@@ -1,14 +1,12 @@
 # VTEnc
 
-**DISCLAIMER: This project is in its initial stages of development and might change dramatically between version. That could lead to incompatibilities and errors, so be careful in the way you use it.**
-
 [VTEnc](https://vteromero.github.io/2019/07/28/vtenc.html) is a compression algorithm for sorted lists of unsigned integers. This C library provides an interface to use VTEnc with different data types (8, 16, 32 and 64 bits) and with both lists and sets.
 
 ## Results
 
 *This is a work-in-progress section. Last updated on: 27/10/2019*
 
-For reference, VTEnc has been tested on a laptop Ubuntu Desktop 19.04 with a Core i7-6700HQ CPU @ 2.60GHz x 8, using different data sets (see "Tests" below for further information), and comparing it with other integer compression algorithms.
+For reference, VTEnc has been tested on a laptop Ubuntu Desktop 19.04 with a Core i7-6700HQ CPU @ 2.60GHz x 8, using different data sets (see [Tests](https://github.com/vteromero/vtenc#tests) for further information), and comparing it with other integer compression algorithms.
 
 * Timestamps (`ts.txt`):
 
