@@ -4,16 +4,21 @@
 
 ## Results
 
-*This is a work-in-progress section. Last updated on: 27/10/2019*
+*This is a work-in-progress section. Last updated on: 2019-11-10*
 
-For reference, VTEnc has been tested on a laptop Ubuntu Desktop 19.04 with a Core i7-6700HQ CPU @ 2.60GHz x 8, using different data sets (see [Tests](https://github.com/vteromero/vtenc#tests) for further information), and comparing it with other integer compression algorithms.
+For reference, VTEnc has been tested on a laptop Ubuntu Desktop 19.04 with a Core i7-6700HQ CPU @ 2.60GHz x 8, using different data sets and comparing it with other integer compression algorithms. See [Tests](https://github.com/vteromero/VTEnc#tests) and [Benchmarks](https://github.com/vteromero/VTEnc#benchmarks) below for further information.
 
 * Timestamps (`ts.txt`):
 
-| Algorithm |Encoded Size|Ratio %|Encoding Speed|Decoding Speed|
-|:----------|-----------:|------:|:------------:|:------------:|
-| VTEnc     |      21,686| 0.0038| - | - |
-| memcpy    | 577,141,992|  100.0| - | - |
+| Algorithm          |Encoded Size|Ratio %|Encoding Speed|Decoding Speed|
+|:-------------------|-----------:|------:|-------------:|-------------:|
+| VTEnc              |  **21,686**| **0.0038**|**60.9155 G/s**|   734.54 M/s |
+| Delta+FastPFor256  |   1,179,312|   0.20|  2.00714 G/s |  4.75146 G/s |
+| Delta+FastPFor128  |   2,306,544|   0.40|   1.9029 G/s |  4.82925 G/s |
+| Delta+BinaryPacking|   4,552,280|   0.79|   8.5867 G/s |  5.77439 G/s |
+| Delta+VariableByte | 144,285,504|   25.0|  4.86063 G/s |  5.09461 G/s |
+| Delta+VarIntGB     | 180,356,880|  31.25|  6.75428 G/s |**9.2638 G/s**|
+| Copy               | 577,141,992|  100.0|  10.4087 G/s | - |
 
 * `gov2.sorted`:
 
@@ -129,3 +134,11 @@ This library is well covered with unit tests and with a few little programs to t
 * `tests/timestamps`: program to test [ts.txt](https://github.com/zentures/encoding/tree/master/benchmark/data), a text file with a big list of timestamps.
 
 * `tests/gov2`: program to test [gov2.sorted](https://lemire.me/data/integercompression2014.html) file, which is part of the "Document identifier data set" created by [D. Lemire](https://lemire.me/en/).
+
+## Benchmarks
+
+The tables shown in the [Results](https://github.com/vteromero/VTEnc#results) section are the result of running the tests included in the [integer-compression-benchmarks](https://github.com/vteromero/integer-compression-benchmarks) repository.
+
+## License
+
+This code is licensed under MIT license.
