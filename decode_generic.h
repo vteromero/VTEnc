@@ -41,7 +41,7 @@ static VtencErrorCode decode_ctx_init(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
   return bsreader_init(&(ctx->bits_reader), in, in_len);
 }
 
-static void decode_full_subtree(WIDTH)(TYPE *values, size_t values_len)
+static inline void decode_full_subtree(WIDTH)(TYPE *values, size_t values_len)
 {
   size_t i;
 
@@ -50,7 +50,7 @@ static void decode_full_subtree(WIDTH)(TYPE *values, size_t values_len)
   }
 }
 
-static void set_ones_at_bit_pos(WIDTH)(TYPE *values,
+static inline void set_ones_at_bit_pos(WIDTH)(TYPE *values,
   size_t values_len, unsigned int bit_pos)
 {
   int i;
