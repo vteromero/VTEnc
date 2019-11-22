@@ -5,7 +5,7 @@
 VTENCDIR = ..
 
 CC = gcc
-CFLAGS ?= -Wall -O3
+CFLAGS ?= -std=c99 -Wall -O3
 
 .PHONY: default
 default: all

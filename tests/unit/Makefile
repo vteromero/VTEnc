@@ -5,7 +5,7 @@
 VTENCDIR = ../..
 
 CC = gcc
-CFLAGS ?= -Wall -O3
+CFLAGS ?= -std=c99 -Wall -O3
 
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
