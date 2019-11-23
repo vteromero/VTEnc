@@ -8,6 +8,8 @@
 
 #include <stdint.h>
 
+#include "compiler.h"
+
 static const uint64_t BITS_SIZE_MASK[] = {
                  0x0ULL,
 	               0x1ULL,                0x3ULL,                0x7ULL,                0xfULL,
@@ -70,19 +72,30 @@ static const unsigned int BITS_LEN8[] = {
 
 static inline uint16_t bits_swap_u16(uint16_t value)
 {
+#ifdef __HAVE_BUILTIN_BSWAP16__
+  return __builtin_bswap16(value);
+#else
   return (value << 8) | (value >> 8);
+#endif
 }
 
 static inline uint32_t bits_swap_u32(uint32_t value)
 {
+#ifdef __HAVE_BUILTIN_BSWAP32__
+  return __builtin_bswap32(value);
+#else
   return  ((value << 24) & 0xff000000 ) |
           ((value <<  8) & 0x00ff0000 ) |
           ((value >>  8) & 0x0000ff00 ) |
           ((value >> 24) & 0x000000ff );
+#endif
 }
 
 static inline uint64_t bits_swap_u64(uint64_t value)
 {
+#ifdef __HAVE_BUILTIN_BSWAP64__
+  return __builtin_bswap64(value);
+#else
   return  ((value << 56) & 0xff00000000000000ULL) |
           ((value << 40) & 0x00ff000000000000ULL) |
           ((value << 24) & 0x0000ff0000000000ULL) |
@@ -91,6 +104,7 @@ static inline uint64_t bits_swap_u64(uint64_t value)
           ((value >> 24) & 0x0000000000ff0000ULL) |
           ((value >> 40) & 0x000000000000ff00ULL) |
           ((value >> 56) & 0x00000000000000ffULL);
+#endif
 }
 
 static inline unsigned int bits_len_u8(uint8_t value)
