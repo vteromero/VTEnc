@@ -126,6 +126,9 @@ static inline unsigned int bits_len_u16(uint16_t value)
 
 static inline unsigned int bits_len_u32(uint32_t value)
 {
+#ifdef __HAVE_BUILTIN_CLZ__
+  return 32 - __builtin_clz(value | 1);
+#else
   unsigned int n = 0;
 
   if (value > 0x0000ffff) {
@@ -138,10 +141,14 @@ static inline unsigned int bits_len_u32(uint32_t value)
   }
 
   return n + BITS_LEN8[value];
+#endif
 }
 
 static inline unsigned int bits_len_u64(uint64_t value)
 {
+#ifdef __HAVE_BUILTIN_CLZLL__
+  return 64 - __builtin_clzll(value | 1ULL);
+#else
   unsigned int n = 0;
 
   if (value > 0x00000000ffffffffULL) {
@@ -158,6 +165,7 @@ static inline unsigned int bits_len_u64(uint64_t value)
   }
 
   return n + BITS_LEN8[value];
+#endif
 }
 
 #endif /* VTENC_BITS_H_ */

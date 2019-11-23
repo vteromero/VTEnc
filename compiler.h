@@ -19,4 +19,9 @@
 #define __HAVE_BUILTIN_BSWAP16__
 #endif
 
+#if GCC_VERSION >= 40000
+#define __HAVE_BUILTIN_CLZ__
+#define __HAVE_BUILTIN_CLZLL__
+#endif
+
 #endif /* VTENC_COMPILER_H_ */
