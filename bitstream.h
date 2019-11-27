@@ -46,10 +46,9 @@ static inline VtencErrorCode bswriter_init(BSWriter *writer, uint8_t *out_buf, s
 static inline void bswriter_append(BSWriter *writer, uint64_t value, unsigned int n_bits)
 {
   assert(n_bits <= BIT_STREAM_MAX_WRITE);
-  assert(n_bits < BITS_SIZE_MASK_LEN);
   assert(n_bits + writer->bit_pos < 64);
 
-  writer->bit_container |= (value & BITS_SIZE_MASK[n_bits]) << writer->bit_pos;
+  writer->bit_container |= value << writer->bit_pos;
   writer->bit_pos += n_bits;
 }
 
@@ -57,7 +56,6 @@ static inline VtencErrorCode bswriter_flush(BSWriter *writer)
 {
   size_t const n_bytes = writer->bit_pos >> 3;
 
-  assert(writer->bit_pos < 64);
   mem_write_le_u64(writer->ptr, writer->bit_container);
 
   writer->ptr += n_bytes;
