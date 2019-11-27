@@ -10,7 +10,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "bits.h"
 #include "error.h"
 #include "mem.h"
 
@@ -148,8 +147,6 @@ static inline VtencErrorCode bsreader_load(BSReader *reader)
 static inline VtencErrorCode bsreader_read(BSReader *reader, unsigned int n_bits, uint64_t *read_value)
 {
   assert(n_bits <= BIT_STREAM_MAX_READ);
-  assert(n_bits < BITS_SIZE_MASK_LEN);
-  assert(reader->bits_consumed <= reader->bits_loaded);
 
   if (n_bits + reader->bits_consumed > reader->bits_loaded) {
     RETURN_IF_ERROR(bsreader_load(reader));
@@ -158,7 +155,7 @@ static inline VtencErrorCode bsreader_read(BSReader *reader, unsigned int n_bits
       return VtencErrorNotEnoughBits;
   }
 
-  *read_value = (reader->bit_container >> reader->bits_consumed) & BITS_SIZE_MASK[n_bits];
+  *read_value = (reader->bit_container >> reader->bits_consumed) & ((1ULL << n_bits) - 1ULL);
   reader->bits_consumed += n_bits;
 
   return VtencErrorNoError;
