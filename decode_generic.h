@@ -53,8 +53,8 @@ static inline void decode_full_subtree(WIDTH)(TYPE *values, size_t values_len)
 static inline void set_ones_at_bit_pos(WIDTH)(TYPE *values,
   size_t values_len, unsigned int bit_pos)
 {
-  int i;
-  const TYPE mask = (const TYPE)BITS_POS_MASK[bit_pos];
+  const TYPE mask = (TYPE)1 << bit_pos;
+  size_t i;
 
   for (i = 0; i < values_len; ++i) {
     values[i] |= mask;

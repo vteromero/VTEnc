@@ -48,7 +48,7 @@ static size_t encode_ctx_close(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
 static inline size_t count_zeros_at_bit_pos(WIDTH)(const TYPE *values,
   size_t values_len, unsigned int bit_pos)
 {
-  const TYPE mask = (const TYPE)BITS_POS_MASK[bit_pos];
+  const TYPE mask = (TYPE)1 << bit_pos;
   size_t l = 0;
   size_t r = values_len;
   size_t m, i;
