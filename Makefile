@@ -6,7 +6,7 @@ TESTSDIR = tests
 UNITTESTSDIR = tests/unit
 
 CC = gcc
-CFLAGS = -std=c99 -Wall -O3
+CFLAGS = -std=c99 -Wall -O3 -march=native -mtune=native
 DEBUGFLAGS = -std=c99 -Wall -O0 -g3
 LDFLAGS = -shared
 AR = ar
