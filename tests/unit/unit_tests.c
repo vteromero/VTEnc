@@ -11,7 +11,10 @@
 do {                                \
   printf(""#fn_name"...");          \
   if ((fn_name)()) printf(" OK\n"); \
-  else printf(" KO\n");             \
+  else {                            \
+    printf(" KO\n");                \
+    return 1;                       \
+  }                                 \
 } while (0)
 
 int main()
