@@ -12,8 +12,8 @@
 
 int test_vtenc_list_decode_u8_1(void)
 {
-  const uint8_t *in = (const uint8_t *)"\xff\xff\xff\xff\xff\xff\xff\xff";
-  const size_t in_len = 8;
+  const uint8_t in[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+  const size_t in_len = sizeof(in);
   size_t out_len = 1;
   uint8_t out[out_len];
 
@@ -24,8 +24,8 @@ int test_vtenc_list_decode_u8_1(void)
 
 int test_vtenc_list_decode_u8_2(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x09\x00\x00\x00\x00\x00\x00\x00";
-  const size_t in_len = 8;
+  const uint8_t in[] = {0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  const size_t in_len = sizeof(in);
   size_t out_len = 4;
   uint8_t out[out_len];
 
@@ -36,8 +36,8 @@ int test_vtenc_list_decode_u8_2(void)
 
 int test_vtenc_list_decode_u8_3(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x04\x00\x00\x00\x00\x00\x00\x0e";
-  const size_t in_len = 8;
+  const uint8_t in[] = {0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0e};
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_list_decoded_size_u8(in, in_len);
   uint8_t out[out_len];
 
@@ -48,8 +48,11 @@ int test_vtenc_list_decode_u8_3(void)
 
 int test_vtenc_list_decode_u8_4(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x0b\x00\x00\x00\x00\x00\x00\xb0\x56\x09\xc5\xd8\x8a\x2e\x56\x2b\x01";
-  const size_t in_len = 17;
+  const uint8_t in[] = {
+    0x0b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xb0, 0x56, 0x09, 0xc5, 0xd8,
+    0x8a, 0x2e, 0x56, 0x2b, 0x01
+  };
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_list_decoded_size_u8(in, in_len);
   uint8_t out[out_len];
   uint8_t expected[] = {5, 22, 23, 44, 62, 69, 109, 113, 178, 194, 206};
@@ -63,8 +66,11 @@ int test_vtenc_list_decode_u8_4(void)
 
 int test_vtenc_list_decode_u8_5(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x09\x00\x00\x00\x00\x00\x00\x6e\xc0\x03\x02\x00\xa2\x0a";
-  const size_t in_len = 14;
+  const uint8_t in[] = {
+    0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x6e, 0xc0, 0x03, 0x02, 0x00,
+    0xa2, 0x0a
+  };
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_list_decoded_size_u8(in, in_len);
   uint8_t out[out_len];
   uint8_t expected[] = {57, 57, 57, 111, 111, 111, 111, 208, 208};
@@ -78,8 +84,8 @@ int test_vtenc_list_decode_u8_5(void)
 
 int test_vtenc_list_decode_u16_1(void)
 {
-  const uint8_t *in = (const uint8_t *)"\xff\xff\xff\xff\xff\xff\xff\xff";
-  const size_t in_len = 8;
+  const uint8_t in[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+  const size_t in_len = sizeof(in);
   size_t out_len = 1;
   uint16_t out[out_len];
 
@@ -90,8 +96,8 @@ int test_vtenc_list_decode_u16_1(void)
 
 int test_vtenc_list_decode_u16_2(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x09\x00\x00\x00\x00\x00\x00\x00";
-  const size_t in_len = 8;
+  const uint8_t in[] = {0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  const size_t in_len = sizeof(in);
   size_t out_len = 4;
   uint16_t out[out_len];
 
@@ -102,8 +108,8 @@ int test_vtenc_list_decode_u16_2(void)
 
 int test_vtenc_list_decode_u16_3(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x04\x00\x00\x00\x00\x00\x00\x0e";
-  const size_t in_len = 8;
+  const uint8_t in[] = {0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0e};
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_list_decoded_size_u16(in, in_len);
   uint16_t out[out_len];
 
@@ -114,8 +120,11 @@ int test_vtenc_list_decode_u16_3(void)
 
 int test_vtenc_list_decode_u16_4(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x07\x00\x00\x00\x00\x00\x00\xba\xcd\x2d\x97\x01\x4d\xe2\xcf\x6b\x6b\x95\x78\x74\x00";
-  const size_t in_len = 21;
+  const uint8_t in[] = {
+    0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xba, 0xcd, 0x2d, 0x97, 0x01,
+    0x4d, 0xe2, 0xcf, 0x6b, 0x6b, 0x95, 0x78, 0x74, 0x00
+  };
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_list_decoded_size_u16(in, in_len);
   uint16_t out[out_len];
   uint16_t expected[] = {1099, 2227, 8102, 27654, 29001, 35511, 50083};
@@ -129,8 +138,11 @@ int test_vtenc_list_decode_u16_4(void)
 
 int test_vtenc_list_decode_u16_5(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x08\x00\x00\x00\x00\x00\x00\x10\xe7\x67\xe6\x99\xb6\x28\x0a\xb4\x05";
-  const size_t in_len = 17;
+  const uint8_t in[] = {
+    0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0xe7, 0x67, 0xe6, 0x99,
+    0xb6, 0x28, 0x0a, 0xb4, 0x05
+  };
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_list_decoded_size_u16(in, in_len);
   uint16_t out[out_len];
   uint16_t expected[] = {677, 677, 677, 8881, 8881, 8881, 8881, 8881};
@@ -144,8 +156,8 @@ int test_vtenc_list_decode_u16_5(void)
 
 int test_vtenc_list_decode_u32_1(void)
 {
-  const uint8_t *in = (const uint8_t *)"\xff\xff\xff\xff\xff\xff\xff\xff";
-  const size_t in_len = 8;
+  const uint8_t in[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+  const size_t in_len = sizeof(in);
   size_t out_len = 1;
   uint32_t out[out_len];
 
@@ -156,8 +168,8 @@ int test_vtenc_list_decode_u32_1(void)
 
 int test_vtenc_list_decode_u32_2(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x09\x00\x00\x00\x00\x00\x00\x00";
-  const size_t in_len = 8;
+  const uint8_t in[] = {0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  const size_t in_len = sizeof(in);
   size_t out_len = 4;
   uint32_t out[out_len];
 
@@ -168,8 +180,8 @@ int test_vtenc_list_decode_u32_2(void)
 
 int test_vtenc_list_decode_u32_3(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x04\x00\x00\x00\x00\x00\x00\x0e";
-  const size_t in_len = 8;
+  const uint8_t in[] = {0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0e};
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_list_decoded_size_u32(in, in_len);
   uint32_t out[out_len];
 
@@ -180,9 +192,12 @@ int test_vtenc_list_decode_u32_3(void)
 
 int test_vtenc_list_decode_u32_4(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x05\x00\x00\x00\x00\x00\x00\x4a\x6e\xb5"
-    "\xff\x35\xb6\x43\x74\xaa\x3e\xda\xf3\xdf\xe8\x7b\x2a\xdd\x60\x7d\x01";
-  const size_t in_len = 27;
+  const uint8_t in[] = {
+    0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4a, 0x6e, 0xb5, 0xff, 0x35,
+    0xb6, 0x43, 0x74, 0xaa, 0x3e, 0xda, 0xf3, 0xdf, 0xe8, 0x7b, 0x2a, 0xdd,
+    0x60, 0x7d, 0x01
+  };
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_list_decoded_size_u32(in, in_len);
   uint32_t out[out_len];
   uint32_t expected[] = {5348, 13089333, 88199704, 271008013, 1451881090};
@@ -196,9 +211,12 @@ int test_vtenc_list_decode_u32_4(void)
 
 int test_vtenc_list_decode_u32_5(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x06\x00\x00\x00\x00\x00\x00\x6c\x93\x20"
-    "\x41\x90\x20\x49\x90\x04\x40\x10\x20\x14\x41\x05\x15\x51\x15\x04\x01";
-  const size_t in_len = 27;
+  const uint8_t in[] = {
+    0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x6c, 0x93, 0x20, 0x41, 0x90,
+    0x20, 0x49, 0x90, 0x04, 0x40, 0x10, 0x20, 0x14, 0x41, 0x05, 0x15, 0x51,
+    0x15, 0x04, 0x01
+  };
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_list_decoded_size_u32(in, in_len);
   uint32_t out[out_len];
   uint32_t expected[] = {77865901, 77865901, 77865901, 77865901, 314976310, 314976310};
@@ -212,8 +230,8 @@ int test_vtenc_list_decode_u32_5(void)
 
 int test_vtenc_list_decode_u64_1(void)
 {
-  const uint8_t *in = (const uint8_t *)"\xff\xff\xff\xff\xff\xff\xff\xff";
-  const size_t in_len = 8;
+  const uint8_t in[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+  const size_t in_len = sizeof(in);
   size_t out_len = 1;
   uint64_t out[out_len];
 
@@ -224,8 +242,8 @@ int test_vtenc_list_decode_u64_1(void)
 
 int test_vtenc_list_decode_u64_2(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x09\x00\x00\x00\x00\x00\x00\x00";
-  const size_t in_len = 8;
+  const uint8_t in[] = {0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  const size_t in_len = sizeof(in);
   size_t out_len = 4;
   uint64_t out[out_len];
 
@@ -236,8 +254,8 @@ int test_vtenc_list_decode_u64_2(void)
 
 int test_vtenc_list_decode_u64_3(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x04\x00\x00\x00\x00\x00\x00\x0e";
-  const size_t in_len = 8;
+  const uint8_t in[] = {0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0e};
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_list_decoded_size_u64(in, in_len);
   uint64_t out[out_len];
 
@@ -248,10 +266,12 @@ int test_vtenc_list_decode_u64_3(void)
 
 int test_vtenc_list_decode_u64_4(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x04\x00\x00\x00\x00\x00\x00\x48\x92\x24"
-    "\x49\x92\x24\xc9\xfd\xff\xff\xaf\xaa\xda\xff\x56\xf3\x4a\x04\x0f\xd0\x93\x16"
-    "\x79\x5b\x8e\x38\xa6\xaa";
-  const size_t in_len = 35;
+  const uint8_t in[] = {
+    0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x48, 0x92, 0x24, 0x49, 0x92,
+    0x24, 0xc9, 0xfd, 0xff, 0xff, 0xaf, 0xaa, 0xda, 0xff, 0x56, 0xf3, 0x4a,
+    0x04, 0x0f, 0xd0, 0x93, 0x16, 0x79, 0x5b, 0x8e, 0x38, 0xa6, 0xaa
+  };
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_list_decoded_size_u64(in, in_len);
   uint64_t out[out_len];
   uint64_t expected[] = {0x12a6, 0x8addf0, 0xffa1b4bb, 0x21258ee39aaa};
@@ -265,10 +285,13 @@ int test_vtenc_list_decode_u64_4(void)
 
 int test_vtenc_list_decode_u64_5(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x05\x00\x00\x00\x00\x00\x00\xda\xb6\x6d"
-    "\xdb\xb6\x6d\xdb\xee\xff\xff\x7f\x66\x66\x66\x66\x66\x66\x66\x46\x45\x45\x45"
-    "\x45\x45\x45\x45\x45\x45\x45\x05";
-  const size_t in_len = 37;
+  const uint8_t in[] = {
+    0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xda, 0xb6, 0x6d, 0xdb, 0xb6,
+    0x6d, 0xdb, 0xee, 0xff, 0xff, 0x7f, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66,
+    0x66, 0x46, 0x45, 0x45, 0x45, 0x45, 0x45, 0x45, 0x45, 0x45, 0x45, 0x45,
+    0x05
+  };
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_list_decoded_size_u64(in, in_len);
   uint64_t out[out_len];
   uint64_t expected[] = {0x55555555, 0x55555555, 0x55555555, 0x111111111111, 0x111111111111};
@@ -282,8 +305,8 @@ int test_vtenc_list_decode_u64_5(void)
 
 int test_vtenc_set_decode_u8_1(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x00";
-  const size_t in_len = 1;
+  const uint8_t in[] = {0x00};
+  const size_t in_len = sizeof(in);
   size_t out_len = 0;
   uint8_t out[out_len];
 
@@ -294,8 +317,8 @@ int test_vtenc_set_decode_u8_1(void)
 
 int test_vtenc_set_decode_u8_2(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x03\xff";
-  const size_t in_len = 2;
+  const uint8_t in[] = {0x03, 0xff};
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_set_decoded_size_u8(in, in_len);
   uint8_t out[out_len];
 
@@ -306,8 +329,8 @@ int test_vtenc_set_decode_u8_2(void)
 
 int test_vtenc_set_decode_u8_3(void)
 {
-  const uint8_t *in = (const uint8_t *)"\xff";
-  const size_t in_len = 1;
+  const uint8_t in[] = {0xff};
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_set_decoded_size_u8(in, in_len);
   uint8_t out[out_len];
   size_t expected_len = 256;
@@ -325,8 +348,8 @@ int test_vtenc_set_decode_u8_3(void)
 
 int test_vtenc_set_decode_u8_4(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x0b\x88\x88\x48\x90\x04";
-  const size_t in_len = 6;
+  const uint8_t in[] = {0x0b, 0x88, 0x88, 0x48, 0x90, 0x04};
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_set_decoded_size_u8(in, in_len);
   uint8_t out[out_len];
   uint8_t expected[] = {0, 1, 2, 3, 4, 5, 6, 7, 160, 161, 162, 163};
@@ -340,8 +363,8 @@ int test_vtenc_set_decode_u8_4(void)
 
 int test_vtenc_set_decode_u8_5(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x05\xcc\x74\x44\x57\x55\x03";
-  const size_t in_len = 7;
+  const uint8_t in[] = {0x05, 0xcc, 0x74, 0x44, 0x57, 0x55, 0x03};
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_set_decoded_size_u8(in, in_len);
   uint8_t out[out_len];
   uint8_t expected[] = {13, 77, 88, 93, 149, 212};
@@ -355,8 +378,8 @@ int test_vtenc_set_decode_u8_5(void)
 
 int test_vtenc_set_decode_u16_1(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x00\x00";
-  const size_t in_len = 2;
+  const uint8_t in[] = {0x00, 0x00};
+  const size_t in_len = sizeof(in);
   size_t out_len = 0;
   uint16_t out[out_len];
 
@@ -367,8 +390,8 @@ int test_vtenc_set_decode_u16_1(void)
 
 int test_vtenc_set_decode_u16_2(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x03\x00\xff";
-  const size_t in_len = 3;
+  const uint8_t in[] = {0x03, 0x00, 0xff};
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_set_decoded_size_u16(in, in_len);
   uint16_t out[out_len];
 
@@ -379,8 +402,11 @@ int test_vtenc_set_decode_u16_2(void)
 
 int test_vtenc_set_decode_u16_3(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x07\x00\xc6\x19\x23\x34\xf0\x0f\xb7\x17\x5a\x23\xd8\xfb\xf1\x5c\x51";
-  const size_t in_len = 17;
+  const uint8_t in[] = {
+    0x07, 0x00, 0xc6, 0x19, 0x23, 0x34, 0xf0, 0x0f, 0xb7, 0x17, 0x5a, 0x23,
+    0xd8, 0xfb, 0xf1, 0x5c, 0x51
+  };
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_set_decoded_size_u16(in, in_len);
   uint16_t out[out_len];
   uint16_t expected[] = {1655, 3391, 4111, 8770, 29006, 32712, 32993, 58042};
@@ -394,8 +420,11 @@ int test_vtenc_set_decode_u16_3(void)
 
 int test_vtenc_set_decode_u16_4(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x0b\x00\x8c\x00\x08\x80\x80\x00\x48\x02\x20\x09\x92";
-  const size_t in_len = 13;
+  const uint8_t in[] = {
+    0x0b, 0x00, 0x8c, 0x00, 0x08, 0x80, 0x80, 0x00, 0x48, 0x02, 0x20, 0x09,
+    0x92
+  };
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_set_decoded_size_u16(in, in_len);
   uint16_t out[out_len];
   uint16_t expected[] = {
@@ -412,8 +441,8 @@ int test_vtenc_set_decode_u16_4(void)
 
 int test_vtenc_set_decode_u32_1(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x00\x00\x00\x00";
-  const size_t in_len = 4;
+  const uint8_t in[] = {0x00, 0x00, 0x00, 0x00};
+  const size_t in_len = sizeof(in);
   size_t out_len = 0;
   uint32_t out[out_len];
 
@@ -424,8 +453,8 @@ int test_vtenc_set_decode_u32_1(void)
 
 int test_vtenc_set_decode_u32_2(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x03\x00\x00\x00\xff";
-  const size_t in_len = 5;
+  const uint8_t in[] = {0x03, 0x00, 0x00, 0x00, 0xff};
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_set_decoded_size_u32(in, in_len);
   uint32_t out[out_len];
 
@@ -436,9 +465,11 @@ int test_vtenc_set_decode_u32_2(void)
 
 int test_vtenc_set_decode_u32_3(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x04\x00\x00\x00\x9c\xbd\xb9\xec\xf7\x2e"
-    "\xa8\x48\x0b\x47\x46\x78\x82\x59\xc5\xa1\xfd\xf9\x26\x02";
-  const size_t in_len = 24;
+  const uint8_t in[] = {
+    0x04, 0x00, 0x00, 0x00, 0x9c, 0xbd, 0xb9, 0xec, 0xf7, 0x2e, 0xa8, 0x48,
+    0x0b, 0x47, 0x46, 0x78, 0x82, 0x59, 0xc5, 0xa1, 0xfd, 0xf9, 0x26, 0x02
+  };
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_set_decoded_size_u32(in, in_len);
   uint32_t out[out_len];
   uint32_t expected[] = {0x98b204, 0x122fabb4, 0x378ecef0, 0x77ccab8f, 0xa40609bb};
@@ -452,10 +483,12 @@ int test_vtenc_set_decode_u32_3(void)
 
 int test_vtenc_set_decode_u32_4(void)
 {
-  const uint8_t *in = (const uint8_t *)
-  "\x0d\x00\x00\x00\xee\xee\xee\xee\x46\x92\x24\x41\x90\x20\x48\x92"
-  "\x54\x04\x04\x04\x55\x15\x00\x00\x00\x00\x00\x00\x00\x10\x11\x11";
-  const size_t in_len = 32;
+  const uint8_t in[] = {
+    0x0d, 0x00, 0x00, 0x00, 0xee, 0xee, 0xee, 0xee, 0x46, 0x92, 0x24, 0x41,
+    0x90, 0x20, 0x48, 0x92, 0x54, 0x04, 0x04, 0x04, 0x55, 0x15, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x11, 0x11
+  };
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_set_decoded_size_u32(in, in_len);
   uint32_t out[out_len];
   uint32_t expected[] = {
@@ -473,8 +506,8 @@ int test_vtenc_set_decode_u32_4(void)
 
 int test_vtenc_set_decode_u64_1(void)
 {
-  const uint8_t *in = (const uint8_t *)"\xff\xff\xff\xff\xff\xff\xff\xff";
-  const size_t in_len = 8;
+  const uint8_t in[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+  const size_t in_len = sizeof(in);
   size_t out_len = 0;
   uint64_t out[out_len];
 
@@ -485,8 +518,8 @@ int test_vtenc_set_decode_u64_1(void)
 
 int test_vtenc_set_decode_u64_2(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x00\x00\x00\x00\x00\x00\x00\x00";
-  const size_t in_len = 8;
+  const uint8_t in[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  const size_t in_len = sizeof(in);
   size_t out_len = 0;
   uint64_t out[out_len];
 
@@ -497,8 +530,8 @@ int test_vtenc_set_decode_u64_2(void)
 
 int test_vtenc_set_decode_u64_3(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x03\x00\x00\x00\x00\x00\x00\xfe";
-  const size_t in_len = 8;
+  const uint8_t in[] = {0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfe};
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_set_decoded_size_u64(in, in_len);
   uint64_t out[out_len];
 
@@ -509,12 +542,14 @@ int test_vtenc_set_decode_u64_3(void)
 
 int test_vtenc_set_decode_u64_4(void)
 {
-  const uint8_t *in = (const uint8_t *)
-    "\x06\x00\x00\x00\x00\x00\x00\xfe\xff\xff\xff\xff\xff\xdb\xb6\x6d"
-    "\xb9\x55\x6d\xb7\x3b\xd3\x5d\x15\x61\x26\xfa\xfb\xfb\xfb\xfb\xaa"
-    "\xaa\xaa\xaa\x0a\x0f\x0f\x0f\x0f\x5f\xe6\x1e\x91\x59\xd5\x0d\x20"
-    "\x02\x20\x02\x20\x02";
-  const size_t in_len = 53;
+  const uint8_t in[] = {
+    0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfe, 0xff, 0xff, 0xff, 0xff,
+    0xff, 0xdb, 0xb6, 0x6d, 0xb9, 0x55, 0x6d, 0xb7, 0x3b, 0xd3, 0x5d, 0x15,
+    0x61, 0x26, 0xfa, 0xfb, 0xfb, 0xfb, 0xfb, 0xaa, 0xaa, 0xaa, 0xaa, 0x0a,
+    0x0f, 0x0f, 0x0f, 0x0f, 0x5f, 0xe6, 0x1e, 0x91, 0x59, 0xd5, 0x0d, 0x20,
+    0x02, 0x20, 0x02, 0x20, 0x02
+  };
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_set_decoded_size_u64(in, in_len);
   uint64_t out[out_len];
   uint64_t expected[] = {
@@ -531,12 +566,14 @@ int test_vtenc_set_decode_u64_4(void)
 
 int test_vtenc_set_decode_u64_5(void)
 {
-  const uint8_t *in = (const uint8_t *)
-    "\x07\x00\x00\x00\x00\x00\x00\x10\x11\x11\x11\x11\x11\x11\x11\x11"
-    "\x11\x11\x11\x11\xcd\xb6\x4d\x82\x24\x49\x92\x24\x49\x92\x24\x49"
-    "\x92\xa4\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
-    "\xaa\xaa\x02";
-  const size_t in_len = 51;
+  const uint8_t in[] = {
+    0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x11, 0x11, 0x11, 0x11,
+    0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0xcd, 0xb6, 0x4d, 0x82,
+    0x24, 0x49, 0x92, 0x24, 0x49, 0x92, 0x24, 0x49, 0x92, 0xa4, 0xaa, 0xaa,
+    0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
+    0xaa, 0xaa, 0x02
+  };
+  const size_t in_len = sizeof(in);
   size_t out_len = vtenc_set_decoded_size_u64(in, in_len);
   uint64_t out[out_len];
   uint64_t expected[] = {
@@ -554,8 +591,8 @@ int test_vtenc_set_decode_u64_5(void)
 
 int test_vtenc_list_decoded_size_1(void)
 {
-  const uint8_t *in = (const uint8_t *)"";
-  const size_t in_len = 0;
+  const uint8_t in[] = {};
+  const size_t in_len = sizeof(in);
 
   EXPECT_TRUE(vtenc_list_decoded_size_u8(in, in_len) == 0);
   EXPECT_TRUE(vtenc_list_decoded_size_u16(in, in_len) == 0);
@@ -567,8 +604,8 @@ int test_vtenc_list_decoded_size_1(void)
 
 int test_vtenc_list_decoded_size_2(void)
 {
-  const uint8_t *in = (const uint8_t *)"\xff\xff";
-  const size_t in_len = 1;
+  const uint8_t in[] = {0xff, 0xff};
+  const size_t in_len = sizeof(in);
 
   EXPECT_TRUE(vtenc_list_decoded_size_u8(in, in_len) == 0);
   EXPECT_TRUE(vtenc_list_decoded_size_u16(in, in_len) == 0);
@@ -580,8 +617,8 @@ int test_vtenc_list_decoded_size_2(void)
 
 int test_vtenc_list_decoded_size_3(void)
 {
-  const uint8_t *in = (const uint8_t *)"\x07\x00\x00\x00\x00\x00\x00\x00";
-  const size_t in_len = 8;
+  const uint8_t in[] = {0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  const size_t in_len = sizeof(in);
 
   EXPECT_TRUE(vtenc_list_decoded_size_u8(in, in_len) == 7);
   EXPECT_TRUE(vtenc_list_decoded_size_u16(in, in_len) == 7);
@@ -593,8 +630,8 @@ int test_vtenc_list_decoded_size_3(void)
 
 int test_vtenc_list_decoded_size_4(void)
 {
-  const uint8_t *in = (const uint8_t *)"\xff\xff\x0f\x00\x00\x00\x00\x00";
-  const size_t in_len = 8;
+  const uint8_t in[] = {0xff, 0xff, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x00};
+  const size_t in_len = sizeof(in);
 
   EXPECT_TRUE(vtenc_list_decoded_size_u8(in, in_len) == 1048575);
   EXPECT_TRUE(vtenc_list_decoded_size_u16(in, in_len) == 1048575);
@@ -606,8 +643,8 @@ int test_vtenc_list_decoded_size_4(void)
 
 int test_vtenc_set_decoded_size_with_wrong_input(void)
 {
-  const uint8_t *in = (const uint8_t *)"";
-  const size_t in_len = 0;
+  const uint8_t in[] = {};
+  const size_t in_len = sizeof(in);
 
   EXPECT_TRUE(vtenc_set_decoded_size_u8(in, in_len) == 0);
   EXPECT_TRUE(vtenc_set_decoded_size_u16(in, in_len) == 0);

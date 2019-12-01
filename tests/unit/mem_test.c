@@ -12,7 +12,7 @@
 
 int test_little_endian_read_and_write_u16(void)
 {
-  const char *in_data = "\x11\x22";
+  const char in_data[] = {0x11, 0x22};
   char out_data[2];
   uint16_t value;
 
@@ -26,7 +26,7 @@ int test_little_endian_read_and_write_u16(void)
 
 int test_little_endian_read_and_write_u32(void)
 {
-  const char *in_data = "\x11\x22\x33\x44";
+  const char in_data[] = {0x11, 0x22, 0x33, 0x44};
   char out_data[4];
   uint32_t value;
 
@@ -40,7 +40,7 @@ int test_little_endian_read_and_write_u32(void)
 
 int test_little_endian_read_and_write_u64(void)
 {
-  const char *in_data = "\x11\x22\x33\x44\x55\x66\x77\x88";
+  const char in_data[] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88};
   char out_data[8];
   uint64_t value;
 
