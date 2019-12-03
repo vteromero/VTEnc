@@ -41,6 +41,10 @@ test: lib
 	$(MAKE) -C $(TESTSDIR) all CFLAGS="$(CFLAGS)"
 	$(MAKE) -C $(UNITTESTSDIR) all CFLAGS="$(CFLAGS)"
 
+.PHONY: check
+check: test
+	./$(UNITTESTSDIR)/unit_tests
+
 .PHONY: clean
 clean:
 	rm -f *.o libvtenc.a libvtenc.so

@@ -1,3 +1,6 @@
-*.o
 *.a
+*.o
 *.so
+tests/gov2
+tests/timestamps
+tests/unit/unit_tests

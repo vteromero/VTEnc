@@ -154,8 +154,8 @@ int test_bswriter_close_2(void)
 int test_bsreader_init_1(void)
 {
   BSReader reader;
-  const size_t buf_len = 0;
-  const uint8_t *buf = (const uint8_t *)"";
+  const uint8_t buf[] = {};
+  const size_t buf_len = sizeof(buf);
 
   EXPECT_TRUE(bsreader_init(&reader, buf, buf_len) == VtencErrorBufferTooSmall);
 
@@ -165,8 +165,8 @@ int test_bsreader_init_1(void)
 int test_bsreader_init_2(void)
 {
   BSReader reader;
-  const size_t buf_len = 1;
-  const uint8_t *buf = (const uint8_t *)"\xff";
+  const uint8_t buf[] = {0xff};
+  const size_t buf_len = sizeof(buf);
 
   EXPECT_TRUE(bsreader_init(&reader, buf, buf_len) == VtencErrorNoError);
 
@@ -176,8 +176,8 @@ int test_bsreader_init_2(void)
 int test_bsreader_read_1(void)
 {
   BSReader reader;
-  const size_t buf_len = 1;
-  const uint8_t *buf = (const uint8_t *)"\xff";
+  const uint8_t buf[] = {0xff};
+  const size_t buf_len = sizeof(buf);
   uint64_t val=0;
 
   bsreader_init(&reader, buf, buf_len);
@@ -191,8 +191,8 @@ int test_bsreader_read_1(void)
 int test_bsreader_read_2(void)
 {
   BSReader reader;
-  const size_t buf_len = 2;
-  const uint8_t *buf = (const uint8_t *)"\xff\x66";
+  const uint8_t buf[] = {0xff, 0x66};
+  const size_t buf_len = sizeof(buf);
   uint64_t val=0;
 
   bsreader_init(&reader, buf, buf_len);
@@ -207,8 +207,8 @@ int test_bsreader_read_2(void)
 int test_bsreader_read_3(void)
 {
   BSReader reader;
-  const size_t buf_len = 1;
-  const uint8_t *buf = (const uint8_t *)"\xba";
+  const uint8_t buf[] = {0xba};
+  const size_t buf_len = sizeof(buf);
   uint64_t val=0;
 
   bsreader_init(&reader, buf, buf_len);
@@ -226,8 +226,11 @@ int test_bsreader_read_3(void)
 int test_bsreader_read_4(void)
 {
   BSReader reader;
-  const size_t buf_len = 18;
-  const uint8_t *buf = (const uint8_t *)"\x11\x11\x11\x11\x11\x11\x22\x22\x22\x22\x22\x22\x33\x33\x33\x33\x33\x33";
+  const uint8_t buf[] = {
+    0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22,
+    0x33, 0x33, 0x33, 0x33, 0x33, 0x33
+  };
+  const size_t buf_len = sizeof(buf);
   uint64_t val=0;
 
   bsreader_init(&reader, buf, buf_len);
@@ -243,8 +246,10 @@ int test_bsreader_read_4(void)
 int test_bsreader_read_5(void)
 {
   BSReader reader;
-  const size_t buf_len = 12;
-  const uint8_t *buf = (const uint8_t *)"\xff\xab\x11\xcd\x55\x55\x55\x55\x66\x66\x66\x66";
+  const uint8_t buf[] = {
+    0xff, 0xab, 0x11, 0xcd, 0x55, 0x55, 0x55, 0x55, 0x66, 0x66, 0x66, 0x66
+  };
+  const size_t buf_len = sizeof(buf);
   uint64_t val=0;
 
   bsreader_init(&reader, buf, buf_len);
@@ -268,8 +273,11 @@ int test_bsreader_read_5(void)
 int test_bsreader_read_6(void)
 {
   BSReader reader;
-  const size_t buf_len = 15;
-  const uint8_t *buf = (const uint8_t *)"\x55\x55\x55\x55\x55\x55\x55\x55\x55\x55\x55\x55\x55\x55\x55";
+  const uint8_t buf[] = {
+    0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
+    0x55, 0x55, 0x55
+  };
+  const size_t buf_len = sizeof(buf);
   uint64_t val=0;
 
   bsreader_init(&reader, buf, buf_len);
@@ -284,8 +292,10 @@ int test_bsreader_read_6(void)
 int test_bsreader_size(void)
 {
   BSReader reader;
-  const size_t buf_len = 12;
-  const uint8_t *buf = (const uint8_t *)"\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff";
+  const uint8_t buf[] = {
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
+  };
+  const size_t buf_len = sizeof(buf);
   uint64_t val=0;
 
   bsreader_init(&reader, buf, buf_len);
