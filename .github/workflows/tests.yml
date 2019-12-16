@@ -1,15 +1,13 @@
-name: C/C++ CI
+name: Unit Tests
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@master
-    - name: make
-      run: make
+    - uses: actions/checkout@v1
     - name: make check
       run: make check

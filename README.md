@@ -2,9 +2,11 @@
 
 [VTEnc](https://vteromero.github.io/2019/07/28/vtenc.html) is a compression algorithm for sorted lists of unsigned integers. This C library provides an interface to use VTEnc with different data types (8, 16, 32 and 64 bits) and with both lists and sets.
 
+**WARNING: This project is in its initial stages of development and might dramatically change on each version. Have a look at the [Development philosophy](https://github.com/vteromero/VTEnc#development-philosophy) section to understand the rationale behind it.**
+
 ## Results
 
-*This is a work-in-progress section. Last updated on: 2019-11-10*
+*This is a work-in-progress section. Last updated on: 2019-12-16*
 
 For reference, VTEnc has been tested on a laptop Ubuntu Desktop 19.04 with a Core i7-6700HQ CPU @ 2.60GHz x 8, using different data sets and comparing it with other integer compression algorithms. See [Tests](https://github.com/vteromero/VTEnc#tests) and [Benchmarks](https://github.com/vteromero/VTEnc#benchmarks) below for further information.
 
@@ -12,25 +14,25 @@ For reference, VTEnc has been tested on a laptop Ubuntu Desktop 19.04 with a Cor
 
 | Algorithm          |Encoded Size|Ratio %    |Encoding Speed |Decoding Speed|
 |:-------------------|-----------:|----------:|--------------:|-------------:|
-| VTEnc              |  **21,686**| **0.0038**|  **60.92 G/s**|    734.54 M/s|
-| Delta+FastPFor256  |   1,179,312|       0.20|       2.01 G/s|      4.75 G/s|
-| Delta+FastPFor128  |   2,306,544|       0.40|       1.90 G/s|      4.83 G/s|
-| Delta+BinaryPacking|   4,552,280|       0.79|       8.59 G/s|      5.77 G/s|
-| Delta+VariableByte | 144,285,504|       25.0|       4.86 G/s|      5.09 G/s|
-| Delta+VarIntGB     | 180,356,880|      31.25|       6.75 G/s|  **9.26 G/s**|
-| Copy               | 577,141,992|      100.0|      10.41 G/s|       -      |
+| VTEnc              |  **21,686**| **0.0038**|  **82.62 G/s**|    728.46 M/s|
+| Delta+FastPFor256  |   1,179,312|       0.20|       1.60 G/s|      3.54 G/s|
+| Delta+FastPFor128  |   2,306,544|       0.40|       1.46 G/s|      3.82 G/s|
+| Delta+BinaryPacking|   4,552,280|       0.79|       6.54 G/s|      4.23 G/s|
+| Delta+VariableByte | 144,285,504|       25.0|       3.56 G/s|      3.75 G/s|
+| Delta+VarIntGB     | 180,356,880|      31.25|       4.88 G/s|  **6.98 G/s**|
+| Copy               | 577,141,992|      100.0|      10.49 G/s|       -      |
 
 * `gov2.sorted`:
 
 | Algorithm          |Encoded Size     |Ratio %  |Encoding Speed|Decoding Speed|
 |:-------------------|----------------:|--------:|-------------:|-------------:|
-| VTEnc              |**2,889,599,350**|**12.08**|     77.69 M/s|     69.08 M/s|
-| Delta+FastPFor128  |    3,849,161,656|    16.09|    855.60 M/s|    850.43 M/s|
-| Delta+FastPFor256  |    3,899,341,376|    16.30|    915.43 M/s|    916.01 M/s|
-| Delta+BinaryPacking|    4,329,919,808|    18.10|  **3.03 G/s**|      2.94 G/s|
-| Delta+VariableByte |    6,572,084,696|    27.48|      2.05 G/s|      2.09 G/s|
-| Delta+VarIntGB     |    7,923,819,720|    33.13|      2.54 G/s|  **3.73 G/s**|
-| Copy               |   23,918,861,764|    100.0|      6.27 G/s|       -      |
+| VTEnc              |**2,889,599,350**|**12.08**|     79.13 M/s|     73.41 M/s|
+| Delta+FastPFor128  |    3,849,161,656|    16.09|    642.19 M/s|    641.80 M/s|
+| Delta+FastPFor256  |    3,899,341,376|    16.30|    689.48 M/s|    689.34 M/s|
+| Delta+BinaryPacking|    4,329,919,808|    18.10|  **2.33 G/s**|      2.26 G/s|
+| Delta+VariableByte |    6,572,084,696|    27.48|      1.56 G/s|      1.59 G/s|
+| Delta+VarIntGB     |    7,923,819,720|    33.13|      1.93 G/s|  **2.87 G/s**|
+| Copy               |   23,918,861,764|    100.0|      5.03 G/s|       -      |
 
 ## API
 
@@ -143,6 +145,31 @@ This library is well covered with unit tests and with a few little programs to t
 ## Benchmarks
 
 The tables shown in the [Results](https://github.com/vteromero/VTEnc#results) section are the result of running the tests included in the [integer-compression-benchmarks](https://github.com/vteromero/integer-compression-benchmarks) repository.
+
+## Development philosophy
+
+This section describes the rules and guidelines that will be followed in the different phases of development. Specifically, it explains the versioning philosophy in the two well-differentiated stages: before and after version 1.0.0 (first stable version).
+
+#### Versions 0.X.Y
+
+The main focus at this stage is to find the right **encoded format** that maximises compression ratio, encoding speed and decoding speed. Ideally, the format should also be open to support new features in future versions.
+
+Given a version *0.X.Y*, changes on:
+
+* *X* means either breaking changes or new functionality.
+* *Y* means bug fixes or performance improvements.
+
+Backward compatibility is not a priority here.
+
+#### From version 1.0.0
+
+Versions will follow [SemVer](https://semver.org/) scheme, i.e. given a version *X.Y.Z*, incrementing:
+
+* *X* means that the library introduces breaking changes.
+* *Y* means that the library adds new functionality with backward compatibility.
+* *Z* means that the library adds bug fixes or performance improvements.
+
+Stability, security and backward compatibility will be a priority starting at version v1.0.0.
 
 ## License
 
