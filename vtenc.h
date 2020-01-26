@@ -25,13 +25,14 @@ extern "C" {
 
 /* Error codes */
 typedef enum {
-  VtencErrorNoError = 0,
-  VtencErrorBufferTooSmall = 1,
-  VtencErrorEndOfStream = 2,
-  VtencErrorNotEnoughBits = 3,
-  VtencErrorInputTooSmall = 4,
-  VtencErrorInputTooBig = 5,
-  VtencErrorWrongFormat = 6
+  VtencErrorNoError         = 0,
+  VtencErrorMemoryAlloc     = 1,
+  VtencErrorBufferTooSmall  = 2,
+  VtencErrorEndOfStream     = 3,
+  VtencErrorNotEnoughBits   = 4,
+  VtencErrorInputTooSmall   = 5,
+  VtencErrorInputTooBig     = 6,
+  VtencErrorWrongFormat     = 7
 } VtencErrorCode;
 
 /**
