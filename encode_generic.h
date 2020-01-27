@@ -60,7 +60,7 @@ static inline void encctx_add_cluster(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
   bclqueue_put(ctx->cl_queue, cl_from, cl_len, cl_bit_pos);
 }
 
-static size_t encctx_close(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
+static inline size_t encctx_close(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
 {
   bclqueue_free(&(ctx->cl_queue));
 
