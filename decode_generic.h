@@ -44,7 +44,7 @@ static VtencErrorCode decctx_init(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
 
   ctx->reconstruct_full_subtrees = 0;
 
-  ctx->cl_queue = bclqueue_new(out_len + WIDTH);
+  ctx->cl_queue = bclqueue_new(out_len * 2 + WIDTH);
   if (ctx->cl_queue == NULL) return VtencErrorMemoryAlloc;
 
   return bsreader_init(&(ctx->bits_reader), in, in_len);
