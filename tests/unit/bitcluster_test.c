@@ -55,15 +55,18 @@ int test_bclqueue_put_and_get_2(void)
   bclqueue_put(q, 0, 5, 0);
   bclqueue_put(q, 5, 2, 0);
   bclqueue_put(q, 7, 3, 1);
+  EXPECT_TRUE(bclqueue_length(q) == 3);
+  EXPECT_TRUE(!bclqueue_empty(q));
 
-  EXPECT_TRUE(bclqueue_get(q) != NULL);
-  EXPECT_TRUE(bclqueue_get(q) != NULL);
-  EXPECT_TRUE(bclqueue_get(q) != NULL);
+  EXPECT_TRUE(bclqueue_get(q) != NULL); EXPECT_TRUE(bclqueue_length(q) == 2);
+  EXPECT_TRUE(bclqueue_get(q) != NULL); EXPECT_TRUE(bclqueue_length(q) == 1);
+  EXPECT_TRUE(bclqueue_get(q) != NULL); EXPECT_TRUE(bclqueue_length(q) == 0);
+  EXPECT_TRUE(bclqueue_empty(q));
 
-  // here bclqueue_restructure should be called before putting next element.
-  bclqueue_put(q, 100, 100, 15);
-  bclqueue_put(q, 200, 100, 16);
-  bclqueue_put(q, 300, 100, 17);
+  bclqueue_put(q, 100, 100, 15); EXPECT_TRUE(bclqueue_length(q) == 1);
+  bclqueue_put(q, 200, 100, 16); EXPECT_TRUE(bclqueue_length(q) == 2);
+  bclqueue_put(q, 300, 100, 17); EXPECT_TRUE(bclqueue_length(q) == 3);
+  EXPECT_TRUE(!bclqueue_empty(q));
 
   cl = bclqueue_get(q); EXPECT_TRUE(cl->from == 100); EXPECT_TRUE(cl->length == 100); EXPECT_TRUE(cl->bit_pos == 15);
   cl = bclqueue_get(q); EXPECT_TRUE(cl->from == 200); EXPECT_TRUE(cl->length == 100); EXPECT_TRUE(cl->bit_pos == 16);

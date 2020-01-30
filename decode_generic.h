@@ -44,7 +44,7 @@ static VtencErrorCode decctx_init(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
 
   ctx->reconstruct_full_subtrees = 0;
 
-  ctx->cl_queue = bclqueue_new(out_len * 2 + WIDTH);
+  ctx->cl_queue = bclqueue_new(out_len + WIDTH);
   if (ctx->cl_queue == NULL) return VtencErrorMemoryAlloc;
 
   return bsreader_init(&(ctx->bits_reader), in, in_len);
@@ -83,39 +83,6 @@ static inline void set_ones_at_bit_pos(WIDTH)(TYPE *values,
     values[i] |= mask;
   }
 }
-
-// static VtencErrorCode decode_bits_tree(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
-//   unsigned int bit_pos, size_t idx_from, size_t idx_to)
-// {
-//   TYPE *values_chunk = ctx->values + idx_from;
-//   size_t values_chunk_len = idx_to - idx_from;
-//   unsigned int enc_len;
-//   uint64_t n_zeros;
-//
-//   assert(bit_pos <= MAX_BIT_POS(WIDTH));
-//   assert(idx_from <= idx_to);
-//   assert(idx_to <= ctx->values_len);
-//
-//   if (values_chunk_len == 0) return VtencErrorNoError;
-//
-//   if (ctx->reconstruct_full_subtrees && is_full_subtree(values_chunk_len, bit_pos)) {
-//     decode_full_subtree(WIDTH)(values_chunk, values_chunk_len);
-//     return VtencErrorNoError;
-//   }
-//
-//   enc_len = bits_len_u64(values_chunk_len);
-//
-//   RETURN_IF_ERROR(bsreader_read(&(ctx->bits_reader), enc_len, &n_zeros));
-//
-//   if (n_zeros > (uint64_t)values_chunk_len) return VtencErrorWrongFormat;
-//
-//   set_ones_at_bit_pos(WIDTH)(values_chunk + n_zeros, values_chunk_len - n_zeros, bit_pos);
-//
-//   if (bit_pos == 0) return VtencErrorNoError;
-//
-//   RETURN_IF_ERROR(decode_bits_tree(WIDTH)(ctx, bit_pos - 1, idx_from, idx_from + n_zeros));
-//   return decode_bits_tree(WIDTH)(ctx, bit_pos - 1, idx_from + n_zeros, idx_to);
-// }
 
 static VtencErrorCode decode_bits_tree(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
 {

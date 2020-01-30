@@ -42,7 +42,7 @@ static VtencErrorCode encctx_init(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
 
   ctx->skip_full_subtrees = 0;
 
-  ctx->cl_queue = bclqueue_new(in_len * 2 + WIDTH);
+  ctx->cl_queue = bclqueue_new(in_len + WIDTH);
   if (ctx->cl_queue == NULL) return VtencErrorMemoryAlloc;
 
   return bswriter_init(&(ctx->bits_writer), out, out_cap);
