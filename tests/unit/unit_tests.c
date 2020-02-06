@@ -54,6 +54,8 @@ int main()
   RUN_TEST(test_bclqueue_new);
   RUN_TEST(test_bclqueue_put_and_get_1);
   RUN_TEST(test_bclqueue_put_and_get_2);
+  RUN_TEST(test_bclstack_new);
+  RUN_TEST(test_bclstack_put_and_get);
 
   RUN_TEST(test_vtenc_list_encode_u8_1);
   RUN_TEST(test_vtenc_list_encode_u8_2);
