@@ -32,7 +32,7 @@ struct DecodeCtx(WIDTH) {
   TYPE *values;
   size_t values_len;
   unsigned int reconstruct_full_subtrees;
-  struct BitClusterQueue *cl_queue;
+  struct BitClusterStack *cl_stack;
   BSReader bits_reader;
 };
 
@@ -44,8 +44,8 @@ static VtencErrorCode decctx_init(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
 
   ctx->reconstruct_full_subtrees = 0;
 
-  ctx->cl_queue = bclqueue_new(out_len + WIDTH);
-  if (ctx->cl_queue == NULL) return VtencErrorMemoryAlloc;
+  ctx->cl_stack = bclstack_new(out_len + WIDTH);
+  if (ctx->cl_stack == NULL) return VtencErrorMemoryAlloc;
 
   return bsreader_init(&(ctx->bits_reader), in, in_len);
 }
@@ -56,12 +56,12 @@ static inline void decctx_add_cluster(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
   if (cl_len == 0)
     return;
 
-  bclqueue_put(ctx->cl_queue, cl_from, cl_len, cl_bit_pos);
+  bclstack_put(ctx->cl_stack, cl_from, cl_len, cl_bit_pos);
 }
 
 static inline void decctx_close(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
 {
-  bclqueue_free(&(ctx->cl_queue));
+  bclstack_free(&(ctx->cl_stack));
 }
 
 static inline void decode_full_subtree(WIDTH)(TYPE *values, size_t values_len)
@@ -87,42 +87,46 @@ static inline void set_ones_at_bit_pos(WIDTH)(TYPE *values,
 static VtencErrorCode decode_bits_tree(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
 {
   struct BitCluster *cluster;
-  unsigned int cur_bit_pos, enc_len;
+  size_t cl_from, cl_len;
+  unsigned int cl_bit_pos, cur_bit_pos, enc_len;
   uint64_t n_zeros;
 
   decctx_add_cluster(WIDTH)(ctx, 0, ctx->values_len, WIDTH);
 
-  while (!bclqueue_empty(ctx->cl_queue)) {
-    cluster = bclqueue_get(ctx->cl_queue);
-    cur_bit_pos = cluster->bit_pos - 1;
+  while (!bclstack_empty(ctx->cl_stack)) {
+    cluster = bclstack_get(ctx->cl_stack);
+    cl_from = cluster->from;
+    cl_len = cluster->length;
+    cl_bit_pos = cluster->bit_pos;
+    cur_bit_pos = cl_bit_pos - 1;
 
-    if (ctx->reconstruct_full_subtrees && is_full_subtree(cluster->length, cluster->bit_pos)) {
-      decode_full_subtree(WIDTH)(ctx->values + cluster->from, cluster->length);
+    if (ctx->reconstruct_full_subtrees && is_full_subtree(cl_len, cl_bit_pos)) {
+      decode_full_subtree(WIDTH)(ctx->values + cl_from, cl_len);
       continue;
     }
 
-    enc_len = bits_len_u64(cluster->length);
+    enc_len = bits_len_u64(cl_len);
 
     RETURN_IF_ERROR(bsreader_read(&(ctx->bits_reader), enc_len, &n_zeros));
 
-    if (n_zeros > (uint64_t)cluster->length) return VtencErrorWrongFormat;
+    if (n_zeros > (uint64_t)cl_len) return VtencErrorWrongFormat;
 
     set_ones_at_bit_pos(WIDTH)(
-      ctx->values + cluster->from + n_zeros,
-      cluster->length - n_zeros,
+      ctx->values + cl_from + n_zeros,
+      cl_len - n_zeros,
       cur_bit_pos
     );
 
     if (cur_bit_pos == 0) continue;
 
     decctx_add_cluster(WIDTH)(ctx,
-      cluster->from,
+      cl_from,
       n_zeros,
       cur_bit_pos
     );
     decctx_add_cluster(WIDTH)(ctx,
-      cluster->from + n_zeros,
-      cluster->length - n_zeros,
+      cl_from + n_zeros,
+      cl_len - n_zeros,
       cur_bit_pos
     );
   }
