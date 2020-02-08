@@ -6,7 +6,6 @@
 #include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <string.h>
 
 #include "bitcluster.h"
 #include "bitstream.h"
@@ -44,7 +43,7 @@ static VtencErrorCode decctx_init(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
 
   ctx->reconstruct_full_subtrees = 0;
 
-  ctx->cl_stack = bclstack_new(out_len + WIDTH);
+  ctx->cl_stack = bclstack_new(WIDTH);
   if (ctx->cl_stack == NULL) return VtencErrorMemoryAlloc;
 
   return bsreader_init(&(ctx->bits_reader), in, in_len);
