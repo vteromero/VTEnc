@@ -51,9 +51,6 @@ int main()
   RUN_TEST(test_bsreader_read_6);
   RUN_TEST(test_bsreader_size);
 
-  RUN_TEST(test_bclqueue_new);
-  RUN_TEST(test_bclqueue_put_and_get_1);
-  RUN_TEST(test_bclqueue_put_and_get_2);
   RUN_TEST(test_bclstack_new);
   RUN_TEST(test_bclstack_put_and_get);
 
