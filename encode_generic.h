@@ -30,7 +30,7 @@ struct EncodeCtx(WIDTH) {
   const TYPE *values;
   size_t values_len;
   unsigned int skip_full_subtrees;
-  struct BitClusterQueue *cl_queue;
+  struct BitClusterStack *cl_stack;
   BSWriter bits_writer;
 };
 
@@ -42,8 +42,8 @@ static VtencErrorCode encctx_init(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
 
   ctx->skip_full_subtrees = 0;
 
-  ctx->cl_queue = bclqueue_new(in_len + WIDTH);
-  if (ctx->cl_queue == NULL) return VtencErrorMemoryAlloc;
+  ctx->cl_stack = bclstack_new(WIDTH);
+  if (ctx->cl_stack == NULL) return VtencErrorMemoryAlloc;
 
   return bswriter_init(&(ctx->bits_writer), out, out_cap);
 }
@@ -57,12 +57,12 @@ static inline void encctx_add_cluster(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
   if (ctx->skip_full_subtrees && is_full_subtree(cl_len, cl_bit_pos))
     return;
 
-  bclqueue_put(ctx->cl_queue, cl_from, cl_len, cl_bit_pos);
+  bclstack_put(ctx->cl_stack, cl_from, cl_len, cl_bit_pos);
 }
 
 static inline size_t encctx_close(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
 {
-  bclqueue_free(&(ctx->cl_queue));
+  bclstack_free(&(ctx->cl_stack));
 
   return bswriter_close(&(ctx->bits_writer));
 }
@@ -91,34 +91,37 @@ static inline size_t count_zeros_at_bit_pos(WIDTH)(const TYPE *values,
 static VtencErrorCode encode_bits_tree(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
 {
   struct BitCluster *cluster;
-  size_t n_zeros;
-  unsigned int cur_bit_pos, enc_len;
+  size_t cl_from, cl_len, n_zeros;
+  unsigned int cl_bit_pos, cur_bit_pos, enc_len;
 
   encctx_add_cluster(WIDTH)(ctx, 0, ctx->values_len, WIDTH);
 
-  while (!bclqueue_empty(ctx->cl_queue)) {
-    cluster = bclqueue_get(ctx->cl_queue);
-    cur_bit_pos = cluster->bit_pos - 1;
+  while (!bclstack_empty(ctx->cl_stack)) {
+    cluster = bclstack_get(ctx->cl_stack);
+    cl_from = cluster->from;
+    cl_len = cluster->length;
+    cl_bit_pos = cluster->bit_pos;
+    cur_bit_pos = cl_bit_pos - 1;
 
     n_zeros = count_zeros_at_bit_pos(WIDTH)(
-      ctx->values + cluster->from,
-      cluster->length,
+      ctx->values + cl_from,
+      cl_len,
       cur_bit_pos
     );
-    enc_len = bits_len_u64(cluster->length);
+    enc_len = bits_len_u64(cl_len);
 
     RETURN_IF_ERROR(bswriter_write(&(ctx->bits_writer), n_zeros, enc_len));
 
     if (cur_bit_pos == 0) continue;
 
     encctx_add_cluster(WIDTH)(ctx,
-      cluster->from,
+      cl_from,
       n_zeros,
       cur_bit_pos
     );
     encctx_add_cluster(WIDTH)(ctx,
-      cluster->from + n_zeros,
-      cluster->length - n_zeros,
+      cl_from + n_zeros,
+      cl_len - n_zeros,
       cur_bit_pos
     );
   }

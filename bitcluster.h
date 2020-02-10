@@ -17,83 +17,64 @@ struct BitCluster {
 };
 
 /**
- * BitClusterQueue is a FIFO queue with a fixed maximum size. It is implemented
- * as a circular queue so that no extra re-allocations are required.
+ * BitClusterStack is a LIFO stack with a fixed maximum size.
  */
-struct BitClusterQueue {
+struct BitClusterStack {
   struct BitCluster *start;
   struct BitCluster *end;
-  struct BitCluster *back;
-  struct BitCluster *front;
+  struct BitCluster *head;
 };
 
-static struct BitClusterQueue *bclqueue_new(size_t max_size)
+static struct BitClusterStack *bclstack_new(size_t max_size)
 {
-  struct BitClusterQueue *q = NULL;
-  size_t alloc_size = max_size + 1;
+  struct BitClusterStack *s = (struct BitClusterStack *) malloc(sizeof(struct BitClusterStack));
+  if (s == NULL) return NULL;
 
-  assert(max_size > 0);
-
-  q = (struct BitClusterQueue *) malloc(sizeof(struct BitClusterQueue));
-  if (q == NULL) return NULL;
-
-  q->start = (struct BitCluster *) malloc(alloc_size * sizeof(struct BitCluster));
-  if (q->start == NULL) {
-    free(q);
+  s->start = (struct BitCluster *) malloc(max_size * sizeof(struct BitCluster));
+  if (s->start == NULL) {
+    free(s);
     return NULL;
   }
 
-  q->end = q->start + alloc_size;
-  q->back = q->start;
-  q->front = q->start;
+  s->end = s->start + max_size;
+  s->head = s->start;
 
-  return q;
+  return s;
 }
 
-static inline void bclqueue_free(struct BitClusterQueue **q)
+static inline void bclstack_free(struct BitClusterStack **s)
 {
-  free((*q)->start);
-  free(*q);
+  free((*s)->start);
+  free(*s);
 }
 
-static inline size_t bclqueue_length(struct BitClusterQueue *q)
+static inline int bclstack_empty(struct BitClusterStack *s)
 {
-  if (q->front < q->back) {
-    return (q->end - q->back) + (q->front - q->start);
-  } else {
-    return q->front - q->back;
-  }
+  return s->head == s->start;
 }
 
-static inline int bclqueue_empty(struct BitClusterQueue *q)
+static inline size_t bclstack_length(struct BitClusterStack *s)
 {
-  return q->front == q->back;
+  return s->head - s->start;
 }
 
-static inline void bclqueue_put(struct BitClusterQueue *q, size_t cl_from,
+static inline void bclstack_put(struct BitClusterStack *s, size_t cl_from,
   size_t cl_len, unsigned int bit_pos)
 {
-  *(q->front) = (struct BitCluster) {
+  assert(s->head < s->end);
+
+  *(s->head++) = (struct BitCluster) {
     .from = cl_from,
     .length = cl_len,
     .bit_pos = bit_pos
   };
-
-  q->front = (++q->front == q->end) ? q->start : q->front;
-
-  assert(q->front != q->back);
 }
 
-static inline struct BitCluster *bclqueue_get(struct BitClusterQueue *q)
+static inline struct BitCluster *bclstack_get(struct BitClusterStack *s)
 {
-  struct BitCluster *cluster = NULL;
+  if (bclstack_empty(s)) return NULL;
 
-  if (bclqueue_empty(q)) return NULL;
-
-  cluster = q->back;
-  q->back = (++q->back == q->end) ? q->start : q->back;
-
-  return cluster;
+  return --s->head;
 }
 
 #endif /* VTENC_BITCLUSTER_H_ */
