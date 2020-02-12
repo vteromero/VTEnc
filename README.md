@@ -6,7 +6,7 @@
 
 ## Results
 
-*This is a work-in-progress section. Last updated on: 2019-12-16*
+*This is a work-in-progress section. Last updated on: 2020-02-12*
 
 For reference, VTEnc has been tested on a laptop Ubuntu Desktop 19.04 with a Core i7-6700HQ CPU @ 2.60GHz x 8, using different data sets and comparing it with other integer compression algorithms. See [Tests](https://github.com/vteromero/VTEnc#tests) and [Benchmarks](https://github.com/vteromero/VTEnc#benchmarks) below for further information.
 
@@ -14,25 +14,25 @@ For reference, VTEnc has been tested on a laptop Ubuntu Desktop 19.04 with a Cor
 
 | Algorithm          |Encoded Size|Ratio %    |Encoding Speed |Decoding Speed|
 |:-------------------|-----------:|----------:|--------------:|-------------:|
-| VTEnc              |  **21,686**| **0.0038**|  **82.62 G/s**|    728.46 M/s|
-| Delta+FastPFor256  |   1,179,312|       0.20|       1.60 G/s|      3.54 G/s|
-| Delta+FastPFor128  |   2,306,544|       0.40|       1.46 G/s|      3.82 G/s|
-| Delta+BinaryPacking|   4,552,280|       0.79|       6.54 G/s|      4.23 G/s|
-| Delta+VariableByte | 144,285,504|       25.0|       3.56 G/s|      3.75 G/s|
-| Delta+VarIntGB     | 180,356,880|      31.25|       4.88 G/s|  **6.98 G/s**|
-| Copy               | 577,141,992|      100.0|      10.49 G/s|       -      |
+| VTEnc              |  **21,686**| **0.0038**|  **77.58 G/s**|    747.43 M/s|
+| Delta+FastPFor256  |   1,179,312|       0.20|       1.61 G/s|      3.61 G/s|
+| Delta+FastPFor128  |   2,306,544|       0.40|       1.46 G/s|      3.86 G/s|
+| Delta+BinaryPacking|   4,552,280|       0.79|       6.47 G/s|      4.20 G/s|
+| Delta+VariableByte | 144,285,504|       25.0|       3.54 G/s|      3.75 G/s|
+| Delta+VarIntGB     | 180,356,880|      31.25|       3.92 G/s|  **6.96 G/s**|
+| Copy               | 577,141,992|      100.0|      10.36 G/s|       -      |
 
 * `gov2.sorted`:
 
 | Algorithm          |Encoded Size     |Ratio %  |Encoding Speed|Decoding Speed|
 |:-------------------|----------------:|--------:|-------------:|-------------:|
-| VTEnc              |**2,889,599,350**|**12.08**|     79.13 M/s|     73.41 M/s|
-| Delta+FastPFor128  |    3,849,161,656|    16.09|    642.19 M/s|    641.80 M/s|
-| Delta+FastPFor256  |    3,899,341,376|    16.30|    689.48 M/s|    689.34 M/s|
-| Delta+BinaryPacking|    4,329,919,808|    18.10|  **2.33 G/s**|      2.26 G/s|
-| Delta+VariableByte |    6,572,084,696|    27.48|      1.56 G/s|      1.59 G/s|
-| Delta+VarIntGB     |    7,923,819,720|    33.13|      1.93 G/s|  **2.87 G/s**|
-| Copy               |   23,918,861,764|    100.0|      5.03 G/s|       -      |
+| VTEnc              |**2,889,599,350**|**12.08**|     75.86 M/s|     97.50 M/s|
+| Delta+FastPFor128  |    3,849,161,656|    16.09|    641.80 M/s|    645.42 M/s|
+| Delta+FastPFor256  |    3,899,341,376|    16.30|    682.57 M/s|    679.37 M/s|
+| Delta+BinaryPacking|    4,329,919,808|    18.10|  **2.32 G/s**|      2.25 G/s|
+| Delta+VariableByte |    6,572,084,696|    27.48|      1.51 G/s|      1.59 G/s|
+| Delta+VarIntGB     |    7,923,819,720|    33.13|      1.79 G/s|  **2.86 G/s**|
+| Copy               |   23,918,861,764|    100.0|      4.96 G/s|       -      |
 
 ## API
 
