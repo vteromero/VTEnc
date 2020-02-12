@@ -15,6 +15,15 @@ do {                                  \
     return code;                      \
 } while(0)
 
+#define RETURN_IF_ERROR_WITH(exp, cleanup)  \
+do {                                        \
+  const VtencErrorCode code = (exp);        \
+  if (code != VtencErrorNoError) {          \
+    (cleanup);                              \
+    return code;                            \
+  }                                         \
+} while(0)
+
 #define RETURN_ZERO_IF_ERROR(exp)     \
 do {                                  \
   const VtencErrorCode code = (exp);  \

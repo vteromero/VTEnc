@@ -26,6 +26,8 @@
 #define vtenc_list_max_encoded_size(_width_) ADD_UINT_SUFFIX(vtenc_list_max_encoded_size, _width_)
 #define vtenc_set_max_encoded_size(_width_) ADD_UINT_SUFFIX(vtenc_set_max_encoded_size, _width_)
 
+#define ENCCTX_RETURN_ON_ERROR(ctx, exp) RETURN_IF_ERROR_WITH(exp, encctx_close(WIDTH)(&ctx))
+
 struct EncodeCtx(WIDTH) {
   const TYPE *values;
   size_t values_len;
@@ -62,7 +64,7 @@ static inline void encctx_add_cluster(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
 
 static inline size_t encctx_close(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
 {
-  bclstack_free(&(ctx->cl_stack));
+  if (ctx->cl_stack != NULL) bclstack_free(&(ctx->cl_stack));
 
   return bswriter_close(&(ctx->bits_writer));
 }
@@ -146,11 +148,11 @@ VtencErrorCode vtenc_list_encode(WIDTH)(const TYPE *in, size_t in_len,
 
   if ((uint64_t)in_len > LIST_MAX_VALUES) return VtencErrorInputTooBig;
 
-  RETURN_IF_ERROR(encctx_init(WIDTH)(&ctx, in, in_len, out, out_cap));
+  ENCCTX_RETURN_ON_ERROR(ctx, encctx_init(WIDTH)(&ctx, in, in_len, out, out_cap));
 
-  RETURN_IF_ERROR(list_write_cardinality(WIDTH)(&ctx));
+  ENCCTX_RETURN_ON_ERROR(ctx, list_write_cardinality(WIDTH)(&ctx));
 
-  RETURN_IF_ERROR(encode_bits_tree(WIDTH)(&ctx));
+  ENCCTX_RETURN_ON_ERROR(ctx, encode_bits_tree(WIDTH)(&ctx));
 
   *out_len = encctx_close(WIDTH)(&ctx);
 
@@ -165,13 +167,13 @@ VtencErrorCode vtenc_set_encode(WIDTH)(const TYPE *in, size_t in_len,
   if (in_len == 0) return VtencErrorInputTooSmall;
   if ((uint64_t)in_len > SET_MAX_VALUES) return VtencErrorInputTooBig;
 
-  RETURN_IF_ERROR(encctx_init(WIDTH)(&ctx, in, in_len, out, out_cap));
+  ENCCTX_RETURN_ON_ERROR(ctx, encctx_init(WIDTH)(&ctx, in, in_len, out, out_cap));
 
   ctx.skip_full_subtrees = 1;
 
-  RETURN_IF_ERROR(set_write_cardinality(WIDTH)(&ctx));
+  ENCCTX_RETURN_ON_ERROR(ctx, set_write_cardinality(WIDTH)(&ctx));
 
-  RETURN_IF_ERROR(encode_bits_tree(WIDTH)(&ctx));
+  ENCCTX_RETURN_ON_ERROR(ctx, encode_bits_tree(WIDTH)(&ctx));
 
   *out_len = encctx_close(WIDTH)(&ctx);
 
