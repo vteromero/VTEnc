@@ -236,7 +236,7 @@ static int test_encdec_list8(uint8_t *list, size_t list_len)
     goto free_and_exit;
   }
 
-  if (memcmp(list, dec_out, list_len) != 0) {
+  if ((dec_out_len != list_len) || (memcmp(list, dec_out, list_len) != 0)) {
     fprintf(stderr, "decoded output different from original input\n");
     ret_code = 0;
     goto free_and_exit;
@@ -287,7 +287,7 @@ static int test_encdec_list16(uint16_t *list, size_t list_len)
     goto free_and_exit;
   }
 
-  if (memcmp(list, dec_out, list_len) != 0) {
+  if ((dec_out_len != list_len) || (memcmp(list, dec_out, list_len * sizeof(uint16_t)) != 0)) {
     fprintf(stderr, "decoded output different from original input\n");
     ret_code = 0;
     goto free_and_exit;
@@ -338,7 +338,7 @@ static int test_encdec_list32(uint32_t *list, size_t list_len)
     goto free_and_exit;
   }
 
-  if (memcmp(list, dec_out, list_len) != 0) {
+  if ((dec_out_len != list_len) || (memcmp(list, dec_out, list_len * sizeof(uint32_t)) != 0)) {
     fprintf(stderr, "decoded output different from original input\n");
     ret_code = 0;
     goto free_and_exit;
@@ -389,7 +389,7 @@ static int test_encdec_list64(uint64_t *list, size_t list_len)
     goto free_and_exit;
   }
 
-  if (memcmp(list, dec_out, list_len) != 0) {
+  if ((dec_out_len != list_len) || (memcmp(list, dec_out, list_len * sizeof(uint64_t)) != 0)) {
     fprintf(stderr, "decoded output different from original input\n");
     ret_code = 0;
     goto free_and_exit;
@@ -439,7 +439,7 @@ static int test_encdec_set8(uint8_t *set, size_t set_len)
     goto free_and_exit;
   }
 
-  if (memcmp(set, dec_out, set_len) != 0) {
+  if ((dec_out_len != set_len) || (memcmp(set, dec_out, set_len) != 0)) {
     fprintf(stderr, "decoded output different from original input\n");
     ret_code = 0;
     goto free_and_exit;
@@ -490,7 +490,7 @@ static int test_encdec_set16(uint16_t *set, size_t set_len)
     goto free_and_exit;
   }
 
-  if (memcmp(set, dec_out, set_len) != 0) {
+  if ((dec_out_len != set_len) || (memcmp(set, dec_out, set_len * sizeof(uint16_t)) != 0)) {
     fprintf(stderr, "decoded output different from original input\n");
     ret_code = 0;
     goto free_and_exit;
@@ -541,7 +541,7 @@ static int test_encdec_set32(uint32_t *set, size_t set_len)
     goto free_and_exit;
   }
 
-  if (memcmp(set, dec_out, set_len) != 0) {
+  if ((dec_out_len != set_len) || (memcmp(set, dec_out, set_len * sizeof(uint32_t)) != 0)) {
     fprintf(stderr, "decoded output different from original input\n");
     ret_code = 0;
     goto free_and_exit;
@@ -592,7 +592,7 @@ static int test_encdec_set64(uint64_t *set, size_t set_len)
     goto free_and_exit;
   }
 
-  if (memcmp(set, dec_out, set_len) != 0) {
+  if ((dec_out_len != set_len) || (memcmp(set, dec_out, set_len * sizeof(uint64_t)) != 0)) {
     fprintf(stderr, "decoded output different from original input\n");
     ret_code = 0;
     goto free_and_exit;
