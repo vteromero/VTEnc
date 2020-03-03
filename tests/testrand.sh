@@ -1,9 +1,10 @@
 #!/bin/bash
 
-FILES=`ls data/rand.*.bin`
+ROOTDIR="$(dirname $0)"
+FILES=`ls $ROOTDIR/data/rand.*.bin`
 
 for file in $FILES; do
-  ./testbinseq $file
+  $ROOTDIR/testbinseq $file
 
   if [ "$?" -eq "0" ]; then
     echo "$file - OK"
