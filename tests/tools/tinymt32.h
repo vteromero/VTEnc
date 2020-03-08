@@ -13,7 +13,7 @@
  * All rights reserved.
  *
  * The 3-clause BSD License is applied to this software, see
- * LICENSE.txt
+ * LICENSE-TinyMT.txt
  */
 
 #include <stdint.h>
