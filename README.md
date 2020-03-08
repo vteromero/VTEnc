@@ -138,6 +138,8 @@ This library is well covered with unit tests and with a few little programs to t
 
 * `tests/unit/unit_tests`: invoke it to run all the unit tests.
 
+* `tests/testrand.sh`: script to test all the random sequences located on `tests/data` directory. For each file, it calls `tests/testbinseq` program, which tests the serialised list or set "end-to-end", by encoding and decoding it and then comparing the result with the original sequence.
+
 * `tests/timestamps`: program to test [ts.txt](https://github.com/zentures/encoding/tree/master/benchmark/data), a text file with a big list of timestamps.
 
 * `tests/gov2`: program to test [gov2.sorted](https://lemire.me/data/integercompression2014.html) file, which is part of the "Document identifier data set" created by [D. Lemire](https://lemire.me/en/).
