@@ -10,6 +10,7 @@
 #include "bitcluster.h"
 #include "bitstream.h"
 #include "common.h"
+#include "countbits.h"
 #include "error.h"
 #include "internals.h"
 
@@ -67,27 +68,6 @@ static inline size_t encctx_close(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
   if (ctx->cl_stack != NULL) bclstack_free(&(ctx->cl_stack));
 
   return bswriter_close(&(ctx->bits_writer));
-}
-
-static inline size_t count_zeros_at_bit_pos(WIDTH)(const TYPE *values,
-  size_t values_len, unsigned int bit_pos)
-{
-  const TYPE mask = (TYPE)1 << bit_pos;
-  size_t l = 0;
-  size_t r = values_len;
-  size_t m, i;
-
-  do {
-    m = (r - l) / 2;
-    i = l + m;
-    if((values[i] & mask) == 0) {
-      l = i;
-    } else {
-      r = i;
-    }
-  } while (m > 0);
-
-  return r;
 }
 
 static VtencErrorCode encode_bits_tree(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
