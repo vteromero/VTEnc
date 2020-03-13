@@ -6,6 +6,8 @@
 #ifndef VTENC_COUNTBITS_H_
 #define VTENC_COUNTBITS_H_
 
+#include "bits.h"
+
 #define BINSEARCH                                             \
 do {                                                          \
   size_t half;                                                \
@@ -24,7 +26,7 @@ do {                                                          \
 static inline size_t count_zeros_at_bit_pos_u8(const uint8_t *values,
   size_t values_len, unsigned int bit_pos)
 {
-  const uint8_t mask = 1 << bit_pos;
+  const uint8_t mask = BITS_POS_MASK8[bit_pos];
   const uint8_t *base = values;
   BINSEARCH;
 }
@@ -32,7 +34,7 @@ static inline size_t count_zeros_at_bit_pos_u8(const uint8_t *values,
 static inline size_t count_zeros_at_bit_pos_u16(const uint16_t *values,
   size_t values_len, unsigned int bit_pos)
 {
-  const uint16_t mask = 1 << bit_pos;
+  const uint16_t mask = BITS_POS_MASK16[bit_pos];
   const uint16_t *base = values;
   BINSEARCH;
 }
@@ -40,7 +42,7 @@ static inline size_t count_zeros_at_bit_pos_u16(const uint16_t *values,
 static inline size_t count_zeros_at_bit_pos_u32(const uint32_t *values,
   size_t values_len, unsigned int bit_pos)
 {
-  const uint32_t mask = 1 << bit_pos;
+  const uint32_t mask = BITS_POS_MASK32[bit_pos];
   const uint32_t *base = values;
   BINSEARCH;
 }
@@ -48,7 +50,7 @@ static inline size_t count_zeros_at_bit_pos_u32(const uint32_t *values,
 static inline size_t count_zeros_at_bit_pos_u64(const uint64_t *values,
   size_t values_len, unsigned int bit_pos)
 {
-  const uint64_t mask = 1ULL << bit_pos;
+  const uint64_t mask = BITS_POS_MASK64[bit_pos];
   const uint64_t *base = values;
   BINSEARCH;
 }
