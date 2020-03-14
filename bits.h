@@ -31,7 +31,30 @@ static const uint64_t BITS_SIZE_MASK[] = {
 };
 #define BITS_SIZE_MASK_LEN (sizeof(BITS_SIZE_MASK) / sizeof(BITS_SIZE_MASK[0]))
 
-static const uint64_t BITS_POS_MASK[] = {
+static const uint8_t BITS_POS_MASK8[] = {
+   0x1,  0x2,  0x4,  0x8,
+  0x10, 0x20, 0x40, 0x80
+};
+
+static const uint16_t BITS_POS_MASK16[] = {
+     0x1,    0x2,    0x4,    0x8,
+    0x10,   0x20,   0x40,   0x80,
+   0x100,  0x200,  0x400,  0x800,
+  0x1000, 0x2000, 0x4000, 0x8000,
+};
+
+static const uint32_t BITS_POS_MASK32[] = {
+         0x1,        0x2,        0x4,        0x8,
+        0x10,       0x20,       0x40,       0x80,
+       0x100,      0x200,      0x400,      0x800,
+      0x1000,     0x2000,     0x4000,     0x8000,
+     0x10000,    0x20000,    0x40000,    0x80000,
+    0x100000,   0x200000,   0x400000,   0x800000,
+   0x1000000,  0x2000000,  0x4000000,  0x8000000,
+  0x10000000, 0x20000000, 0x40000000, 0x80000000
+};
+
+static const uint64_t BITS_POS_MASK64[] = {
                  0x1ULL,                0x2ULL,                0x4ULL,                0x8ULL,
                 0x10ULL,               0x20ULL,               0x40ULL,               0x80ULL,
                0x100ULL,              0x200ULL,              0x400ULL,              0x800ULL,
@@ -49,7 +72,6 @@ static const uint64_t BITS_POS_MASK[] = {
    0x100000000000000ULL,  0x200000000000000ULL,  0x400000000000000ULL,  0x800000000000000ULL,
   0x1000000000000000ULL, 0x2000000000000000ULL, 0x4000000000000000ULL, 0x8000000000000000ULL
 };
-#define BITS_POS_MASK_LEN (sizeof(BITS_POS_MASK) / sizeof(BITS_POS_MASK[0]))
 
 static const unsigned int BITS_LEN8[] = {
   1, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4,

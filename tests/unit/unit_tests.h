@@ -51,6 +51,11 @@ int test_bsreader_size(void);
 int test_bclstack_new(void);
 int test_bclstack_put_and_get(void);
 
+int test_count_zeros_at_bit_pos_u8(void);
+int test_count_zeros_at_bit_pos_u16(void);
+int test_count_zeros_at_bit_pos_u32(void);
+int test_count_zeros_at_bit_pos_u64(void);
+
 int test_vtenc_list_encode_u8_1(void);
 int test_vtenc_list_encode_u8_2(void);
 int test_vtenc_list_encode_u8_3(void);
