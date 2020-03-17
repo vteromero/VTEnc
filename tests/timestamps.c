@@ -149,7 +149,7 @@ int main(int argc, char **argv)
     goto error2;
   }
 
-  if (memcmp(arr.values, dec_out, arr.size) != 0) {
+  if ((dec_out_len != arr.size) || (memcmp(arr.values, dec_out, arr.size * sizeof(uint32_t)) != 0)) {
     fprintf(stderr, "decoded output different from original input\n");
     exit_code = EXIT_FAILURE;
     goto error2;

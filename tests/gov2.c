@@ -111,7 +111,7 @@ int encode_and_decode_set(const uint32_t *values, uint32_t values_len, struct St
     goto cleanup2;
   }
 
-  if (memcmp(values, dec_out, values_len) != 0) {
+  if ((dec_out_len != values_len) || (memcmp(values, dec_out, values_len * sizeof(uint32_t)) != 0)) {
     fprintf(stderr, "decoded output different from original input\n");
     exit_code = 0;
     goto cleanup2;
