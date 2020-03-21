@@ -19,6 +19,7 @@
 #define encctx_add_cluster(_width_) ADD_UINT_SUFFIX(encctx_add_cluster, _width_)
 #define encctx_close(_width_) ADD_UINT_SUFFIX(encctx_close, _width_)
 #define count_zeros_at_bit_pos(_width_) ADD_UINT_SUFFIX(count_zeros_at_bit_pos, _width_)
+#define encode_lower_bits(_width_) ADD_UINT_SUFFIX(encode_lower_bits, _width_)
 #define encode_bits_tree(_width_) ADD_UINT_SUFFIX(encode_bits_tree, _width_)
 #define list_write_cardinality(_width_) ADD_UINT_SUFFIX(list_write_cardinality, _width_)
 #define set_write_cardinality(_width_) ADD_UINT_SUFFIX(set_write_cardinality, _width_)
@@ -70,6 +71,25 @@ static inline size_t encctx_close(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
   return bswriter_close(&(ctx->bits_writer));
 }
 
+static inline VtencErrorCode encode_lower_bits(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
+  uint64_t value, unsigned int n_bits)
+{
+#if WIDTH == 64
+  if (n_bits > BIT_STREAM_MAX_WRITE) {
+    RETURN_IF_ERROR(bswriter_write(
+      &(ctx->bits_writer),
+      value & BITS_SIZE_MASK[BIT_STREAM_MAX_WRITE],
+      BIT_STREAM_MAX_WRITE
+    ));
+
+    value >>= BIT_STREAM_MAX_WRITE;
+    n_bits -= BIT_STREAM_MAX_WRITE;
+  }
+#endif
+
+  return bswriter_write(&(ctx->bits_writer), value & BITS_SIZE_MASK[n_bits], n_bits);
+}
+
 static VtencErrorCode encode_bits_tree(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
 {
   struct BitCluster *cluster;
@@ -84,6 +104,11 @@ static VtencErrorCode encode_bits_tree(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
     cl_len = cluster->length;
     cl_bit_pos = cluster->bit_pos;
     cur_bit_pos = cl_bit_pos - 1;
+
+    if (cl_len == 1) {
+      RETURN_IF_ERROR(encode_lower_bits(WIDTH)(ctx, *(ctx->values + cl_from), cl_bit_pos));
+      continue;
+    }
 
     n_zeros = count_zeros_at_bit_pos(WIDTH)(
       ctx->values + cl_from,
