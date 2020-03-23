@@ -17,6 +17,7 @@
 #define decctx_init(_width_) ADD_UINT_SUFFIX(decctx_init, _width_)
 #define decctx_add_cluster(_width_) ADD_UINT_SUFFIX(decctx_add_cluster, _width_)
 #define decctx_close(_width_) ADD_UINT_SUFFIX(decctx_close, _width_)
+#define decode_lower_bits(_width_) ADD_UINT_SUFFIX(decode_lower_bits, _width_)
 #define decode_full_subtree(_width_) ADD_UINT_SUFFIX(decode_full_subtree, _width_)
 #define set_ones_at_bit_pos(_width_) ADD_UINT_SUFFIX(set_ones_at_bit_pos, _width_)
 #define decode_bits_tree(_width_) ADD_UINT_SUFFIX(decode_bits_tree, _width_)
@@ -65,6 +66,34 @@ static inline void decctx_close(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
   if (ctx->cl_stack != NULL) bclstack_free(&(ctx->cl_stack));
 }
 
+static inline VtencErrorCode decode_lower_bits(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
+  TYPE *value, unsigned int n_bits)
+{
+#if WIDTH == 64
+  uint64_t lower;
+  unsigned int shift = 0;
+
+  if (n_bits > BIT_STREAM_MAX_READ) {
+    RETURN_IF_ERROR(bsreader_read(&(ctx->bits_reader), BIT_STREAM_MAX_READ, &lower));
+    *value |= lower;
+    shift = BIT_STREAM_MAX_READ;
+    n_bits -= BIT_STREAM_MAX_READ;
+  }
+
+  RETURN_IF_ERROR(bsreader_read(&(ctx->bits_reader), n_bits, &lower));
+  *value |= lower << shift;
+
+  return VtencErrorNoError;
+#else
+  uint64_t lower;
+
+  RETURN_IF_ERROR(bsreader_read(&(ctx->bits_reader), n_bits, &lower));
+  *value |= (TYPE)lower;
+
+  return VtencErrorNoError;
+#endif
+}
+
 static inline void decode_full_subtree(WIDTH)(TYPE *values, size_t values_len)
 {
   size_t i;
@@ -100,6 +129,11 @@ static VtencErrorCode decode_bits_tree(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
     cl_len = cluster->length;
     cl_bit_pos = cluster->bit_pos;
     cur_bit_pos = cl_bit_pos - 1;
+
+    if (cl_len == 1) {
+      RETURN_IF_ERROR(decode_lower_bits(WIDTH)(ctx, ctx->values + cl_from, cl_bit_pos));
+      continue;
+    }
 
     if (ctx->reconstruct_full_subtrees && is_full_subtree(cl_len, cl_bit_pos)) {
       decode_full_subtree(WIDTH)(ctx->values + cl_from, cl_len);
