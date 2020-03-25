@@ -29,7 +29,9 @@ Sequence of cluster lengths.
 
 This is the result of serialising the Bit Cluster Tree following a **pre-order traversal** order, which is a Depth-First Search (DFS) method. Therefore, clusters are serialised in depth from level `W-1` through level `0`; where `W` is the size (or width) of the sequence's data type.
 
-The number of levels depends on the width of the sequence's data type. Thus, a 8-bit sequence has 8 levels, a 16-bit sequence has 16 levels, and so on.
+When a cluster of length 1 is seen, the DFS serialisation for that cluster ends. The rest of clusters from there to the leaf node are **not** serialised in the same fashion. Instead, corresponding lower bits of the value that belongs to those clusters are encoded.
+
+The number of serialisation levels depends on the width of the sequence's data type. Thus, a 8-bit sequence has 8 levels, a 16-bit sequence has 16 levels, and so on.
 
 ## Lists
 
