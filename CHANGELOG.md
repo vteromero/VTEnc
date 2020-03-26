@@ -1,3 +1,11 @@
+v0.1.0
+------
+*Released on March 26th, 2020*
+* **BREAKING CHANGE**: Encode lower bits of values in clusters of length 1 #18
+* Refactor of `count_zeros_at_bit_pos`* functions to improve encoding performance #16
+* Fix bug on wrongly using `memcmp` on some testing programs #17 #14
+* Tests for random sequences #15
+
 v0.0.3
 ------
 *Released on February 13th, 2020*
