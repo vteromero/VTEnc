@@ -7,6 +7,13 @@
 
 #include "internals.h"
 
+void vtenc_encoder_init(VtencEncoder *enc)
+{
+  enc->has_repeated_values  = 1;
+  enc->skip_full_subtrees   = 0;
+  enc->last_error_code      = VtencErrorNoError;
+}
+
 #define LIST_MAX_VALUES VTENC_LIST_MAX_VALUES
 #define LIST_CARDINALITY_SIZE VTENC_LIST_CARDINALITY_SIZE
 

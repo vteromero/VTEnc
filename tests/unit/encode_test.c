@@ -688,7 +688,7 @@ int test_vtenc_encoder_init(void)
 
   vtenc_encoder_init(&enc);
 
-  EXPECT_TRUE(enc.has_repeated_values == 0);
+  EXPECT_TRUE(enc.has_repeated_values == 1);
   EXPECT_TRUE(enc.skip_full_subtrees == 0);
   EXPECT_TRUE(enc.last_error_code == VtencErrorNoError);
 

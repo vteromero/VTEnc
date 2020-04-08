@@ -218,18 +218,6 @@ size_t vtenc_set_max_encoded_size(WIDTH)(size_t in_len)
   return bswriter_align_buffer_size((SET_CARDINALITY_SIZE / 8) + (WIDTH / 8) * (in_len + 1));
 }
 
-#ifndef VTENC_ENCODER_INIT
-#define VTENC_ENCODER_INIT
-
-void vtenc_encoder_init(VtencEncoder *enc)
-{
-  enc->has_repeated_values = 0;
-  enc->skip_full_subtrees = 0;
-  enc->last_error_code = VtencErrorNoError;
-}
-
-#endif /* VTENC_ENCODER_INIT */
-
 size_t vtenc_encode(WIDTH)(VtencEncoder *enc, const TYPE *in, size_t in_len,
   uint8_t *out, size_t out_cap)
 {
