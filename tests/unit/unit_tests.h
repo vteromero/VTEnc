@@ -163,4 +163,18 @@ int test_vtenc_set_decoded_size_u16(void);
 int test_vtenc_set_decoded_size_u32(void);
 int test_vtenc_set_decoded_size_u64(void);
 
+/* Unit tests for new API */
+
+int test_vtenc_encoder_init(void);
+
+int test_vtenc_encode8(void);
+int test_vtenc_encode16(void);
+int test_vtenc_encode32(void);
+int test_vtenc_encode64(void);
+
+int test_vtenc_max_encoded_size8(void);
+int test_vtenc_max_encoded_size16(void);
+int test_vtenc_max_encoded_size32(void);
+int test_vtenc_max_encoded_size64(void);
+
 #endif /* VTENC_UNIT_TESTS_H_ */
