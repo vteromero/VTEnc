@@ -64,6 +64,19 @@ VtencErrorCode vtenc_set_encode_u16(const uint16_t *in, size_t in_len, uint8_t *
 VtencErrorCode vtenc_set_encode_u32(const uint32_t *in, size_t in_len, uint8_t *out, size_t out_cap, size_t *out_len);
 VtencErrorCode vtenc_set_encode_u64(const uint64_t *in, size_t in_len, uint8_t *out, size_t out_cap, size_t *out_len);
 
+typedef struct {
+  int has_repeated_values;
+  int skip_full_subtrees;
+  VtencErrorCode last_error_code;
+} VtencEncoder;
+
+void vtenc_encoder_init(VtencEncoder *enc);
+
+size_t vtenc_encode8(VtencEncoder *enc, const uint8_t *in, size_t in_len, uint8_t *out, size_t out_cap);
+size_t vtenc_encode16(VtencEncoder *enc, const uint16_t *in, size_t in_len, uint8_t *out, size_t out_cap);
+size_t vtenc_encode32(VtencEncoder *enc, const uint32_t *in, size_t in_len, uint8_t *out, size_t out_cap);
+size_t vtenc_encode64(VtencEncoder *enc, const uint64_t *in, size_t in_len, uint8_t *out, size_t out_cap);
+
 /**
  * Functions to calculate the maximum encoded size in bytes when encoding a list
  * or set of size `in_len`. The returned value is an approximation of the actual
@@ -78,6 +91,11 @@ size_t vtenc_set_max_encoded_size_u8(size_t in_len);
 size_t vtenc_set_max_encoded_size_u16(size_t in_len);
 size_t vtenc_set_max_encoded_size_u32(size_t in_len);
 size_t vtenc_set_max_encoded_size_u64(size_t in_len);
+
+size_t vtenc_max_encoded_size8(const VtencEncoder *enc, size_t in_len);
+size_t vtenc_max_encoded_size16(const VtencEncoder *enc, size_t in_len);
+size_t vtenc_max_encoded_size32(const VtencEncoder *enc, size_t in_len);
+size_t vtenc_max_encoded_size64(const VtencEncoder *enc, size_t in_len);
 
 /**
  * Decoding functions.
