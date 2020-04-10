@@ -33,14 +33,15 @@
 #define vtenc_max_encoded_size(_width_) WIDTH_SUFFIX(vtenc_max_encoded_size, _width_)
 
 #define ENCCTX_RETURN_ON_ERROR(ctx, exp) RETURN_IF_ERROR_WITH(exp, encctx_close(WIDTH)(&ctx))
-#define ENCCTX_HANDLE_ERROR(ctx, enc, exp)  \
-do {                                        \
-  const VtencErrorCode code = (exp);        \
-  if (code != VtencErrorNoError) {          \
-    (enc)->last_error_code = code;          \
-    encctx_close(WIDTH)(ctx);               \
-    return 0;                               \
-  }                                         \
+
+#define ENC_HANDLE_ERROR(ctx, enc, exp) \
+do {                                    \
+  const VtencErrorCode code = (exp);    \
+  if (code != VtencErrorNoError) {      \
+    (enc)->last_error_code = code;      \
+    encctx_close(WIDTH)((ctx));         \
+    return 0;                           \
+  }                                     \
 } while(0)
 
 struct EncodeCtx(WIDTH) {
@@ -236,17 +237,17 @@ size_t vtenc_encode(WIDTH)(VtencEncoder *enc, const TYPE *in, size_t in_len,
     return 0;
   }
 
-  ENCCTX_HANDLE_ERROR(&ctx, enc,
+  ENC_HANDLE_ERROR(&ctx, enc,
     encctx_init_with_encoder(WIDTH)(&ctx, enc, in, in_len, out, out_cap)
   );
 
   if (enc->has_repeated_values) {
-    ENCCTX_HANDLE_ERROR(&ctx, enc, list_write_cardinality(WIDTH)(&ctx));
+    ENC_HANDLE_ERROR(&ctx, enc, list_write_cardinality(WIDTH)(&ctx));
   } else {
-    ENCCTX_HANDLE_ERROR(&ctx, enc, set_write_cardinality(WIDTH)(&ctx));
+    ENC_HANDLE_ERROR(&ctx, enc, set_write_cardinality(WIDTH)(&ctx));
   }
 
-  ENCCTX_HANDLE_ERROR(&ctx, enc, encode_bits_tree(WIDTH)(&ctx));
+  ENC_HANDLE_ERROR(&ctx, enc, encode_bits_tree(WIDTH)(&ctx));
 
   return encctx_close(WIDTH)(&ctx);
 }

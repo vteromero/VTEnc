@@ -119,6 +119,19 @@ VtencErrorCode vtenc_set_decode_u16(const uint8_t *in, size_t in_len, uint16_t *
 VtencErrorCode vtenc_set_decode_u32(const uint8_t *in, size_t in_len, uint32_t *out, size_t out_len);
 VtencErrorCode vtenc_set_decode_u64(const uint8_t *in, size_t in_len, uint64_t *out, size_t out_len);
 
+typedef struct {
+  int has_repeated_values;
+  int skip_full_subtrees;
+  VtencErrorCode last_error_code;
+} VtencDecoder;
+
+void vtenc_decoder_init(VtencDecoder *dec);
+
+void vtenc_decode8(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint8_t *out, size_t out_len);
+void vtenc_decode16(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint16_t *out, size_t out_len);
+void vtenc_decode32(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint32_t *out, size_t out_len);
+void vtenc_decode64(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint64_t *out, size_t out_len);
+
 /**
  * Functions to extract the size of the decoded sequence from the encoded stream
  * of bytes `in` of size `in_len`. These functions are used to allocate memory
@@ -134,6 +147,11 @@ size_t vtenc_set_decoded_size_u8(const uint8_t *in, size_t in_len);
 size_t vtenc_set_decoded_size_u16(const uint8_t *in, size_t in_len);
 size_t vtenc_set_decoded_size_u32(const uint8_t *in, size_t in_len);
 size_t vtenc_set_decoded_size_u64(const uint8_t *in, size_t in_len);
+
+size_t vtenc_decoded_size8(VtencDecoder *dec, const uint8_t *in, size_t in_len);
+size_t vtenc_decoded_size16(VtencDecoder *dec, const uint8_t *in, size_t in_len);
+size_t vtenc_decoded_size32(VtencDecoder *dec, const uint8_t *in, size_t in_len);
+size_t vtenc_decoded_size64(VtencDecoder *dec, const uint8_t *in, size_t in_len);
 
 #ifdef __cplusplus
 }
