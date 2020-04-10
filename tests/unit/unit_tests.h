@@ -177,4 +177,11 @@ int test_vtenc_max_encoded_size16(void);
 int test_vtenc_max_encoded_size32(void);
 int test_vtenc_max_encoded_size64(void);
 
+int test_vtenc_decoder_init(void);
+
+int test_vtenc_decode8(void);
+int test_vtenc_decode16(void);
+int test_vtenc_decode32(void);
+int test_vtenc_decode64(void);
+
 #endif /* VTENC_UNIT_TESTS_H_ */

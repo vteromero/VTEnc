@@ -178,5 +178,12 @@ int main()
   RUN_TEST(test_vtenc_max_encoded_size32);
   RUN_TEST(test_vtenc_max_encoded_size64);
 
+  RUN_TEST(test_vtenc_decoder_init);
+
+  RUN_TEST(test_vtenc_decode8);
+  RUN_TEST(test_vtenc_decode16);
+  RUN_TEST(test_vtenc_decode32);
+  RUN_TEST(test_vtenc_decode64);
+
   return 0;
 }
