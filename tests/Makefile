@@ -22,7 +22,7 @@ timestamps: timestamps.o
 gov2: gov2.o
 	$(CC) $(CFLAGS) $^ $(VTENCDIR)/libvtenc.a -o $@
 
-testbinseq: testbinseq.o
+testbinseq: encdec.o testbinseq.o
 	$(CC) $(CFLAGS) $^ $(VTENCDIR)/libvtenc.a -o $@
 
 .PHONY: clean
