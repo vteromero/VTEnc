@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "encdec.h"
 #include "../vtenc.h"
 
 struct array_t {
@@ -98,11 +99,7 @@ void usage(const char *program)
 int main(int argc, char **argv)
 {
   struct array_t arr;
-  size_t exit_code=0, enc_out_cap, enc_out_len, dec_out_len;
-  uint8_t *enc_out;
-  uint32_t *dec_out;
-  VtencErrorCode enc_ret_code, dec_ret_code;
-  double ratio;
+  VtencEncoder encoder;
 
   if (argc != 2) {
     usage(argv[0]);
@@ -115,61 +112,19 @@ int main(int argc, char **argv)
 
   if (!has_ascending_order(arr.values, arr.size)) {
     fprintf(stderr, "wrong list order\n");
-    exit_code = EXIT_FAILURE;
-    goto error0;
+    array_free(&arr);
+    return EXIT_FAILURE;
   }
 
-  enc_out_cap = vtenc_list_max_encoded_size_u32(arr.size);
-  enc_out = (uint8_t *) malloc(enc_out_cap * sizeof(uint8_t));
-  if (enc_out == NULL) {
-    fprintf(stderr, "allocation error\n");
-    exit_code = EXIT_FAILURE;
-    goto error0;
+  vtenc_encoder_init(&encoder);
+
+  if (!test_encode_and_decode32(&encoder, arr.values, arr.size, 1)) {
+    fprintf(stderr, "test_encode_and_decode32 failed!\n");
+    array_free(&arr);
+    return EXIT_FAILURE;
   }
 
-  enc_ret_code = vtenc_list_encode_u32(arr.values, arr.size, enc_out, enc_out_cap, &enc_out_len);
-  if (enc_ret_code != VtencErrorNoError) {
-    fprintf(stderr, "encode error code: %d\n", enc_ret_code);
-    exit_code = EXIT_FAILURE;
-    goto error1;
-  }
-
-  dec_out_len = vtenc_list_decoded_size_u32(enc_out, enc_out_len);
-  dec_out = (uint32_t *) malloc(dec_out_len * sizeof(uint32_t));
-  if (dec_out == NULL) {
-    fprintf(stderr, "allocation error\n");
-    exit_code = EXIT_FAILURE;
-    goto error1;
-  }
-
-  dec_ret_code = vtenc_list_decode_u32(enc_out, enc_out_len, dec_out, dec_out_len);
-  if (dec_ret_code != VtencErrorNoError) {
-    fprintf(stderr, "decode error code: %d\n", dec_ret_code);
-    exit_code = EXIT_FAILURE;
-    goto error2;
-  }
-
-  if ((dec_out_len != arr.size) || (memcmp(arr.values, dec_out, arr.size * sizeof(uint32_t)) != 0)) {
-    fprintf(stderr, "decoded output different from original input\n");
-    exit_code = EXIT_FAILURE;
-    goto error2;
-  }
-
-  ratio = enc_out_len / (double)(arr.size * sizeof(uint32_t));
-
-  printf("input size: %lu (%lu bytes)\n", arr.size, arr.size * sizeof(uint32_t));
-  printf("encoded size: %lu bytes\n", enc_out_len);
-  printf("decoded size: %lu (%lu bytes)\n", dec_out_len, dec_out_len * sizeof(uint32_t));
-  printf("compression ratio: %f (%.4f%%)\n", ratio, ratio * 100.0);
-
-error2:
-  free(dec_out);
-
-error1:
-  free(enc_out);
-
-error0:
   array_free(&arr);
 
-  return exit_code;
+  return 0;
 }

@@ -10,7 +10,17 @@
 
 #include "../vtenc.h"
 
-int test_encode_and_decode8(VtencEncoder *encoder, const uint8_t *in, size_t in_len)
+static void print_summary(size_t in_len, size_t in_len_in_bytes, size_t enc_len)
+{
+  double ratio = enc_len / (double)(in_len_in_bytes);
+
+  printf("input size: %lu (%lu bytes)\n", in_len, in_len_in_bytes);
+  printf("encoded size: %lu bytes\n", enc_len);
+  printf("compression ratio: %f (%.4f%%)\n", ratio, ratio * 100.0);
+}
+
+int test_encode_and_decode8(VtencEncoder *encoder, const uint8_t *in, size_t in_len,
+  int show_summary)
 {
   size_t enc_out_cap, enc_out_len, dec_out_len;
   uint8_t *enc_out=NULL, *dec_out=NULL;
@@ -62,6 +72,10 @@ int test_encode_and_decode8(VtencEncoder *encoder, const uint8_t *in, size_t in_
     goto free_and_exit;
   }
 
+  if (show_summary) {
+    print_summary(in_len, in_len * sizeof(uint8_t), enc_out_len);
+  }
+
 free_and_exit:
   if (enc_out != NULL) free(enc_out);
   if (dec_out != NULL) free(dec_out);
@@ -69,7 +83,8 @@ free_and_exit:
   return ret_code;
 }
 
-int test_encode_and_decode16(VtencEncoder *encoder, const uint16_t *in, size_t in_len)
+int test_encode_and_decode16(VtencEncoder *encoder, const uint16_t *in, size_t in_len,
+  int show_summary)
 {
   size_t enc_out_cap, enc_out_len, dec_out_len;
   uint8_t *enc_out = NULL;
@@ -122,6 +137,10 @@ int test_encode_and_decode16(VtencEncoder *encoder, const uint16_t *in, size_t i
     goto free_and_exit;
   }
 
+  if (show_summary) {
+    print_summary(in_len, in_len * sizeof(uint16_t), enc_out_len);
+  }
+
 free_and_exit:
   if (enc_out != NULL) free(enc_out);
   if (dec_out != NULL) free(dec_out);
@@ -129,7 +148,8 @@ free_and_exit:
   return ret_code;
 }
 
-int test_encode_and_decode32(VtencEncoder *encoder, const uint32_t *in, size_t in_len)
+int test_encode_and_decode32(VtencEncoder *encoder, const uint32_t *in, size_t in_len,
+  int show_summary)
 {
   size_t enc_out_cap, enc_out_len, dec_out_len;
   uint8_t *enc_out = NULL;
@@ -182,6 +202,10 @@ int test_encode_and_decode32(VtencEncoder *encoder, const uint32_t *in, size_t i
     goto free_and_exit;
   }
 
+  if (show_summary) {
+    print_summary(in_len, in_len * sizeof(uint32_t), enc_out_len);
+  }
+
 free_and_exit:
   if (enc_out != NULL) free(enc_out);
   if (dec_out != NULL) free(dec_out);
@@ -189,7 +213,8 @@ free_and_exit:
   return ret_code;
 }
 
-int test_encode_and_decode64(VtencEncoder *encoder, const uint64_t *in, size_t in_len)
+int test_encode_and_decode64(VtencEncoder *encoder, const uint64_t *in, size_t in_len,
+  int show_summary)
 {
   size_t enc_out_cap, enc_out_len, dec_out_len;
   uint8_t *enc_out = NULL;
@@ -240,6 +265,10 @@ int test_encode_and_decode64(VtencEncoder *encoder, const uint64_t *in, size_t i
     fprintf(stderr, "decoded output different from original input\n");
     ret_code = 0;
     goto free_and_exit;
+  }
+
+  if (show_summary) {
+    print_summary(in_len, in_len * sizeof(uint64_t), enc_out_len);
   }
 
 free_and_exit:

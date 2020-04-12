@@ -11,9 +11,9 @@
 
 #include "../vtenc.h"
 
-int test_encode_and_decode8(VtencEncoder *encoder, const uint8_t *in, size_t in_len);
-int test_encode_and_decode16(VtencEncoder *encoder, const uint16_t *in, size_t in_len);
-int test_encode_and_decode32(VtencEncoder *encoder, const uint32_t *in, size_t in_len);
-int test_encode_and_decode64(VtencEncoder *encoder, const uint64_t *in, size_t in_len);
+int test_encode_and_decode8(VtencEncoder *encoder, const uint8_t *in, size_t in_len, int show_summary);
+int test_encode_and_decode16(VtencEncoder *encoder, const uint16_t *in, size_t in_len, int show_summary);
+int test_encode_and_decode32(VtencEncoder *encoder, const uint32_t *in, size_t in_len, int show_summary);
+int test_encode_and_decode64(VtencEncoder *encoder, const uint64_t *in, size_t in_len, int show_summary);
 
 #endif /* VTENC_TESTS_ENCDEC_H_ */

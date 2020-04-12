@@ -16,7 +16,7 @@ all: timestamps gov2 testbinseq
 %.o: %.c
 	${CC} -c $(CFLAGS) $<
 
-timestamps: timestamps.o
+timestamps: encdec.o timestamps.o
 	$(CC) $(CFLAGS) $^ $(VTENCDIR)/libvtenc.a -o $@
 
 gov2: gov2.o

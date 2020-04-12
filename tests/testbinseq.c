@@ -210,7 +210,7 @@ static int test_seq8(FILE *f, VtencEncoder *encoder, size_t seqsize)
     return 0;
   }
 
-  if (!test_encode_and_decode8(encoder, seq, seqsize)) {
+  if (!test_encode_and_decode8(encoder, seq, seqsize, 0)) {
     fprintf(stderr, "Encoding/decoding test failed\n");
     free(seq);
     return 0;
@@ -231,7 +231,7 @@ static int test_seq16(FILE *f, VtencEncoder *encoder, size_t seqsize)
     return 0;
   }
 
-  if (!test_encode_and_decode16(encoder, seq, seqsize)) {
+  if (!test_encode_and_decode16(encoder, seq, seqsize, 0)) {
     fprintf(stderr, "Encoding/decoding test failed\n");
     free(seq);
     return 0;
@@ -252,7 +252,7 @@ static int test_seq32(FILE *f, VtencEncoder *encoder, size_t seqsize)
     return 0;
   }
 
-  if (!test_encode_and_decode32(encoder, seq, seqsize)) {
+  if (!test_encode_and_decode32(encoder, seq, seqsize, 0)) {
     fprintf(stderr, "Encoding/decoding test failed\n");
     free(seq);
     return 0;
@@ -273,7 +273,7 @@ static int test_seq64(FILE *f, VtencEncoder *encoder, size_t seqsize)
     return 0;
   }
 
-  if (!test_encode_and_decode64(encoder, seq, seqsize)) {
+  if (!test_encode_and_decode64(encoder, seq, seqsize, 0)) {
     fprintf(stderr, "Encoding/decoding test failed\n");
     free(seq);
     return 0;
