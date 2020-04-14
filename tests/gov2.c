@@ -73,64 +73,6 @@ int has_strictly_ascending_order(const uint32_t *values, uint32_t values_len)
   return 1;
 }
 
-// int encode_and_decode_set(const uint32_t *values, uint32_t values_len, struct Stats *stats)
-// {
-//   size_t enc_out_cap, enc_out_len, dec_out_len;
-//   uint8_t *enc_out;
-//   uint32_t *dec_out;
-//   VtencErrorCode enc_ret_code, dec_ret_code;
-//   int exit_code = 1;
-//
-//   enc_out_cap = vtenc_set_max_encoded_size_u32(values_len);
-//   enc_out = (uint8_t *) malloc(enc_out_cap * sizeof(uint8_t));
-//   if (enc_out == NULL) {
-//     fprintf(stderr, "allocation error\n");
-//     exit_code = 0;
-//     goto cleanup0;
-//   }
-//
-//   enc_ret_code = vtenc_set_encode_u32(values, values_len, enc_out, enc_out_cap, &enc_out_len);
-//   if (enc_ret_code != VtencErrorNoError) {
-//     fprintf(stderr, "encode error code: %d\n", enc_ret_code);
-//     exit_code = 0;
-//     goto cleanup1;
-//   }
-//
-//   dec_out_len = vtenc_set_decoded_size_u32(enc_out, enc_out_len);
-//   dec_out = (uint32_t *) malloc(dec_out_len * sizeof(uint32_t));
-//   if (dec_out == NULL) {
-//     fprintf(stderr, "allocation error\n");
-//     exit_code = 0;
-//     goto cleanup1;
-//   }
-//
-//   dec_ret_code = vtenc_set_decode_u32(enc_out, enc_out_len, dec_out, dec_out_len);
-//   if (dec_ret_code != VtencErrorNoError) {
-//     fprintf(stderr, "decode error code: %d\n", dec_ret_code);
-//     exit_code = 0;
-//     goto cleanup2;
-//   }
-//
-//   if ((dec_out_len != values_len) || (memcmp(values, dec_out, values_len * sizeof(uint32_t)) != 0)) {
-//     fprintf(stderr, "decoded output different from original input\n");
-//     exit_code = 0;
-//     goto cleanup2;
-//   }
-//
-//   stats->n_sets++;
-//   stats->total_input_size += values_len * sizeof(uint32_t);
-//   stats->total_encoded_size += enc_out_len;
-//
-// cleanup2:
-//   free(dec_out);
-//
-// cleanup1:
-//   free(enc_out);
-//
-// cleanup0:
-//   return exit_code;
-// }
-
 int encode_and_decode_set(const uint32_t *values, uint32_t values_len, struct Stats *stats)
 {
   struct EncDec encdec;
