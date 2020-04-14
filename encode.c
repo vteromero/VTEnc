@@ -10,7 +10,7 @@
 void vtenc_encoder_init(VtencEncoder *enc)
 {
   enc->has_repeated_values  = 1;
-  enc->skip_full_subtrees   = 0;
+  enc->skip_full_subtrees   = 1;
   enc->last_error_code      = VtencErrorNoError;
 }
 
