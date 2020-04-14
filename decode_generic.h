@@ -24,15 +24,8 @@
 #define decode_bits_tree(_width_) ADD_UINT_SUFFIX(decode_bits_tree, _width_)
 #define list_read_cardinality(_width_) ADD_UINT_SUFFIX(list_read_cardinality, _width_)
 #define set_read_cardinality(_width_) ADD_UINT_SUFFIX(set_read_cardinality, _width_)
-#define vtenc_list_decode(_width_) ADD_UINT_SUFFIX(vtenc_list_decode, _width_)
-#define vtenc_set_decode(_width_) ADD_UINT_SUFFIX(vtenc_set_decode, _width_)
-#define vtenc_list_decoded_size(_width_) ADD_UINT_SUFFIX(vtenc_list_decoded_size, _width_)
-#define vtenc_set_decoded_size(_width_) ADD_UINT_SUFFIX(vtenc_set_decoded_size, _width_)
-
 #define vtenc_decode(_width_) WIDTH_SUFFIX(vtenc_decode, _width_)
 #define vtenc_decoded_size(_width_) WIDTH_SUFFIX(vtenc_decoded_size, _width_)
-
-#define DECCTX_RETURN_ON_ERROR(ctx, exp) RETURN_IF_ERROR_WITH(exp, decctx_close(WIDTH)(&ctx))
 
 #define DEC_RETURN_WITH_CODE(ctx, dec, code)  \
 do {                                          \
@@ -210,54 +203,6 @@ static VtencErrorCode set_read_cardinality(WIDTH)(BSReader *reader, uint64_t *ca
   return VtencErrorNoError;
 }
 
-VtencErrorCode vtenc_list_decode(WIDTH)(const uint8_t *in, size_t in_len, TYPE *out, size_t out_len)
-{
-  struct DecodeCtx(WIDTH) ctx;
-  uint64_t cardinality;
-
-  memset(out, 0, out_len * sizeof(*out));
-
-  DECCTX_RETURN_ON_ERROR(ctx, decctx_init(WIDTH)(&ctx, in, in_len, out, out_len));
-
-  DECCTX_RETURN_ON_ERROR(ctx, list_read_cardinality(WIDTH)(&(ctx.bits_reader), &cardinality));
-
-  if (cardinality > LIST_MAX_VALUES || cardinality != (uint64_t)out_len) {
-    decctx_close(WIDTH)(&ctx);
-    return VtencErrorWrongFormat;
-  }
-
-  DECCTX_RETURN_ON_ERROR(ctx, decode_bits_tree(WIDTH)(&ctx));
-
-  decctx_close(WIDTH)(&ctx);
-
-  return VtencErrorNoError;
-}
-
-VtencErrorCode vtenc_set_decode(WIDTH)(const uint8_t *in, size_t in_len, TYPE *out, size_t out_len)
-{
-  struct DecodeCtx(WIDTH) ctx;
-  uint64_t cardinality;
-
-  memset(out, 0, out_len * sizeof(*out));
-
-  DECCTX_RETURN_ON_ERROR(ctx, decctx_init(WIDTH)(&ctx, in, in_len, out, out_len));
-
-  ctx.reconstruct_full_subtrees = 1;
-
-  DECCTX_RETURN_ON_ERROR(ctx, set_read_cardinality(WIDTH)(&(ctx.bits_reader), &cardinality));
-
-  if (cardinality > SET_MAX_VALUES || cardinality != (uint64_t)out_len) {
-    decctx_close(WIDTH)(&ctx);
-    return VtencErrorWrongFormat;
-  }
-
-  DECCTX_RETURN_ON_ERROR(ctx, decode_bits_tree(WIDTH)(&ctx));
-
-  decctx_close(WIDTH)(&ctx);
-
-  return VtencErrorNoError;
-}
-
 void vtenc_decode(WIDTH)(VtencDecoder *dec, const uint8_t *in, size_t in_len,
   TYPE *out, size_t out_len)
 {
@@ -290,28 +235,6 @@ void vtenc_decode(WIDTH)(VtencDecoder *dec, const uint8_t *in, size_t in_len,
   DEC_HANDLE_ERROR(&ctx, dec, decode_bits_tree(WIDTH)(&ctx));
 
   decctx_close(WIDTH)(&ctx);
-}
-
-size_t vtenc_list_decoded_size(WIDTH)(const uint8_t *in, size_t in_len)
-{
-  BSReader reader;
-  size_t dec_len;
-
-  RETURN_ZERO_IF_ERROR(bsreader_init(&reader, in, in_len));
-  RETURN_ZERO_IF_ERROR(list_read_cardinality(WIDTH)(&reader, &dec_len));
-
-  return dec_len;
-}
-
-size_t vtenc_set_decoded_size(WIDTH)(const uint8_t *in, size_t in_len)
-{
-  BSReader reader;
-  size_t dec_len;
-
-  RETURN_ZERO_IF_ERROR(bsreader_init(&reader, in, in_len));
-  RETURN_ZERO_IF_ERROR(set_read_cardinality(WIDTH)(&reader, &dec_len));
-
-  return dec_len;
 }
 
 size_t vtenc_decoded_size(WIDTH)(VtencDecoder *dec, const uint8_t *in, size_t in_len)

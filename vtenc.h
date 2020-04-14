@@ -54,15 +54,6 @@ typedef enum {
  * return a 'VtencErrorNoError' code, but the output won't correspond to the
  * correct encoded stream for the input sequence.
  */
-VtencErrorCode vtenc_list_encode_u8(const uint8_t *in, size_t in_len, uint8_t *out, size_t out_cap, size_t *out_len);
-VtencErrorCode vtenc_list_encode_u16(const uint16_t *in, size_t in_len, uint8_t *out, size_t out_cap, size_t *out_len);
-VtencErrorCode vtenc_list_encode_u32(const uint32_t *in, size_t in_len, uint8_t *out, size_t out_cap, size_t *out_len);
-VtencErrorCode vtenc_list_encode_u64(const uint64_t *in, size_t in_len, uint8_t *out, size_t out_cap, size_t *out_len);
-
-VtencErrorCode vtenc_set_encode_u8(const uint8_t *in, size_t in_len, uint8_t *out, size_t out_cap, size_t *out_len);
-VtencErrorCode vtenc_set_encode_u16(const uint16_t *in, size_t in_len, uint8_t *out, size_t out_cap, size_t *out_len);
-VtencErrorCode vtenc_set_encode_u32(const uint32_t *in, size_t in_len, uint8_t *out, size_t out_cap, size_t *out_len);
-VtencErrorCode vtenc_set_encode_u64(const uint64_t *in, size_t in_len, uint8_t *out, size_t out_cap, size_t *out_len);
 
 typedef struct {
   int has_repeated_values;
@@ -82,15 +73,6 @@ size_t vtenc_encode64(VtencEncoder *enc, const uint64_t *in, size_t in_len, uint
  * or set of size `in_len`. The returned value is an approximation of the actual
  * encoded length and it's guaranteed to be at least as big as the actual size.
  */
-size_t vtenc_list_max_encoded_size_u8(size_t in_len);
-size_t vtenc_list_max_encoded_size_u16(size_t in_len);
-size_t vtenc_list_max_encoded_size_u32(size_t in_len);
-size_t vtenc_list_max_encoded_size_u64(size_t in_len);
-
-size_t vtenc_set_max_encoded_size_u8(size_t in_len);
-size_t vtenc_set_max_encoded_size_u16(size_t in_len);
-size_t vtenc_set_max_encoded_size_u32(size_t in_len);
-size_t vtenc_set_max_encoded_size_u64(size_t in_len);
 
 size_t vtenc_max_encoded_size8(const VtencEncoder *enc, size_t in_len);
 size_t vtenc_max_encoded_size16(const VtencEncoder *enc, size_t in_len);
@@ -109,15 +91,6 @@ size_t vtenc_max_encoded_size64(const VtencEncoder *enc, size_t in_len);
  * Returns 'VtencErrorNoError' in case of success. Otherwise, a specific error
  * code is returned.
  */
-VtencErrorCode vtenc_list_decode_u8(const uint8_t *in, size_t in_len, uint8_t *out, size_t out_len);
-VtencErrorCode vtenc_list_decode_u16(const uint8_t *in, size_t in_len, uint16_t *out, size_t out_len);
-VtencErrorCode vtenc_list_decode_u32(const uint8_t *in, size_t in_len, uint32_t *out, size_t out_len);
-VtencErrorCode vtenc_list_decode_u64(const uint8_t *in, size_t in_len, uint64_t *out, size_t out_len);
-
-VtencErrorCode vtenc_set_decode_u8(const uint8_t *in, size_t in_len, uint8_t *out, size_t out_len);
-VtencErrorCode vtenc_set_decode_u16(const uint8_t *in, size_t in_len, uint16_t *out, size_t out_len);
-VtencErrorCode vtenc_set_decode_u32(const uint8_t *in, size_t in_len, uint32_t *out, size_t out_len);
-VtencErrorCode vtenc_set_decode_u64(const uint8_t *in, size_t in_len, uint64_t *out, size_t out_len);
 
 typedef struct {
   int has_repeated_values;
@@ -138,15 +111,6 @@ void vtenc_decode64(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint64_
  * for the list or set to be decoded before calling the corresponding decode
  * function.
  */
-size_t vtenc_list_decoded_size_u8(const uint8_t *in, size_t in_len);
-size_t vtenc_list_decoded_size_u16(const uint8_t *in, size_t in_len);
-size_t vtenc_list_decoded_size_u32(const uint8_t *in, size_t in_len);
-size_t vtenc_list_decoded_size_u64(const uint8_t *in, size_t in_len);
-
-size_t vtenc_set_decoded_size_u8(const uint8_t *in, size_t in_len);
-size_t vtenc_set_decoded_size_u16(const uint8_t *in, size_t in_len);
-size_t vtenc_set_decoded_size_u32(const uint8_t *in, size_t in_len);
-size_t vtenc_set_decoded_size_u64(const uint8_t *in, size_t in_len);
 
 size_t vtenc_decoded_size8(VtencDecoder *dec, const uint8_t *in, size_t in_len);
 size_t vtenc_decoded_size16(VtencDecoder *dec, const uint8_t *in, size_t in_len);

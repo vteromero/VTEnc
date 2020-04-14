@@ -24,15 +24,8 @@
 #define encode_bits_tree(_width_) ADD_UINT_SUFFIX(encode_bits_tree, _width_)
 #define list_write_cardinality(_width_) ADD_UINT_SUFFIX(list_write_cardinality, _width_)
 #define set_write_cardinality(_width_) ADD_UINT_SUFFIX(set_write_cardinality, _width_)
-#define vtenc_list_encode(_width_) ADD_UINT_SUFFIX(vtenc_list_encode, _width_)
-#define vtenc_set_encode(_width_) ADD_UINT_SUFFIX(vtenc_set_encode, _width_)
-#define vtenc_list_max_encoded_size(_width_) ADD_UINT_SUFFIX(vtenc_list_max_encoded_size, _width_)
-#define vtenc_set_max_encoded_size(_width_) ADD_UINT_SUFFIX(vtenc_set_max_encoded_size, _width_)
-
 #define vtenc_encode(_width_) WIDTH_SUFFIX(vtenc_encode, _width_)
 #define vtenc_max_encoded_size(_width_) WIDTH_SUFFIX(vtenc_max_encoded_size, _width_)
-
-#define ENCCTX_RETURN_ON_ERROR(ctx, exp) RETURN_IF_ERROR_WITH(exp, encctx_close(WIDTH)(&ctx))
 
 #define ENC_HANDLE_ERROR(ctx, enc, exp) \
 do {                                    \
@@ -168,55 +161,6 @@ static VtencErrorCode list_write_cardinality(WIDTH)(struct EncodeCtx(WIDTH) *ctx
 static VtencErrorCode set_write_cardinality(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
 {
   return bswriter_write(&(ctx->bits_writer), ctx->values_len - 1, SET_CARDINALITY_SIZE);
-}
-
-VtencErrorCode vtenc_list_encode(WIDTH)(const TYPE *in, size_t in_len,
-  uint8_t *out, size_t out_cap, size_t *out_len)
-{
-  struct EncodeCtx(WIDTH) ctx;
-
-  if ((uint64_t)in_len > LIST_MAX_VALUES) return VtencErrorInputTooBig;
-
-  ENCCTX_RETURN_ON_ERROR(ctx, encctx_init(WIDTH)(&ctx, in, in_len, out, out_cap));
-
-  ENCCTX_RETURN_ON_ERROR(ctx, list_write_cardinality(WIDTH)(&ctx));
-
-  ENCCTX_RETURN_ON_ERROR(ctx, encode_bits_tree(WIDTH)(&ctx));
-
-  *out_len = encctx_close(WIDTH)(&ctx);
-
-  return VtencErrorNoError;
-}
-
-VtencErrorCode vtenc_set_encode(WIDTH)(const TYPE *in, size_t in_len,
-  uint8_t *out, size_t out_cap, size_t *out_len)
-{
-  struct EncodeCtx(WIDTH) ctx;
-
-  if (in_len == 0) return VtencErrorInputTooSmall;
-  if ((uint64_t)in_len > SET_MAX_VALUES) return VtencErrorInputTooBig;
-
-  ENCCTX_RETURN_ON_ERROR(ctx, encctx_init(WIDTH)(&ctx, in, in_len, out, out_cap));
-
-  ctx.skip_full_subtrees = 1;
-
-  ENCCTX_RETURN_ON_ERROR(ctx, set_write_cardinality(WIDTH)(&ctx));
-
-  ENCCTX_RETURN_ON_ERROR(ctx, encode_bits_tree(WIDTH)(&ctx));
-
-  *out_len = encctx_close(WIDTH)(&ctx);
-
-  return VtencErrorNoError;
-}
-
-size_t vtenc_list_max_encoded_size(WIDTH)(size_t in_len)
-{
-  return bswriter_align_buffer_size((LIST_CARDINALITY_SIZE / 8) + (WIDTH / 8) * (in_len + 1));
-}
-
-size_t vtenc_set_max_encoded_size(WIDTH)(size_t in_len)
-{
-  return bswriter_align_buffer_size((SET_CARDINALITY_SIZE / 8) + (WIDTH / 8) * (in_len + 1));
 }
 
 size_t vtenc_encode(WIDTH)(VtencEncoder *enc, const TYPE *in, size_t in_len,
