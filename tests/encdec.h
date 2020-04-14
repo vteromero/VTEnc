@@ -48,6 +48,7 @@ void encdec_init64(struct EncDec *encdec);
 int encdec_encode(struct EncDec *encdec, const void *in, size_t in_len);
 int encdec_decode(struct EncDec *encdec);
 int encdec_check_equality(struct EncDec *encdec);
+void encdec_print_summary(struct EncDec *encdec);
 void encdec_free(struct EncDec *encdec);
 
 #endif /* VTENC_TESTS_ENCDEC_H_ */

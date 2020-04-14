@@ -447,6 +447,16 @@ int encdec_check_equality(struct EncDec *encdec)
   return 1;
 }
 
+void encdec_print_summary(struct EncDec *encdec)
+{
+  size_t in_len_in_bytes = encdec->ctx.in_len * encdec->funcs->type_size();
+  double ratio = encdec->ctx.enc_out_len / (double)in_len_in_bytes;
+
+  printf("input size: %lu (%lu bytes)\n", encdec->ctx.in_len, in_len_in_bytes);
+  printf("encoded size: %lu bytes\n", encdec->ctx.enc_out_len);
+  printf("compression ratio: %f (%.4f%%)\n", ratio, ratio * 100.0);
+}
+
 void encdec_free(struct EncDec *encdec)
 {
   if (encdec->ctx.enc_out != NULL) free(encdec->ctx.enc_out);

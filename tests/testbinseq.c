@@ -8,7 +8,6 @@
 
 #include "encdec.h"
 #include "../mem.h"
-#include "../vtenc.h"
 
 struct SequenceAttr
 {
@@ -99,14 +98,6 @@ static int read_header(FILE *f, struct SequenceAttr *attr)
   return 1;
 }
 
-// static void print_sequence_attr(const struct SequenceAttr *attr)
-// {
-//   printf("Sequence attributes:\n");
-//   printf("  islist: %d\n", attr->islist);
-//   printf("  width: %u\n", attr->width);
-//   printf("  size: %lu\n", attr->size);
-// }
-
 static int is_valid_sequence_attr(const struct SequenceAttr *attr)
 {
   return attr->width == 8 || attr->width == 16 || attr->width == 32 || attr->width == 64;
@@ -168,40 +159,34 @@ static int read_arr64(FILE *f, uint64_t *arr, size_t arr_len)
   return 1;
 }
 
-// static void print_arr8(uint8_t *arr, size_t arr_len)
-// {
-//   size_t i;
-//   printf("[%lu]:", arr_len);
-//   for (i = 0; i < arr_len; ++i) printf(" %u", arr[i]);
-//   printf("\n");
-// }
-
-// static void print_arr16(uint16_t *arr, size_t arr_len)
-// {
-//   size_t i;
-//   printf("[%lu]:", arr_len);
-//   for (i = 0; i < arr_len; ++i) printf(" %u", arr[i]);
-//   printf("\n");
-// }
-
-// static void print_arr32(uint32_t *arr, size_t arr_len)
-// {
-//   size_t i;
-//   printf("[%lu]:", arr_len);
-//   for (i = 0; i < arr_len; ++i) printf(" %u", arr[i]);
-//   printf("\n");
-// }
-
-// static void print_arr64(uint64_t *arr, size_t arr_len)
-// {
-//   size_t i;
-//   printf("[%lu]:", arr_len);
-//   for (i = 0; i < arr_len; ++i) printf(" %lu", arr[i]);
-//   printf("\n");
-// }
-
-static int test_seq8(FILE *f, VtencEncoder *encoder, size_t seqsize)
+static int test_encode_and_decode(struct EncDec *encdec, const void *seq, size_t seqsize)
 {
+  if (!encdec_encode(encdec, seq, seqsize)) {
+    fprintf(stderr, "encdec_encode failed\n");
+    encdec_free(encdec);
+    return 0;
+  }
+
+  if (!encdec_decode(encdec)) {
+    fprintf(stderr, "encdec_decode failed\n");
+    encdec_free(encdec);
+    return 0;
+  }
+
+  if (!encdec_check_equality(encdec)) {
+    fprintf(stderr, "encdec_check_equality failed\n");
+    encdec_free(encdec);
+    return 0;
+  }
+
+  encdec_free(encdec);
+
+  return 1;
+}
+
+static int test_seq8(FILE *f, int islist, size_t seqsize)
+{
+  struct EncDec encdec;
   uint8_t *seq = (uint8_t *) malloc(seqsize * sizeof(uint8_t));
 
   if (!read_arr8(f, seq, seqsize)) {
@@ -210,7 +195,10 @@ static int test_seq8(FILE *f, VtencEncoder *encoder, size_t seqsize)
     return 0;
   }
 
-  if (!test_encode_and_decode8(encoder, seq, seqsize, 0)) {
+  encdec_init8(&encdec);
+  encdec.has_repeated_values = islist;
+
+  if (!test_encode_and_decode(&encdec, seq, seqsize)) {
     fprintf(stderr, "Encoding/decoding test failed\n");
     free(seq);
     return 0;
@@ -221,8 +209,9 @@ static int test_seq8(FILE *f, VtencEncoder *encoder, size_t seqsize)
   return 1;
 }
 
-static int test_seq16(FILE *f, VtencEncoder *encoder, size_t seqsize)
+static int test_seq16(FILE *f, int islist, size_t seqsize)
 {
+  struct EncDec encdec;
   uint16_t *seq = (uint16_t *) malloc(seqsize * sizeof(uint16_t));
 
   if (!read_arr16(f, seq, seqsize)) {
@@ -231,7 +220,10 @@ static int test_seq16(FILE *f, VtencEncoder *encoder, size_t seqsize)
     return 0;
   }
 
-  if (!test_encode_and_decode16(encoder, seq, seqsize, 0)) {
+  encdec_init16(&encdec);
+  encdec.has_repeated_values = islist;
+
+  if (!test_encode_and_decode(&encdec, seq, seqsize)) {
     fprintf(stderr, "Encoding/decoding test failed\n");
     free(seq);
     return 0;
@@ -242,8 +234,9 @@ static int test_seq16(FILE *f, VtencEncoder *encoder, size_t seqsize)
   return 1;
 }
 
-static int test_seq32(FILE *f, VtencEncoder *encoder, size_t seqsize)
+static int test_seq32(FILE *f, int islist, size_t seqsize)
 {
+  struct EncDec encdec;
   uint32_t *seq = (uint32_t *) malloc(seqsize * sizeof(uint32_t));
 
   if (!read_arr32(f, seq, seqsize)) {
@@ -252,7 +245,10 @@ static int test_seq32(FILE *f, VtencEncoder *encoder, size_t seqsize)
     return 0;
   }
 
-  if (!test_encode_and_decode32(encoder, seq, seqsize, 0)) {
+  encdec_init32(&encdec);
+  encdec.has_repeated_values = islist;
+
+  if (!test_encode_and_decode(&encdec, seq, seqsize)) {
     fprintf(stderr, "Encoding/decoding test failed\n");
     free(seq);
     return 0;
@@ -263,8 +259,9 @@ static int test_seq32(FILE *f, VtencEncoder *encoder, size_t seqsize)
   return 1;
 }
 
-static int test_seq64(FILE *f, VtencEncoder *encoder, size_t seqsize)
+static int test_seq64(FILE *f, int islist, size_t seqsize)
 {
+  struct EncDec encdec;
   uint64_t *seq = (uint64_t *) malloc(seqsize * sizeof(uint64_t));
 
   if (!read_arr64(f, seq, seqsize)) {
@@ -273,7 +270,10 @@ static int test_seq64(FILE *f, VtencEncoder *encoder, size_t seqsize)
     return 0;
   }
 
-  if (!test_encode_and_decode64(encoder, seq, seqsize, 0)) {
+  encdec_init64(&encdec);
+  encdec.has_repeated_values = islist;
+
+  if (!test_encode_and_decode(&encdec, seq, seqsize)) {
     fprintf(stderr, "Encoding/decoding test failed\n");
     free(seq);
     return 0;
@@ -286,20 +286,11 @@ static int test_seq64(FILE *f, VtencEncoder *encoder, size_t seqsize)
 
 static int test_sequence(FILE *f, const struct SequenceAttr *attr)
 {
-  VtencEncoder encoder;
-
-  vtenc_encoder_init(&encoder);
-
-  if (!attr->islist) {
-    encoder.has_repeated_values = 0;
-    encoder.skip_full_subtrees = 1;
-  }
-
   switch (attr->width) {
-    case 8: return test_seq8(f, &encoder, attr->size);
-    case 16: return test_seq16(f, &encoder, attr->size);
-    case 32: return test_seq32(f, &encoder, attr->size);
-    case 64: return test_seq64(f, &encoder, attr->size);
+    case 8: return test_seq8(f, attr->islist, attr->size);
+    case 16: return test_seq16(f, attr->islist, attr->size);
+    case 32: return test_seq32(f, attr->islist, attr->size);
+    case 64: return test_seq64(f, attr->islist, attr->size);
     default: return 0;
   }
 

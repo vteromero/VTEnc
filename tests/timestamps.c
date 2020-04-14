@@ -10,7 +10,6 @@
 #include <string.h>
 
 #include "encdec.h"
-#include "../vtenc.h"
 
 struct array_t {
   uint32_t *values;
@@ -83,6 +82,37 @@ int has_ascending_order(uint32_t *values, size_t values_len)
   return 1;
 }
 
+static int test_encode_and_decode(const uint32_t *list, size_t list_len)
+{
+  struct EncDec encdec;
+
+  encdec_init32(&encdec);
+
+  if (!encdec_encode(&encdec, list, list_len)) {
+    fprintf(stderr, "encdec_encode failed\n");
+    encdec_free(&encdec);
+    return 0;
+  }
+
+  if (!encdec_decode(&encdec)) {
+    fprintf(stderr, "encdec_decode failed\n");
+    encdec_free(&encdec);
+    return 0;
+  }
+
+  if (!encdec_check_equality(&encdec)) {
+    fprintf(stderr, "encdec_check_equality failed\n");
+    encdec_free(&encdec);
+    return 0;
+  }
+
+  encdec_print_summary(&encdec);
+
+  encdec_free(&encdec);
+
+  return 1;
+}
+
 void usage(const char *program)
 {
   fprintf(stderr,
@@ -99,7 +129,6 @@ void usage(const char *program)
 int main(int argc, char **argv)
 {
   struct array_t arr;
-  VtencEncoder encoder;
 
   if (argc != 2) {
     usage(argv[0]);
@@ -116,10 +145,8 @@ int main(int argc, char **argv)
     return EXIT_FAILURE;
   }
 
-  vtenc_encoder_init(&encoder);
-
-  if (!test_encode_and_decode32(&encoder, arr.values, arr.size, 1)) {
-    fprintf(stderr, "test_encode_and_decode32 failed!\n");
+  if (!test_encode_and_decode(arr.values, arr.size)) {
+    fprintf(stderr, "test_encode_and_decode failed!\n");
     array_free(&arr);
     return EXIT_FAILURE;
   }
