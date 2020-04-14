@@ -54,10 +54,10 @@ int main()
   RUN_TEST(test_bclstack_new);
   RUN_TEST(test_bclstack_put_and_get);
 
-  RUN_TEST(test_count_zeros_at_bit_pos_u8);
-  RUN_TEST(test_count_zeros_at_bit_pos_u16);
-  RUN_TEST(test_count_zeros_at_bit_pos_u32);
-  RUN_TEST(test_count_zeros_at_bit_pos_u64);
+  RUN_TEST(test_count_zeros_at_bit_pos8);
+  RUN_TEST(test_count_zeros_at_bit_pos16);
+  RUN_TEST(test_count_zeros_at_bit_pos32);
+  RUN_TEST(test_count_zeros_at_bit_pos64);
 
   RUN_TEST(test_vtenc_encoder_init);
 

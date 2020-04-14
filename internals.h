@@ -15,7 +15,6 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define PASTE2(x, y) x ## y
 #define PASTE3(x, y, z) x ## y ## z
-#define ADD_UINT_SUFFIX(_name_, _width_) PASTE3(_name_, _u, _width_)
 #define WIDTH_SUFFIX(_name_, _width_) PASTE2(_name_, _width_)
 
 /* VTEnc constants */

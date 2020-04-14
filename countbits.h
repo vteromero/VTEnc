@@ -23,7 +23,7 @@ do {                                                          \
   return ((*base & mask) == 0) + base - values;               \
 } while (0)
 
-static inline size_t count_zeros_at_bit_pos_u8(const uint8_t *values,
+static inline size_t count_zeros_at_bit_pos8(const uint8_t *values,
   size_t values_len, unsigned int bit_pos)
 {
   const uint8_t mask = BITS_POS_MASK8[bit_pos];
@@ -31,7 +31,7 @@ static inline size_t count_zeros_at_bit_pos_u8(const uint8_t *values,
   BINSEARCH;
 }
 
-static inline size_t count_zeros_at_bit_pos_u16(const uint16_t *values,
+static inline size_t count_zeros_at_bit_pos16(const uint16_t *values,
   size_t values_len, unsigned int bit_pos)
 {
   const uint16_t mask = BITS_POS_MASK16[bit_pos];
@@ -39,7 +39,7 @@ static inline size_t count_zeros_at_bit_pos_u16(const uint16_t *values,
   BINSEARCH;
 }
 
-static inline size_t count_zeros_at_bit_pos_u32(const uint32_t *values,
+static inline size_t count_zeros_at_bit_pos32(const uint32_t *values,
   size_t values_len, unsigned int bit_pos)
 {
   const uint32_t mask = BITS_POS_MASK32[bit_pos];
@@ -47,7 +47,7 @@ static inline size_t count_zeros_at_bit_pos_u32(const uint32_t *values,
   BINSEARCH;
 }
 
-static inline size_t count_zeros_at_bit_pos_u64(const uint64_t *values,
+static inline size_t count_zeros_at_bit_pos64(const uint64_t *values,
   size_t values_len, unsigned int bit_pos)
 {
   const uint64_t mask = BITS_POS_MASK64[bit_pos];
