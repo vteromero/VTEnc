@@ -11,11 +11,6 @@
 
 #include "../vtenc.h"
 
-int test_encode_and_decode8(VtencEncoder *encoder, const uint8_t *in, size_t in_len, int show_summary);
-int test_encode_and_decode16(VtencEncoder *encoder, const uint16_t *in, size_t in_len, int show_summary);
-int test_encode_and_decode32(VtencEncoder *encoder, const uint32_t *in, size_t in_len, int show_summary);
-int test_encode_and_decode64(VtencEncoder *encoder, const uint64_t *in, size_t in_len, int show_summary);
-
 struct EncDecFuncs {
   size_t (*type_size)();
   size_t (*max_encoded_size)(const VtencEncoder *enc, size_t in_len);
