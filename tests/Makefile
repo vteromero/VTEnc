@@ -19,7 +19,7 @@ all: timestamps gov2 testbinseq
 timestamps: encdec.o timestamps.o
 	$(CC) $(CFLAGS) $^ $(VTENCDIR)/libvtenc.a -o $@
 
-gov2: gov2.o
+gov2: encdec.o gov2.o
 	$(CC) $(CFLAGS) $^ $(VTENCDIR)/libvtenc.a -o $@
 
 testbinseq: encdec.o testbinseq.o
