@@ -16,7 +16,7 @@ int test_vtenc_decoder_init(void)
 
   vtenc_decoder_init(&dec);
 
-  EXPECT_TRUE(dec.has_repeated_values == 1);
+  EXPECT_TRUE(dec.allow_repeated_values == 1);
   EXPECT_TRUE(dec.skip_full_subtrees == 1);
   EXPECT_TRUE(dec.last_error_code == VtencErrorNoError);
 
@@ -44,7 +44,7 @@ static struct DecodeTestCase test_cases8[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
@@ -59,7 +59,7 @@ static struct DecodeTestCase test_cases8[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
@@ -74,7 +74,7 @@ static struct DecodeTestCase test_cases8[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0e},
@@ -89,7 +89,7 @@ static struct DecodeTestCase test_cases8[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){
@@ -106,7 +106,7 @@ static struct DecodeTestCase test_cases8[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){
@@ -124,7 +124,7 @@ static struct DecodeTestCase test_cases8[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){
@@ -142,7 +142,7 @@ static struct DecodeTestCase test_cases8[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){0x00},
@@ -157,7 +157,7 @@ static struct DecodeTestCase test_cases8[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){0x03, 0xff},
@@ -172,7 +172,7 @@ static struct DecodeTestCase test_cases8[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){0xff},
@@ -205,7 +205,7 @@ static struct DecodeTestCase test_cases8[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){0x00, 0x21},
@@ -220,7 +220,7 @@ static struct DecodeTestCase test_cases8[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){0x0b, 0x48, 0x90, 0x44, 0x44, 0x04},
@@ -235,7 +235,7 @@ static struct DecodeTestCase test_cases8[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){0x05, 0x8c, 0xaa, 0x72, 0x14, 0xdd, 0x00},
@@ -253,7 +253,7 @@ static struct DecodeTestCase test_cases16[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
@@ -268,7 +268,7 @@ static struct DecodeTestCase test_cases16[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
@@ -283,7 +283,7 @@ static struct DecodeTestCase test_cases16[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0e},
@@ -298,7 +298,7 @@ static struct DecodeTestCase test_cases16[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){
@@ -315,7 +315,7 @@ static struct DecodeTestCase test_cases16[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){
@@ -333,7 +333,7 @@ static struct DecodeTestCase test_cases16[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){
@@ -351,7 +351,7 @@ static struct DecodeTestCase test_cases16[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){0x00, 0x00},
@@ -366,7 +366,7 @@ static struct DecodeTestCase test_cases16[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){0x03, 0x00, 0xff},
@@ -381,7 +381,7 @@ static struct DecodeTestCase test_cases16[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){0x00, 0x00, 0x33, 0x5a},
@@ -396,7 +396,7 @@ static struct DecodeTestCase test_cases16[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){
@@ -414,7 +414,7 @@ static struct DecodeTestCase test_cases16[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){
@@ -438,7 +438,7 @@ static struct DecodeTestCase test_cases32[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
@@ -453,7 +453,7 @@ static struct DecodeTestCase test_cases32[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
@@ -468,7 +468,7 @@ static struct DecodeTestCase test_cases32[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0e},
@@ -483,7 +483,7 @@ static struct DecodeTestCase test_cases32[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){
@@ -500,7 +500,7 @@ static struct DecodeTestCase test_cases32[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){
@@ -521,7 +521,7 @@ static struct DecodeTestCase test_cases32[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){
@@ -542,7 +542,7 @@ static struct DecodeTestCase test_cases32[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){0x00, 0x00, 0x00, 0x00},
@@ -557,7 +557,7 @@ static struct DecodeTestCase test_cases32[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){0x03, 0x00, 0x00, 0x00, 0xff},
@@ -572,7 +572,7 @@ static struct DecodeTestCase test_cases32[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){
@@ -589,7 +589,7 @@ static struct DecodeTestCase test_cases32[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){
@@ -609,7 +609,7 @@ static struct DecodeTestCase test_cases32[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){
@@ -635,7 +635,7 @@ static struct DecodeTestCase test_cases64[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
@@ -650,7 +650,7 @@ static struct DecodeTestCase test_cases64[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
@@ -665,7 +665,7 @@ static struct DecodeTestCase test_cases64[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0e},
@@ -680,7 +680,7 @@ static struct DecodeTestCase test_cases64[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){
@@ -698,7 +698,7 @@ static struct DecodeTestCase test_cases64[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){
@@ -719,7 +719,7 @@ static struct DecodeTestCase test_cases64[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 1,
+        .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
       .bytes = (uint8_t []){
@@ -742,7 +742,7 @@ static struct DecodeTestCase test_cases64[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){
@@ -759,7 +759,7 @@ static struct DecodeTestCase test_cases64[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){
@@ -776,7 +776,7 @@ static struct DecodeTestCase test_cases64[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){
@@ -793,7 +793,7 @@ static struct DecodeTestCase test_cases64[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){
@@ -811,7 +811,7 @@ static struct DecodeTestCase test_cases64[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){
@@ -835,7 +835,7 @@ static struct DecodeTestCase test_cases64[] = {
   {
     .input = {
       .decoder = {
-        .has_repeated_values = 0,
+        .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
       .bytes = (uint8_t []){

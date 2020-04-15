@@ -196,7 +196,7 @@ static int test_seq8(FILE *f, int islist, size_t seqsize)
   }
 
   encdec_init8(&encdec);
-  encdec.has_repeated_values = islist;
+  encdec.allow_repeated_values = islist;
 
   if (!test_encode_and_decode(&encdec, seq, seqsize)) {
     fprintf(stderr, "Encoding/decoding test failed\n");
@@ -221,7 +221,7 @@ static int test_seq16(FILE *f, int islist, size_t seqsize)
   }
 
   encdec_init16(&encdec);
-  encdec.has_repeated_values = islist;
+  encdec.allow_repeated_values = islist;
 
   if (!test_encode_and_decode(&encdec, seq, seqsize)) {
     fprintf(stderr, "Encoding/decoding test failed\n");
@@ -246,7 +246,7 @@ static int test_seq32(FILE *f, int islist, size_t seqsize)
   }
 
   encdec_init32(&encdec);
-  encdec.has_repeated_values = islist;
+  encdec.allow_repeated_values = islist;
 
   if (!test_encode_and_decode(&encdec, seq, seqsize)) {
     fprintf(stderr, "Encoding/decoding test failed\n");
@@ -271,7 +271,7 @@ static int test_seq64(FILE *f, int islist, size_t seqsize)
   }
 
   encdec_init64(&encdec);
-  encdec.has_repeated_values = islist;
+  encdec.allow_repeated_values = islist;
 
   if (!test_encode_and_decode(&encdec, seq, seqsize)) {
     fprintf(stderr, "Encoding/decoding test failed\n");

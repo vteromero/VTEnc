@@ -64,7 +64,7 @@ static VtencErrorCode encctx_init_with_encoder(WIDTH)(struct EncodeCtx(WIDTH) *c
 {
   RETURN_IF_ERROR(encctx_init(WIDTH)(ctx, in, in_len, out, out_cap));
 
-  ctx->skip_full_subtrees = !enc->has_repeated_values && enc->skip_full_subtrees;
+  ctx->skip_full_subtrees = !enc->allow_repeated_values && enc->skip_full_subtrees;
 
   return VtencErrorNoError;
 }
@@ -167,7 +167,7 @@ size_t vtenc_encode(WIDTH)(VtencEncoder *enc, const TYPE *in, size_t in_len,
   uint8_t *out, size_t out_cap)
 {
   struct EncodeCtx(WIDTH) ctx;
-  uint64_t max_values = enc->has_repeated_values ? LIST_MAX_VALUES : SET_MAX_VALUES;
+  uint64_t max_values = enc->allow_repeated_values ? LIST_MAX_VALUES : SET_MAX_VALUES;
 
   enc->last_error_code = VtencErrorNoError;
 
@@ -176,7 +176,7 @@ size_t vtenc_encode(WIDTH)(VtencEncoder *enc, const TYPE *in, size_t in_len,
     return 0;
   }
 
-  if (!enc->has_repeated_values && in_len == 0) {
+  if (!enc->allow_repeated_values && in_len == 0) {
     enc->last_error_code = VtencErrorInputTooSmall;
     return 0;
   }
@@ -185,7 +185,7 @@ size_t vtenc_encode(WIDTH)(VtencEncoder *enc, const TYPE *in, size_t in_len,
     encctx_init_with_encoder(WIDTH)(&ctx, enc, in, in_len, out, out_cap)
   );
 
-  if (enc->has_repeated_values) {
+  if (enc->allow_repeated_values) {
     ENC_RETURN_ON_ERROR(&ctx, enc, list_write_cardinality(WIDTH)(&ctx));
   } else {
     ENC_RETURN_ON_ERROR(&ctx, enc, set_write_cardinality(WIDTH)(&ctx));
@@ -198,7 +198,7 @@ size_t vtenc_encode(WIDTH)(VtencEncoder *enc, const TYPE *in, size_t in_len,
 
 size_t vtenc_max_encoded_size(WIDTH)(const VtencEncoder *enc, size_t in_len)
 {
-  if (enc->has_repeated_values) {
+  if (enc->allow_repeated_values) {
     return bswriter_align_buffer_size((LIST_CARDINALITY_SIZE / 8) + (WIDTH / 8) * (in_len + 1));
   } else {
     return bswriter_align_buffer_size((SET_CARDINALITY_SIZE / 8) + (WIDTH / 8) * (in_len + 1));

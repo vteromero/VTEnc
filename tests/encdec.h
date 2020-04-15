@@ -29,7 +29,7 @@ struct EncDecCtx {
 };
 
 struct EncDec {
-  int has_repeated_values;
+  int allow_repeated_values;
   int skip_full_subtrees;
   struct EncDecCtx ctx;
   const struct EncDecFuncs *funcs;

@@ -78,7 +78,7 @@ int encode_and_decode_set(const uint32_t *values, uint32_t values_len, struct St
   struct EncDec encdec;
 
   encdec_init32(&encdec);
-  encdec.has_repeated_values = 0;
+  encdec.allow_repeated_values = 0;
 
   if (!encdec_encode(&encdec, values, values_len)) {
     fprintf(stderr, "encdec_encode failed\n");

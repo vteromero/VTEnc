@@ -61,7 +61,7 @@ static void encdecctx_init(struct EncDecCtx *ctx)
 
 void encdec_init(struct EncDec *encdec, const struct EncDecFuncs *funcs)
 {
-  encdec->has_repeated_values = 1;
+  encdec->allow_repeated_values = 1;
   encdec->skip_full_subtrees = 1;
   encdecctx_init(&(encdec->ctx));
   encdec->funcs = funcs;
@@ -91,7 +91,7 @@ int encdec_encode(struct EncDec *encdec, const void *in, size_t in_len)
 {
   size_t enc_out_cap;
   VtencEncoder encoder = {
-    .has_repeated_values = encdec->has_repeated_values,
+    .allow_repeated_values = encdec->allow_repeated_values,
     .skip_full_subtrees = encdec->skip_full_subtrees
   };
 
@@ -126,7 +126,7 @@ int encdec_encode(struct EncDec *encdec, const void *in, size_t in_len)
 int encdec_decode(struct EncDec *encdec)
 {
   VtencDecoder decoder = {
-    .has_repeated_values = encdec->has_repeated_values,
+    .allow_repeated_values = encdec->allow_repeated_values,
     .skip_full_subtrees = encdec->skip_full_subtrees
   };
 

@@ -69,7 +69,7 @@ static VtencErrorCode decctx_init_with_decoder(WIDTH)(struct DecodeCtx(WIDTH) *c
 {
   RETURN_IF_ERROR(decctx_init(WIDTH)(ctx, in, in_len, out, out_len));
 
-  ctx->reconstruct_full_subtrees = !dec->has_repeated_values && dec->skip_full_subtrees;
+  ctx->reconstruct_full_subtrees = !dec->allow_repeated_values && dec->skip_full_subtrees;
 
   return VtencErrorNoError;
 }
@@ -207,7 +207,7 @@ void vtenc_decode(WIDTH)(VtencDecoder *dec, const uint8_t *in, size_t in_len,
   TYPE *out, size_t out_len)
 {
   struct DecodeCtx(WIDTH) ctx;
-  uint64_t max_values = dec->has_repeated_values ? LIST_MAX_VALUES : SET_MAX_VALUES;
+  uint64_t max_values = dec->allow_repeated_values ? LIST_MAX_VALUES : SET_MAX_VALUES;
   uint64_t cardinality = 0;
 
   dec->last_error_code = VtencErrorNoError;
@@ -218,7 +218,7 @@ void vtenc_decode(WIDTH)(VtencDecoder *dec, const uint8_t *in, size_t in_len,
     decctx_init_with_decoder(WIDTH)(&ctx, dec, in, in_len, out, out_len)
   );
 
-  if (dec->has_repeated_values) {
+  if (dec->allow_repeated_values) {
     DEC_RETURN_ON_ERROR(&ctx, dec,
       list_read_cardinality(WIDTH)(&(ctx.bits_reader), &cardinality)
     );
@@ -251,7 +251,7 @@ size_t vtenc_decoded_size(WIDTH)(VtencDecoder *dec, const uint8_t *in, size_t in
     return 0;
   }
 
-  if (dec->has_repeated_values) {
+  if (dec->allow_repeated_values) {
     code = list_read_cardinality(WIDTH)(&reader, &dec_len);
   } else {
     code = set_read_cardinality(WIDTH)(&reader, &dec_len);

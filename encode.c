@@ -9,9 +9,9 @@
 
 void vtenc_encoder_init(VtencEncoder *enc)
 {
-  enc->has_repeated_values  = 1;
-  enc->skip_full_subtrees   = 1;
-  enc->last_error_code      = VtencErrorNoError;
+  enc->allow_repeated_values  = 1;
+  enc->skip_full_subtrees     = 1;
+  enc->last_error_code        = VtencErrorNoError;
 }
 
 #define LIST_MAX_VALUES VTENC_LIST_MAX_VALUES

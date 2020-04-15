@@ -56,7 +56,7 @@ typedef enum {
  */
 
 typedef struct {
-  int has_repeated_values;
+  int allow_repeated_values;
   int skip_full_subtrees;
   VtencErrorCode last_error_code;
 } VtencEncoder;
@@ -93,7 +93,7 @@ size_t vtenc_max_encoded_size64(const VtencEncoder *enc, size_t in_len);
  */
 
 typedef struct {
-  int has_repeated_values;
+  int allow_repeated_values;
   int skip_full_subtrees;
   VtencErrorCode last_error_code;
 } VtencDecoder;
