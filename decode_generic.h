@@ -34,12 +34,12 @@ do {                                          \
   return;                                     \
 } while (0)
 
-#define DEC_HANDLE_ERROR(ctx, dec, exp)   \
-do {                                      \
-  const VtencErrorCode code = (exp);      \
-  if (code != VtencErrorNoError) {        \
-    DEC_RETURN_WITH_CODE(ctx, dec, code); \
-  }                                       \
+#define DEC_RETURN_ON_ERROR(ctx, dec, exp)  \
+do {                                        \
+  const VtencErrorCode code = (exp);        \
+  if (code != VtencErrorNoError) {          \
+    DEC_RETURN_WITH_CODE(ctx, dec, code);   \
+  }                                         \
 } while (0)
 
 struct DecodeCtx(WIDTH) {
@@ -214,16 +214,16 @@ void vtenc_decode(WIDTH)(VtencDecoder *dec, const uint8_t *in, size_t in_len,
 
   memset(out, 0, out_len * sizeof(*out));
 
-  DEC_HANDLE_ERROR(&ctx, dec,
+  DEC_RETURN_ON_ERROR(&ctx, dec,
     decctx_init_with_decoder(WIDTH)(&ctx, dec, in, in_len, out, out_len)
   );
 
   if (dec->has_repeated_values) {
-    DEC_HANDLE_ERROR(&ctx, dec,
+    DEC_RETURN_ON_ERROR(&ctx, dec,
       list_read_cardinality(WIDTH)(&(ctx.bits_reader), &cardinality)
     );
   } else {
-    DEC_HANDLE_ERROR(&ctx, dec,
+    DEC_RETURN_ON_ERROR(&ctx, dec,
       set_read_cardinality(WIDTH)(&(ctx.bits_reader), &cardinality)
     );
   }
@@ -232,7 +232,7 @@ void vtenc_decode(WIDTH)(VtencDecoder *dec, const uint8_t *in, size_t in_len,
     DEC_RETURN_WITH_CODE(&ctx, dec, VtencErrorWrongFormat);
   }
 
-  DEC_HANDLE_ERROR(&ctx, dec, decode_bits_tree(WIDTH)(&ctx));
+  DEC_RETURN_ON_ERROR(&ctx, dec, decode_bits_tree(WIDTH)(&ctx));
 
   decctx_close(WIDTH)(&ctx);
 }
