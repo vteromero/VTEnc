@@ -15,12 +15,10 @@ extern "C" {
 
 /**
  * This library provides a series of functions to encode and decode sorted
- * sequences of unsigned integers using VTEnc algorithm. It supports different
- * types (uint8_t, uint16_t, uint32_t and uint64_t) and two different kind of
- * sequences: lists and sets.
+ * sequences of unsigned integers using VTEnc algorithm.
  *
- * Lists and sets differ in that lists can have duplicate values, whereas sets
- * cannot. Both have to be sorted in ascending order.
+ * It supports sequences of 4 different types: uint8_t, uint16_t, uint32_t and
+ * uint64_t.
  */
 
 /* Error codes */
@@ -36,82 +34,131 @@ typedef enum {
 } VtencErrorCode;
 
 /**
- * Encoding functions.
- *
- * Each function encodes the list or set `in` into the already-allocated stream
- * of bytes `out`.
- *
- * `in_len`: size of `in`.
- * `out_cap`: capacity in bytes of `out`.
- * `out_len`: actual size of the encoded output. This is an output argument, so
- *    its value will be available after the encode function is called.
- *
- * Returns 'VtencErrorNoError' if there was no error. Otherwise, a specific error
- * code is returned.
- *
- * Note that these functions assume that `in` is a sorted sequence and they don't
- * check its order. If you pass in an unsorted list or set, they'll still
- * return a 'VtencErrorNoError' code, but the output won't correspond to the
- * correct encoded stream for the input sequence.
+ * typedef VtencEncoder - VTEnc encoder.
  */
-
 typedef struct {
+  /**
+   * Indicates whether repeated values are allowed or not.
+   */
   int allow_repeated_values;
+
+  /**
+   * Indicates whether to skip full subtrees or not.
+   */
   int skip_full_subtrees;
+
+  /**
+   * 'Returning state' after calling a encode function. It'll hold the error
+   * code value if the encode function fails, or a 'VtencErrorNoError' value if
+   * the function runs successfully.
+   */
   VtencErrorCode last_error_code;
 } VtencEncoder;
 
+/**
+ * vtenc_encoder_init - initialises encoder @enc.
+ */
 void vtenc_encoder_init(VtencEncoder *enc);
 
+/**
+ * vtenc_encode* functions.
+ *
+ * Functions to encode the sequence @in into the already-allocated stream of
+ * bytes @out, using the VTEnc algorithm with the provided encoding parameters.
+ *
+ * @enc: encoder. Provides encoding parameters and holds the returning state.
+ * @in: input sequence to be encoded.
+ * @in_len: size of @in.
+ * @out: output stream of bytes.
+ * @out_cap: capacity of @out / number of allocated bytes in @out.
+ *
+ * In case of error, @enc->last_error_code contains a specific error code
+ * after calling the function. Otherwise, it has a 'VtencErrorNoError' code.
+ *
+ * Note that these functions assume that @in is a sorted sequence and they don't
+ * check its order. If you pass in an unsorted sequence, @enc->last_error_code
+ * will still have a 'VtencErrorNoError' value after calling the function, but
+ * the output won't correspond to the correct encoded stream for the input
+ * sequence.
+ *
+ * Return the size of the encoded output @out.
+ */
 size_t vtenc_encode8(VtencEncoder *enc, const uint8_t *in, size_t in_len, uint8_t *out, size_t out_cap);
 size_t vtenc_encode16(VtencEncoder *enc, const uint16_t *in, size_t in_len, uint8_t *out, size_t out_cap);
 size_t vtenc_encode32(VtencEncoder *enc, const uint32_t *in, size_t in_len, uint8_t *out, size_t out_cap);
 size_t vtenc_encode64(VtencEncoder *enc, const uint64_t *in, size_t in_len, uint8_t *out, size_t out_cap);
 
 /**
- * Functions to calculate the maximum encoded size in bytes when encoding a list
- * or set of size `in_len`. The returned value is an approximation of the actual
- * encoded length and it's guaranteed to be at least as big as the actual size.
+ * vtenc_max_encoded_size* functions.
+ *
+ * Functions to calculate the maximum encoded size in bytes when encoding a
+ * sequence of size @in_len with the corresponding vtenc_encode* function.
+ *
+ * Return an approximation of the encoded length, which is guaranteed to
+ * be at least as big as the actual size.
  */
-
 size_t vtenc_max_encoded_size8(const VtencEncoder *enc, size_t in_len);
 size_t vtenc_max_encoded_size16(const VtencEncoder *enc, size_t in_len);
 size_t vtenc_max_encoded_size32(const VtencEncoder *enc, size_t in_len);
 size_t vtenc_max_encoded_size64(const VtencEncoder *enc, size_t in_len);
 
 /**
- * Decoding functions.
- *
- * Each function decodes the stream of bytes `in` into the already-allocated
- * list or set `out`.
- *
- * `in_len`: size of `in`.
- * `out_len`: size of `out`.
- *
- * Returns 'VtencErrorNoError' in case of success. Otherwise, a specific error
- * code is returned.
+ * typedef VtencDecoder - VTEnc decoder.
  */
-
 typedef struct {
+  /**
+   * Indicates whether repeated values are allowed or not.
+   */
   int allow_repeated_values;
+
+  /**
+   * Indicates whether to skip full subtrees or not.
+   */
   int skip_full_subtrees;
+
+  /**
+   * 'Returning state' after calling a decode function. It'll hold the error
+   * code value if the decode function fails, or a 'VtencErrorNoError' value if
+   * the function runs successfully.
+   */
   VtencErrorCode last_error_code;
 } VtencDecoder;
 
+/**
+ * vtenc_decoder_init - initialises decoder @dec.
+ */
 void vtenc_decoder_init(VtencDecoder *dec);
 
+/**
+ * vtenc_decode* functions.
+ *
+ * Functions to decode the stream of bytes @in into the already-allocated
+ * sequence @out, using the VTEnc algorithm with the provided decoding
+ * parameters.
+ *
+ * @dec: decoder. Provides decoding parameters and holds the returning state.
+ * @in: input stream of bytes to be decoded.
+ * @in_len: size of @in.
+ * @out: output sequence.
+ * @out_len: size of @out.
+ *
+ * In case of failure, @dec->last_error_code contains the error code after
+ * calling the function. If the function didn't fail, it holds a
+ * 'VtencErrorNoError' value.
+ */
 void vtenc_decode8(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint8_t *out, size_t out_len);
 void vtenc_decode16(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint16_t *out, size_t out_len);
 void vtenc_decode32(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint32_t *out, size_t out_len);
 void vtenc_decode64(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint64_t *out, size_t out_len);
 
 /**
+ * vtenc_decoded_size* functions.
+ *
  * Functions to extract the size of the decoded sequence from the encoded stream
- * of bytes `in` of size `in_len`. These functions are used to allocate memory
- * for the list or set to be decoded before calling the corresponding decode
+ * of bytes @in of size @in_len. These functions are used to allocate memory
+ * for the sequence to be decoded before calling the corresponding vtenc_decode*
  * function.
  */
-
 size_t vtenc_decoded_size8(VtencDecoder *dec, const uint8_t *in, size_t in_len);
 size_t vtenc_decoded_size16(VtencDecoder *dec, const uint8_t *in, size_t in_len);
 size_t vtenc_decoded_size32(VtencDecoder *dec, const uint8_t *in, size_t in_len);
