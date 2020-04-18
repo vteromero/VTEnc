@@ -54,10 +54,13 @@ int main()
 {
   const uint8_t in[] = {13, 14, 29, 39, 65, 80, 88, 106, 152, 154, 155, 177};
   const size_t in_len = sizeof(in) / sizeof(in[0]);
-  const size_t out_cap = vtenc_list_max_encoded_size_u8(in_len); /* output capacity */
+  const size_t out_cap = vtenc_max_encoded_size8(in_len); /* output capacity */
   uint8_t *out=NULL;
-  size_t out_len=0;
-  VtencErrorCode code;
+  size_t out_len;
+  VtencEncoder encoder;
+
+  /* initialise `encoder` */
+  vtenc_encoder_init(&encoder);
 
   /* allocate `out_cap` bytes */
   out = (uint8_t *) malloc(out_cap * sizeof(uint8_t));
@@ -67,9 +70,9 @@ int main()
   }
 
   /* encode `in` list into `out` stream of bytes */
-  code = vtenc_list_encode_u8(in, in_len, out, out_cap, &out_len);
-  if (code != VtencErrorNoError) {
-    fprintf(stderr, "failed encoding with error code: %u\n", code);
+  out_len = vtenc_encode8(&encoder, in, in_len, out, out_cap);
+  if (encoder.last_error_code != VtencErrorNoError) {
+    fprintf(stderr, "encode failed with code: %d\n", encoder.last_error_code);
     free(out);
     return 1;
   }
@@ -97,9 +100,20 @@ int main()
   const uint8_t in[] = {0x0c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x90, 0x26,
     0x24, 0x8d, 0x75, 0xfd, 0x95, 0x83, 0x9b, 0x03};
   const size_t in_len = sizeof(in) / sizeof(in[0]);
-  size_t out_len = vtenc_list_decoded_size_u8(in, in_len); /* output length */
-  uint8_t *out=NULL;
-  VtencErrorCode code;
+  uint8_t *out = NULL;
+  size_t out_len;
+  VtencDecoder decoder;
+
+  /* initialise decoder */
+  vtenc_decoder_init(&decoder);
+
+  /* get decoded size */
+  out_len = vtenc_decoded_size8(&decoder, in, in_len);
+  if (decoder.last_error_code != VtencErrorNoError) {
+    fprintf(stderr, "getting decoded size failed with code: %d\n",
+      decoder.last_error_code);
+    return 1;
+  }
 
   /* allocate `out_len` items */
   out = (uint8_t *) malloc(out_len * sizeof(uint8_t));
@@ -109,9 +123,9 @@ int main()
   }
 
   /* decode `in` stream of bytes into `out` list */
-  code = vtenc_list_decode_u8(in, in_len, out, out_len);
-  if (code != VtencErrorNoError) {
-    fprintf(stderr, "failed decoding with error code: %u\n", code);
+  vtenc_decode8(&decoder, in, in_len, out, out_len);
+  if (decoder.last_error_code != VtencErrorNoError) {
+    fprintf(stderr, "decode failed with code: %d\n", decoder.last_error_code);
     free(out);
     return 1;
   }

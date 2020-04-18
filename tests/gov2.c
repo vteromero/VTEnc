@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../vtenc.h"
+#include "encdec.h"
 
 struct Stats {
   size_t n_sets;
@@ -75,60 +75,36 @@ int has_strictly_ascending_order(const uint32_t *values, uint32_t values_len)
 
 int encode_and_decode_set(const uint32_t *values, uint32_t values_len, struct Stats *stats)
 {
-  size_t enc_out_cap, enc_out_len, dec_out_len;
-  uint8_t *enc_out;
-  uint32_t *dec_out;
-  VtencErrorCode enc_ret_code, dec_ret_code;
-  int exit_code = 1;
+  struct EncDec encdec;
 
-  enc_out_cap = vtenc_set_max_encoded_size_u32(values_len);
-  enc_out = (uint8_t *) malloc(enc_out_cap * sizeof(uint8_t));
-  if (enc_out == NULL) {
-    fprintf(stderr, "allocation error\n");
-    exit_code = 0;
-    goto cleanup0;
+  encdec_init32(&encdec);
+  encdec.allow_repeated_values = 0;
+
+  if (!encdec_encode(&encdec, values, values_len)) {
+    fprintf(stderr, "encdec_encode failed\n");
+    encdec_free(&encdec);
+    return 0;
   }
 
-  enc_ret_code = vtenc_set_encode_u32(values, values_len, enc_out, enc_out_cap, &enc_out_len);
-  if (enc_ret_code != VtencErrorNoError) {
-    fprintf(stderr, "encode error code: %d\n", enc_ret_code);
-    exit_code = 0;
-    goto cleanup1;
+  if (!encdec_decode(&encdec)) {
+    fprintf(stderr, "encdec_decode failed\n");
+    encdec_free(&encdec);
+    return 0;
   }
 
-  dec_out_len = vtenc_set_decoded_size_u32(enc_out, enc_out_len);
-  dec_out = (uint32_t *) malloc(dec_out_len * sizeof(uint32_t));
-  if (dec_out == NULL) {
-    fprintf(stderr, "allocation error\n");
-    exit_code = 0;
-    goto cleanup1;
-  }
-
-  dec_ret_code = vtenc_set_decode_u32(enc_out, enc_out_len, dec_out, dec_out_len);
-  if (dec_ret_code != VtencErrorNoError) {
-    fprintf(stderr, "decode error code: %d\n", dec_ret_code);
-    exit_code = 0;
-    goto cleanup2;
-  }
-
-  if ((dec_out_len != values_len) || (memcmp(values, dec_out, values_len * sizeof(uint32_t)) != 0)) {
-    fprintf(stderr, "decoded output different from original input\n");
-    exit_code = 0;
-    goto cleanup2;
+  if (!encdec_check_equality(&encdec)) {
+    fprintf(stderr, "encdec_check_equality failed\n");
+    encdec_free(&encdec);
+    return 0;
   }
 
   stats->n_sets++;
   stats->total_input_size += values_len * sizeof(uint32_t);
-  stats->total_encoded_size += enc_out_len;
+  stats->total_encoded_size += encdec.ctx.enc_out_len;
 
-cleanup2:
-  free(dec_out);
+  encdec_free(&encdec);
 
-cleanup1:
-  free(enc_out);
-
-cleanup0:
-  return exit_code;
+  return 1;
 }
 
 size_t do_test(const char *filename)

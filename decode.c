@@ -7,6 +7,13 @@
 
 #include "internals.h"
 
+void vtenc_decoder_init(VtencDecoder *dec)
+{
+  dec->allow_repeated_values  = 1;
+  dec->skip_full_subtrees     = 1;
+  dec->last_error_code        = VtencErrorNoError;
+}
+
 #define LIST_MAX_VALUES VTENC_LIST_MAX_VALUES
 #define LIST_CARDINALITY_SIZE VTENC_LIST_CARDINALITY_SIZE
 
