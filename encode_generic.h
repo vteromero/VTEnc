@@ -64,6 +64,10 @@ static VtencErrorCode encctx_init_with_encoder(WIDTH)(struct EncodeCtx(WIDTH) *c
 {
   RETURN_IF_ERROR(encctx_init(WIDTH)(ctx, in, in_len, out, out_cap));
 
+  /**
+   * `skip_full_subtrees` parameter is only applicable to sets, i.e. sequences
+   * with no repeated values.
+   */
   ctx->skip_full_subtrees = !enc->allow_repeated_values && enc->skip_full_subtrees;
 
   return VtencErrorNoError;

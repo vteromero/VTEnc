@@ -44,6 +44,8 @@ typedef struct {
 
   /**
    * Indicates whether to skip full subtrees or not.
+   * This parameter is only applicable to sets, i.e. sequences with no repeated
+   * values. It's ignored if `allow_repeated_values` is set to 1.
    */
   int skip_full_subtrees;
 
@@ -113,6 +115,8 @@ typedef struct {
 
   /**
    * Indicates whether to skip full subtrees or not.
+   * This parameter is only applicable to sets, i.e. sequences with no repeated
+   * values. It's ignored if `allow_repeated_values` is set to 1.
    */
   int skip_full_subtrees;
 

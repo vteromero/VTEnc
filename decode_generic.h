@@ -69,6 +69,10 @@ static VtencErrorCode decctx_init_with_decoder(WIDTH)(struct DecodeCtx(WIDTH) *c
 {
   RETURN_IF_ERROR(decctx_init(WIDTH)(ctx, in, in_len, out, out_len));
 
+  /**
+   * `skip_full_subtrees` parameter is only applicable to sets, i.e. sequences
+   * with no repeated values.
+   */
   ctx->reconstruct_full_subtrees = !dec->allow_repeated_values && dec->skip_full_subtrees;
 
   return VtencErrorNoError;
