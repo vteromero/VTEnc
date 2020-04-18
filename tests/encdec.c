@@ -18,35 +18,35 @@ static size_t type_size32() { return sizeof(uint32_t); }
 static size_t type_size64() { return sizeof(uint64_t); }
 
 static const struct EncDecFuncs enc_dec_8_funcs = {
-  .type_size = type_size8,
+  .type_size        = type_size8,
   .max_encoded_size = vtenc_max_encoded_size8,
-  .encode = (size_t (*)(VtencEncoder *, const void *, size_t,  uint8_t *, size_t))vtenc_encode8,
-  .decoded_size = (size_t (*)(VtencDecoder *, const void *, size_t))vtenc_decoded_size8,
-  .decode = (void (*)(VtencDecoder *, const uint8_t *, size_t,  void *, size_t))vtenc_decode8
+  .encode           = (encode_func_t)vtenc_encode8,
+  .decoded_size     = (decoded_size_func_t)vtenc_decoded_size8,
+  .decode           = (decode_func_t)vtenc_decode8
 };
 
 static const struct EncDecFuncs enc_dec_16_funcs = {
-  .type_size = type_size16,
+  .type_size        = type_size16,
   .max_encoded_size = vtenc_max_encoded_size16,
-  .encode = (size_t (*)(VtencEncoder *, const void *, size_t,  uint8_t *, size_t))vtenc_encode16,
-  .decoded_size = (size_t (*)(VtencDecoder *, const void *, size_t))vtenc_decoded_size16,
-  .decode = (void (*)(VtencDecoder *, const uint8_t *, size_t,  void *, size_t))vtenc_decode16
+  .encode           = (encode_func_t)vtenc_encode16,
+  .decoded_size     = (decoded_size_func_t)vtenc_decoded_size16,
+  .decode           = (decode_func_t)vtenc_decode16
 };
 
 static const struct EncDecFuncs enc_dec_32_funcs = {
-  .type_size = type_size32,
+  .type_size        = type_size32,
   .max_encoded_size = vtenc_max_encoded_size32,
-  .encode = (size_t (*)(VtencEncoder *, const void *, size_t,  uint8_t *, size_t))vtenc_encode32,
-  .decoded_size = (size_t (*)(VtencDecoder *, const void *, size_t))vtenc_decoded_size32,
-  .decode = (void (*)(VtencDecoder *, const uint8_t *, size_t,  void *, size_t))vtenc_decode32
+  .encode           = (encode_func_t)vtenc_encode32,
+  .decoded_size     = (decoded_size_func_t)vtenc_decoded_size32,
+  .decode           = (decode_func_t)vtenc_decode32
 };
 
 static const struct EncDecFuncs enc_dec_64_funcs = {
-  .type_size = type_size64,
+  .type_size        = type_size64,
   .max_encoded_size = vtenc_max_encoded_size64,
-  .encode = (size_t (*)(VtencEncoder *, const void *, size_t,  uint8_t *, size_t))vtenc_encode64,
-  .decoded_size = (size_t (*)(VtencDecoder *, const void *, size_t))vtenc_decoded_size64,
-  .decode = (void (*)(VtencDecoder *, const uint8_t *, size_t,  void *, size_t))vtenc_decode64
+  .encode           = (encode_func_t)vtenc_encode64,
+  .decoded_size     = (decoded_size_func_t)vtenc_decoded_size64,
+  .decode           = (decode_func_t)vtenc_decode64
 };
 
 static void encdecctx_init(struct EncDecCtx *ctx)

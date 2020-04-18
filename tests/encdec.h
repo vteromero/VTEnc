@@ -11,12 +11,18 @@
 
 #include "../vtenc.h"
 
+typedef size_t (*type_size_func_t)();
+typedef size_t (*max_encoded_size_func_t)(const VtencEncoder *, size_t);
+typedef size_t (*encode_func_t)(VtencEncoder *, const void *, size_t,  uint8_t *, size_t);
+typedef size_t (*decoded_size_func_t)(VtencDecoder *, const void *, size_t);
+typedef void (*decode_func_t)(VtencDecoder *, const uint8_t *, size_t,  void *, size_t);
+
 struct EncDecFuncs {
-  size_t (*type_size)();
-  size_t (*max_encoded_size)(const VtencEncoder *enc, size_t in_len);
-  size_t (*encode)(VtencEncoder *enc, const void *in, size_t in_len, uint8_t *out, size_t out_cap);
-  size_t (*decoded_size)(VtencDecoder *dec, const void *in, size_t in_len);
-  void (*decode)(VtencDecoder *dec, const uint8_t *in, size_t in_len, void *out, size_t out_len);
+  type_size_func_t type_size;
+  max_encoded_size_func_t max_encoded_size;
+  encode_func_t encode;
+  decoded_size_func_t decoded_size;
+  decode_func_t decode;
 };
 
 struct EncDecCtx {
