@@ -94,15 +94,15 @@ size_t vtenc_encode64(VtencEncoder *enc, const uint64_t *in, size_t in_len, uint
  * vtenc_max_encoded_size* functions.
  *
  * Functions to calculate the maximum encoded size in bytes when encoding a
- * sequence of size @in_len with the corresponding vtenc_encode* function.
+ * sequence of size @in_len with its corresponding vtenc_encode* function.
  *
  * Return an approximation of the encoded length, which is guaranteed to
  * be at least as big as the actual size.
  */
-size_t vtenc_max_encoded_size8(const VtencEncoder *enc, size_t in_len);
-size_t vtenc_max_encoded_size16(const VtencEncoder *enc, size_t in_len);
-size_t vtenc_max_encoded_size32(const VtencEncoder *enc, size_t in_len);
-size_t vtenc_max_encoded_size64(const VtencEncoder *enc, size_t in_len);
+size_t vtenc_max_encoded_size8(size_t in_len);
+size_t vtenc_max_encoded_size16(size_t in_len);
+size_t vtenc_max_encoded_size32(size_t in_len);
+size_t vtenc_max_encoded_size64(size_t in_len);
 
 /**
  * typedef VtencDecoder - VTEnc decoder.

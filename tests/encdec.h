@@ -12,7 +12,7 @@
 #include "../vtenc.h"
 
 typedef size_t (*type_size_func_t)();
-typedef size_t (*max_encoded_size_func_t)(const VtencEncoder *, size_t);
+typedef size_t (*max_encoded_size_func_t)(size_t);
 typedef size_t (*encode_func_t)(VtencEncoder *, const void *, size_t,  uint8_t *, size_t);
 typedef size_t (*decoded_size_func_t)(VtencDecoder *, const void *, size_t);
 typedef void (*decode_func_t)(VtencDecoder *, const uint8_t *, size_t,  void *, size_t);

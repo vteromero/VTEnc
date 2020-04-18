@@ -61,10 +61,10 @@ int main()
 
   RUN_TEST(test_vtenc_encoder_init);
 
-  RUN_TEST(test_vtenc_encode8);
-  RUN_TEST(test_vtenc_encode16);
-  RUN_TEST(test_vtenc_encode32);
-  RUN_TEST(test_vtenc_encode64);
+  // RUN_TEST(test_vtenc_encode8);
+  // RUN_TEST(test_vtenc_encode16);
+  // RUN_TEST(test_vtenc_encode32);
+  // RUN_TEST(test_vtenc_encode64);
 
   RUN_TEST(test_vtenc_max_encoded_size8);
   RUN_TEST(test_vtenc_max_encoded_size16);

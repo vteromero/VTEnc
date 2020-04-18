@@ -701,7 +701,7 @@ int vtenc_encode8_test_case(struct EncodeTestCase *test_case)
   struct EncodeTestCaseInput *input = &(test_case->input);
   struct EncodeTestCaseOutput *expected_output = &(test_case->expected_output);
   VtencEncoder *encoder = &(input->encoder);
-  const size_t out_cap = vtenc_max_encoded_size8(encoder, input->values_len);
+  const size_t out_cap = vtenc_max_encoded_size8(input->values_len);
   uint8_t out[out_cap & 0xffff]; // mask capacity to avoid large allocations on the stack
   size_t out_len;
 
@@ -725,7 +725,7 @@ int vtenc_encode16_test_case(struct EncodeTestCase *test_case)
   struct EncodeTestCaseInput *input = &(test_case->input);
   struct EncodeTestCaseOutput *expected_output = &(test_case->expected_output);
   VtencEncoder *encoder = &(input->encoder);
-  const size_t out_cap = vtenc_max_encoded_size16(encoder, input->values_len);
+  const size_t out_cap = vtenc_max_encoded_size16(input->values_len);
   uint8_t out[out_cap & 0xffff]; // mask capacity to avoid large allocations on the stack
   size_t out_len;
 
@@ -749,7 +749,7 @@ int vtenc_encode32_test_case(struct EncodeTestCase *test_case)
   struct EncodeTestCaseInput *input = &(test_case->input);
   struct EncodeTestCaseOutput *expected_output = &(test_case->expected_output);
   VtencEncoder *encoder = &(input->encoder);
-  const size_t out_cap = vtenc_max_encoded_size32(encoder, input->values_len);
+  const size_t out_cap = vtenc_max_encoded_size32(input->values_len);
   uint8_t out[out_cap & 0xffff]; // mask capacity to avoid large allocations on the stack
   size_t out_len;
 
@@ -773,7 +773,7 @@ int vtenc_encode64_test_case(struct EncodeTestCase *test_case)
   struct EncodeTestCaseInput *input = &(test_case->input);
   struct EncodeTestCaseOutput *expected_output = &(test_case->expected_output);
   VtencEncoder *encoder = &(input->encoder);
-  const size_t out_cap = vtenc_max_encoded_size64(encoder, input->values_len);
+  const size_t out_cap = vtenc_max_encoded_size64(input->values_len);
   uint8_t out[out_cap & 0xffff]; // mask capacity to avoid large allocations on the stack
   size_t out_len;
 
@@ -842,91 +842,56 @@ int test_vtenc_encode64(void)
 
 int test_vtenc_max_encoded_size8(void)
 {
-  VtencEncoder enc = {.allow_repeated_values = 1};
-
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 0) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 1) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 5) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 10) == 24);
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 100) == 112);
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 1000) == 1008);
-
-  enc.allow_repeated_values = 0;
-
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 0) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 1) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 5) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 10) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 100) == 104);
+  EXPECT_TRUE(vtenc_max_encoded_size8(0) == 8);
+  EXPECT_TRUE(vtenc_max_encoded_size8(1) == 8);
+  EXPECT_TRUE(vtenc_max_encoded_size8(7) == 8);
+  EXPECT_TRUE(vtenc_max_encoded_size8(8) == 16);
+  EXPECT_TRUE(vtenc_max_encoded_size8(15) == 16);
+  EXPECT_TRUE(vtenc_max_encoded_size8(16) == 24);
+  EXPECT_TRUE(vtenc_max_encoded_size8(100) == 104);
+  EXPECT_TRUE(vtenc_max_encoded_size8(1000) == 1008);
 
   return 1;
 }
 
 int test_vtenc_max_encoded_size16(void)
 {
-  VtencEncoder enc = {.allow_repeated_values = 1};
-
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 0) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 1) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 5) == 24);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 10) == 32);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 100) == 216);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 1000) == 2016);
-
-  enc.allow_repeated_values = 0;
-
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 0) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 1) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 5) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 10) == 24);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 100) == 208);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 1000) == 2008);
+  EXPECT_TRUE(vtenc_max_encoded_size16(0) == 8);
+  EXPECT_TRUE(vtenc_max_encoded_size16(1) == 8);
+  EXPECT_TRUE(vtenc_max_encoded_size16(3) == 8);
+  EXPECT_TRUE(vtenc_max_encoded_size16(4) == 16);
+  EXPECT_TRUE(vtenc_max_encoded_size16(7) == 16);
+  EXPECT_TRUE(vtenc_max_encoded_size16(8) == 24);
+  EXPECT_TRUE(vtenc_max_encoded_size16(10) == 24);
+  EXPECT_TRUE(vtenc_max_encoded_size16(100) == 208);
+  EXPECT_TRUE(vtenc_max_encoded_size16(1000) == 2008);
 
   return 1;
 }
 
 int test_vtenc_max_encoded_size32(void)
 {
-  VtencEncoder enc = {.allow_repeated_values = 1};
-
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 0) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 1) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 5) == 32);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 10) == 56);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 100) == 416);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 1000) == 4016);
-
-  enc.allow_repeated_values = 0;
-
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 0) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 1) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 5) == 32);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 10) == 48);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 100) == 408);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 1000) == 4008);
+  EXPECT_TRUE(vtenc_max_encoded_size32(0) == 8);
+  EXPECT_TRUE(vtenc_max_encoded_size32(1) == 8);
+  EXPECT_TRUE(vtenc_max_encoded_size32(2) == 16);
+  EXPECT_TRUE(vtenc_max_encoded_size32(3) == 16);
+  EXPECT_TRUE(vtenc_max_encoded_size32(4) == 24);
+  EXPECT_TRUE(vtenc_max_encoded_size32(10) == 48);
+  EXPECT_TRUE(vtenc_max_encoded_size32(100) == 408);
+  EXPECT_TRUE(vtenc_max_encoded_size32(1000) == 4008);
 
   return 1;
 }
 
 int test_vtenc_max_encoded_size64(void)
 {
-  VtencEncoder enc = {.allow_repeated_values = 1};
-
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 0) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 1) == 24);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 5) == 56);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 10) == 96);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 100) == 816);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 1000) == 8016);
-
-  enc.allow_repeated_values = 0;
-
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 0) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 1) == 24);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 5) == 56);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 10) == 96);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 100) == 816);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 1000) == 8016);
+  EXPECT_TRUE(vtenc_max_encoded_size64(0) == 8);
+  EXPECT_TRUE(vtenc_max_encoded_size64(1) == 16);
+  EXPECT_TRUE(vtenc_max_encoded_size64(2) == 24);
+  EXPECT_TRUE(vtenc_max_encoded_size64(3) == 32);
+  EXPECT_TRUE(vtenc_max_encoded_size64(10) == 88);
+  EXPECT_TRUE(vtenc_max_encoded_size64(100) == 808);
+  EXPECT_TRUE(vtenc_max_encoded_size64(1000) == 8008);
 
   return 1;
 }

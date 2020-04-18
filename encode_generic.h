@@ -200,11 +200,7 @@ size_t vtenc_encode(WIDTH)(VtencEncoder *enc, const TYPE *in, size_t in_len,
   return encctx_close(WIDTH)(&ctx);
 }
 
-size_t vtenc_max_encoded_size(WIDTH)(const VtencEncoder *enc, size_t in_len)
+size_t vtenc_max_encoded_size(WIDTH)(size_t in_len)
 {
-  if (enc->allow_repeated_values) {
-    return bswriter_align_buffer_size((LIST_CARDINALITY_SIZE / 8) + (WIDTH / 8) * (in_len + 1));
-  } else {
-    return bswriter_align_buffer_size((SET_CARDINALITY_SIZE / 8) + (WIDTH / 8) * (in_len + 1));
-  }
+  return bswriter_align_buffer_size((WIDTH / 8) * (in_len + 1));
 }

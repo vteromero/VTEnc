@@ -98,7 +98,7 @@ int encdec_encode(struct EncDec *encdec, const void *in, size_t in_len)
   encdec->ctx.in = in;
   encdec->ctx.in_len = in_len;
 
-  enc_out_cap = encdec->funcs->max_encoded_size(&encoder, in_len);
+  enc_out_cap = encdec->funcs->max_encoded_size(in_len);
 
   encdec->ctx.enc_out = (uint8_t *) malloc(enc_out_cap * sizeof(uint8_t));
 
