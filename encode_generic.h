@@ -22,8 +22,6 @@
 #define count_zeros_at_bit_pos(_width_) WIDTH_SUFFIX(count_zeros_at_bit_pos, _width_)
 #define encode_lower_bits(_width_) WIDTH_SUFFIX(encode_lower_bits, _width_)
 #define encode_bits_tree(_width_) WIDTH_SUFFIX(encode_bits_tree, _width_)
-#define list_write_cardinality(_width_) WIDTH_SUFFIX(list_write_cardinality, _width_)
-#define set_write_cardinality(_width_) WIDTH_SUFFIX(set_write_cardinality, _width_)
 #define vtenc_encode(_width_) WIDTH_SUFFIX(vtenc_encode, _width_)
 #define vtenc_max_encoded_size(_width_) WIDTH_SUFFIX(vtenc_max_encoded_size, _width_)
 
@@ -157,16 +155,6 @@ static VtencErrorCode encode_bits_tree(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
   return VtencErrorNoError;
 }
 
-static VtencErrorCode list_write_cardinality(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
-{
-  return bswriter_write(&(ctx->bits_writer), ctx->values_len, LIST_CARDINALITY_SIZE);
-}
-
-static VtencErrorCode set_write_cardinality(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
-{
-  return bswriter_write(&(ctx->bits_writer), ctx->values_len - 1, SET_CARDINALITY_SIZE);
-}
-
 size_t vtenc_encode(WIDTH)(VtencEncoder *enc, const TYPE *in, size_t in_len,
   uint8_t *out, size_t out_cap)
 {
@@ -188,12 +176,6 @@ size_t vtenc_encode(WIDTH)(VtencEncoder *enc, const TYPE *in, size_t in_len,
   ENC_RETURN_ON_ERROR(&ctx, enc,
     encctx_init_with_encoder(WIDTH)(&ctx, enc, in, in_len, out, out_cap)
   );
-
-  if (enc->allow_repeated_values) {
-    ENC_RETURN_ON_ERROR(&ctx, enc, list_write_cardinality(WIDTH)(&ctx));
-  } else {
-    ENC_RETURN_ON_ERROR(&ctx, enc, set_write_cardinality(WIDTH)(&ctx));
-  }
 
   ENC_RETURN_ON_ERROR(&ctx, enc, encode_bits_tree(WIDTH)(&ctx));
 

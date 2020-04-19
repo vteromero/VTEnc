@@ -16,6 +16,14 @@ do {                                      \
   }                                       \
 } while(0)
 
+#define EXPECT_TRUE_MSG(test, msg)                  \
+do {                                                \
+  if (!(test)) {                                    \
+    printf("\n\t\""#test"\" failed: %s\n", (msg));  \
+    return 0;                                       \
+  }                                                 \
+} while(0)
+
 int test_bits_swap_u16(void);
 int test_bits_swap_u32(void);
 int test_bits_swap_u64(void);
