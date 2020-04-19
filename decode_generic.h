@@ -25,7 +25,6 @@
 #define list_read_cardinality(_width_) WIDTH_SUFFIX(list_read_cardinality, _width_)
 #define set_read_cardinality(_width_) WIDTH_SUFFIX(set_read_cardinality, _width_)
 #define vtenc_decode(_width_) WIDTH_SUFFIX(vtenc_decode, _width_)
-#define vtenc_decoded_size(_width_) WIDTH_SUFFIX(vtenc_decoded_size, _width_)
 
 #define DEC_RETURN_WITH_CODE(ctx, dec, code)  \
 do {                                          \
@@ -239,32 +238,4 @@ void vtenc_decode(WIDTH)(VtencDecoder *dec, const uint8_t *in, size_t in_len,
   DEC_RETURN_ON_ERROR(&ctx, dec, decode_bits_tree(WIDTH)(&ctx));
 
   decctx_close(WIDTH)(&ctx);
-}
-
-size_t vtenc_decoded_size(WIDTH)(VtencDecoder *dec, const uint8_t *in, size_t in_len)
-{
-  BSReader reader;
-  size_t dec_len;
-  VtencErrorCode code;
-
-  dec->last_error_code = VtencErrorNoError;
-
-  code = bsreader_init(&reader, in, in_len);
-  if (code != VtencErrorNoError) {
-    dec->last_error_code = code;
-    return 0;
-  }
-
-  if (dec->allow_repeated_values) {
-    code = list_read_cardinality(WIDTH)(&reader, &dec_len);
-  } else {
-    code = set_read_cardinality(WIDTH)(&reader, &dec_len);
-  }
-
-  if (code != VtencErrorNoError) {
-    dec->last_error_code = code;
-    return 0;
-  }
-
-  return dec_len;
 }

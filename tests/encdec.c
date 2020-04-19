@@ -21,7 +21,6 @@ static const struct EncDecFuncs enc_dec_8_funcs = {
   .type_size        = type_size8,
   .max_encoded_size = vtenc_max_encoded_size8,
   .encode           = (encode_func_t)vtenc_encode8,
-  .decoded_size     = (decoded_size_func_t)vtenc_decoded_size8,
   .decode           = (decode_func_t)vtenc_decode8
 };
 
@@ -29,7 +28,6 @@ static const struct EncDecFuncs enc_dec_16_funcs = {
   .type_size        = type_size16,
   .max_encoded_size = vtenc_max_encoded_size16,
   .encode           = (encode_func_t)vtenc_encode16,
-  .decoded_size     = (decoded_size_func_t)vtenc_decoded_size16,
   .decode           = (decode_func_t)vtenc_decode16
 };
 
@@ -37,7 +35,6 @@ static const struct EncDecFuncs enc_dec_32_funcs = {
   .type_size        = type_size32,
   .max_encoded_size = vtenc_max_encoded_size32,
   .encode           = (encode_func_t)vtenc_encode32,
-  .decoded_size     = (decoded_size_func_t)vtenc_decoded_size32,
   .decode           = (decode_func_t)vtenc_decode32
 };
 
@@ -45,7 +42,6 @@ static const struct EncDecFuncs enc_dec_64_funcs = {
   .type_size        = type_size64,
   .max_encoded_size = vtenc_max_encoded_size64,
   .encode           = (encode_func_t)vtenc_encode64,
-  .decoded_size     = (decoded_size_func_t)vtenc_decoded_size64,
   .decode           = (decode_func_t)vtenc_decode64
 };
 
@@ -130,16 +126,7 @@ int encdec_decode(struct EncDec *encdec)
     .skip_full_subtrees = encdec->skip_full_subtrees
   };
 
-  encdec->ctx.dec_out_len = encdec->funcs->decoded_size(
-    &decoder,
-    encdec->ctx.enc_out,
-    encdec->ctx.enc_out_len
-  );
-
-  if (decoder.last_error_code != VtencErrorNoError) {
-    fprintf(stderr, "getting decoded size failed with code: %d\n", decoder.last_error_code);
-    return 0;
-  }
+  encdec->ctx.dec_out_len = encdec->ctx.in_len;
 
   encdec->ctx.dec_out = malloc(encdec->ctx.dec_out_len * encdec->funcs->type_size());
 
