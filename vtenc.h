@@ -30,7 +30,8 @@ typedef enum {
   VtencErrorNotEnoughBits   = 4,
   VtencErrorInputTooSmall   = 5,
   VtencErrorInputTooBig     = 6,
-  VtencErrorWrongFormat     = 7
+  VtencErrorOutputTooBig    = 7,
+  VtencErrorWrongFormat     = 8
 } VtencErrorCode;
 
 /**

@@ -56,6 +56,21 @@ static struct DecodeTestCase test_cases8[] = {
       .last_error_code = VtencErrorWrongFormat
     }
   },
+  {
+    .input = {
+      .decoder = {
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0
+      },
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .values_len = 0xffffffffffffffffULL,
+    },
+    .expected_output = {
+      .values = (uint8_t []){},
+      .last_error_code = VtencErrorOutputTooBig
+    }
+  },
   // {
   //   .input = {
   //     .decoder = {
@@ -131,6 +146,21 @@ static struct DecodeTestCase test_cases8[] = {
     .expected_output = {
       .values = (uint8_t []){},
       .last_error_code = VtencErrorWrongFormat
+    }
+  },
+  {
+    .input = {
+      .decoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1
+      },
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .values_len = 257,
+    },
+    .expected_output = {
+      .values = (uint8_t []){},
+      .last_error_code = VtencErrorOutputTooBig
     }
   },
   // {
@@ -244,6 +274,21 @@ static struct DecodeTestCase test_cases16[] = {
       .last_error_code = VtencErrorWrongFormat
     }
   },
+  {
+    .input = {
+      .decoder = {
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0
+      },
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .values_len = 0xffffffffffffffffULL
+    },
+    .expected_output = {
+      .values = (uint16_t []){},
+      .last_error_code = VtencErrorOutputTooBig
+    }
+  },
   // {
   //   .input = {
   //     .decoder = {
@@ -322,6 +367,21 @@ static struct DecodeTestCase test_cases16[] = {
     .expected_output = {
       .values = (uint16_t []){},
       .last_error_code = VtencErrorWrongFormat
+    }
+  },
+  {
+    .input = {
+      .decoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1
+      },
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .values_len = 65537
+    },
+    .expected_output = {
+      .values = (uint16_t []){},
+      .last_error_code = VtencErrorOutputTooBig
     }
   },
   // {
@@ -410,6 +470,21 @@ static struct DecodeTestCase test_cases32[] = {
       .last_error_code = VtencErrorWrongFormat
     }
   },
+  {
+    .input = {
+      .decoder = {
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0
+      },
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .values_len = 0xffffffffffffffffULL
+    },
+    .expected_output = {
+      .values = (uint32_t []){},
+      .last_error_code = VtencErrorOutputTooBig
+    }
+  },
   // {
   //   .input = {
   //     .decoder = {
@@ -493,6 +568,21 @@ static struct DecodeTestCase test_cases32[] = {
     .expected_output = {
       .values = (uint32_t []){},
       .last_error_code = VtencErrorWrongFormat
+    }
+  },
+  {
+    .input = {
+      .decoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1
+      },
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .values_len = 0x200000000
+    },
+    .expected_output = {
+      .values = (uint32_t []){},
+      .last_error_code = VtencErrorOutputTooBig
     }
   },
   // {
@@ -586,6 +676,21 @@ static struct DecodeTestCase test_cases64[] = {
       .last_error_code = VtencErrorWrongFormat
     }
   },
+  {
+    .input = {
+      .decoder = {
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0
+      },
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .values_len = 0xffffffffffffffffULL
+    },
+    .expected_output = {
+      .values = (uint64_t []){},
+      .last_error_code = VtencErrorOutputTooBig
+    }
+  },
   // {
   //   .input = {
   //     .decoder = {
@@ -674,6 +779,21 @@ static struct DecodeTestCase test_cases64[] = {
     .expected_output = {
       .values = (uint64_t []){},
       .last_error_code = VtencErrorWrongFormat
+    }
+  },
+  {
+    .input = {
+      .decoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1
+      },
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .values_len = 0xffffffffffffffffULL
+    },
+    .expected_output = {
+      .values = (uint64_t []){},
+      .last_error_code = VtencErrorOutputTooBig
     }
   },
   // {

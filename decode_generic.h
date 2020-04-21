@@ -196,8 +196,13 @@ void vtenc_decode(WIDTH)(VtencDecoder *dec, const uint8_t *in, size_t in_len,
   TYPE *out, size_t out_len)
 {
   struct DecodeCtx(WIDTH) ctx;
+  uint64_t max_values = dec->allow_repeated_values ? LIST_MAX_VALUES : SET_MAX_VALUES;
 
   dec->last_error_code = VtencErrorNoError;
+
+  if ((uint64_t)out_len > max_values) {
+    DEC_RETURN_WITH_CODE(&ctx, dec, VtencErrorOutputTooBig);
+  }
 
   memset(out, 0, out_len * sizeof(*out));
 
