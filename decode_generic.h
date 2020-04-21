@@ -22,8 +22,6 @@
 #define decode_full_subtree(_width_) WIDTH_SUFFIX(decode_full_subtree, _width_)
 #define set_ones_at_bit_pos(_width_) WIDTH_SUFFIX(set_ones_at_bit_pos, _width_)
 #define decode_bits_tree(_width_) WIDTH_SUFFIX(decode_bits_tree, _width_)
-#define list_read_cardinality(_width_) WIDTH_SUFFIX(list_read_cardinality, _width_)
-#define set_read_cardinality(_width_) WIDTH_SUFFIX(set_read_cardinality, _width_)
 #define vtenc_decode(_width_) WIDTH_SUFFIX(vtenc_decode, _width_)
 
 #define DEC_RETURN_WITH_CODE(ctx, dec, code)  \
@@ -194,24 +192,10 @@ static VtencErrorCode decode_bits_tree(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
   return VtencErrorNoError;
 }
 
-static VtencErrorCode list_read_cardinality(WIDTH)(BSReader *reader, uint64_t *cardinality)
-{
-  return bsreader_read(reader, LIST_CARDINALITY_SIZE, cardinality);
-}
-
-static VtencErrorCode set_read_cardinality(WIDTH)(BSReader *reader, uint64_t *cardinality)
-{
-  RETURN_IF_ERROR(bsreader_read(reader, SET_CARDINALITY_SIZE, cardinality));
-  ++(*cardinality);
-  return VtencErrorNoError;
-}
-
 void vtenc_decode(WIDTH)(VtencDecoder *dec, const uint8_t *in, size_t in_len,
   TYPE *out, size_t out_len)
 {
   struct DecodeCtx(WIDTH) ctx;
-  uint64_t max_values = dec->allow_repeated_values ? LIST_MAX_VALUES : SET_MAX_VALUES;
-  uint64_t cardinality = 0;
 
   dec->last_error_code = VtencErrorNoError;
 
@@ -220,20 +204,6 @@ void vtenc_decode(WIDTH)(VtencDecoder *dec, const uint8_t *in, size_t in_len,
   DEC_RETURN_ON_ERROR(&ctx, dec,
     decctx_init_with_decoder(WIDTH)(&ctx, dec, in, in_len, out, out_len)
   );
-
-  if (dec->allow_repeated_values) {
-    DEC_RETURN_ON_ERROR(&ctx, dec,
-      list_read_cardinality(WIDTH)(&(ctx.bits_reader), &cardinality)
-    );
-  } else {
-    DEC_RETURN_ON_ERROR(&ctx, dec,
-      set_read_cardinality(WIDTH)(&(ctx.bits_reader), &cardinality)
-    );
-  }
-
-  if (cardinality > max_values || cardinality != (uint64_t)out_len) {
-    DEC_RETURN_WITH_CODE(&ctx, dec, VtencErrorWrongFormat);
-  }
 
   DEC_RETURN_ON_ERROR(&ctx, dec, decode_bits_tree(WIDTH)(&ctx));
 

@@ -97,7 +97,7 @@ static struct EncodeTestCase test_cases8[] = {
       .values_len = 9
     },
     .expected_output = {
-      .bytes = (uint8_t []){0x87, 0xa8, 0xe, 0x4, 0x0, 0xe0, 0x1},
+      .bytes = (uint8_t []){0x87, 0xa8, 0x0e, 0x04, 0x00, 0xe0, 0x01},
       .bytes_len = 7,
       .last_error_code = VtencErrorNoError
     }
