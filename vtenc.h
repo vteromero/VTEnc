@@ -28,7 +28,6 @@ typedef enum {
   VtencErrorBufferTooSmall  = 2,
   VtencErrorEndOfStream     = 3,
   VtencErrorNotEnoughBits   = 4,
-  VtencErrorInputTooSmall   = 5,
   VtencErrorInputTooBig     = 6,
   VtencErrorOutputTooBig    = 7,
   VtencErrorWrongFormat     = 8

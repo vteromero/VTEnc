@@ -168,11 +168,6 @@ size_t vtenc_encode(WIDTH)(VtencEncoder *enc, const TYPE *in, size_t in_len,
     return 0;
   }
 
-  if (!enc->allow_repeated_values && in_len == 0) {
-    enc->last_error_code = VtencErrorInputTooSmall;
-    return 0;
-  }
-
   ENC_RETURN_ON_ERROR(&ctx, enc,
     encctx_init_with_encoder(WIDTH)(&ctx, enc, in, in_len, out, out_cap)
   );

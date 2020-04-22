@@ -43,6 +43,21 @@ static struct EncodeTestCase test_cases8[] = {
   {
     .input = {
       .encoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1
+      },
+      .values = (uint8_t []){},
+      .values_len = 0xffffffffffffffffULL
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .last_error_code = VtencErrorInputTooBig
+    }
+  },
+  {
+    .input = {
+      .encoder = {
         .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
@@ -109,12 +124,12 @@ static struct EncodeTestCase test_cases8[] = {
         .skip_full_subtrees = 1
       },
       .values = (uint8_t []){},
-      .values_len = 0
+      .values_len = 257
     },
     .expected_output = {
       .bytes = (uint8_t []){},
       .bytes_len = 0,
-      .last_error_code = VtencErrorInputTooSmall
+      .last_error_code = VtencErrorInputTooBig
     }
   },
   {
@@ -124,12 +139,12 @@ static struct EncodeTestCase test_cases8[] = {
         .skip_full_subtrees = 1
       },
       .values = (uint8_t []){},
-      .values_len = 257
+      .values_len = 0
     },
     .expected_output = {
       .bytes = (uint8_t []){},
       .bytes_len = 0,
-      .last_error_code = VtencErrorInputTooBig
+      .last_error_code = VtencErrorNoError
     }
   },
   {
@@ -216,6 +231,21 @@ static struct EncodeTestCase test_cases16[] = {
   {
     .input = {
       .encoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1
+      },
+      .values = (uint16_t []){},
+      .values_len = 0xffffffffffffffffULL
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .last_error_code = VtencErrorInputTooBig
+    }
+  },
+  {
+    .input = {
+      .encoder = {
         .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
@@ -285,12 +315,12 @@ static struct EncodeTestCase test_cases16[] = {
         .skip_full_subtrees = 1
       },
       .values = (uint16_t []){},
-      .values_len = 0
+      .values_len = 65537
     },
     .expected_output = {
       .bytes = (uint8_t []){},
       .bytes_len = 0,
-      .last_error_code = VtencErrorInputTooSmall
+      .last_error_code = VtencErrorInputTooBig
     }
   },
   {
@@ -300,12 +330,12 @@ static struct EncodeTestCase test_cases16[] = {
         .skip_full_subtrees = 1
       },
       .values = (uint16_t []){},
-      .values_len = 65537
+      .values_len = 0
     },
     .expected_output = {
       .bytes = (uint8_t []){},
       .bytes_len = 0,
-      .last_error_code = VtencErrorInputTooBig
+      .last_error_code = VtencErrorNoError
     }
   },
   {
@@ -364,6 +394,21 @@ static struct EncodeTestCase test_cases16[] = {
 };
 
 static struct EncodeTestCase test_cases32[] = {
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1
+      },
+      .values = (uint32_t []){},
+      .values_len = 0xffffffffffffffffULL
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .last_error_code = VtencErrorInputTooBig
+    }
+  },
   {
     .input = {
       .encoder = {
@@ -441,12 +486,12 @@ static struct EncodeTestCase test_cases32[] = {
         .skip_full_subtrees = 1
       },
       .values = (uint32_t []){},
-      .values_len = 0
+      .values_len = 0x200000000
     },
     .expected_output = {
       .bytes = (uint8_t []){},
       .bytes_len = 0,
-      .last_error_code = VtencErrorInputTooSmall
+      .last_error_code = VtencErrorInputTooBig
     }
   },
   {
@@ -456,12 +501,12 @@ static struct EncodeTestCase test_cases32[] = {
         .skip_full_subtrees = 1
       },
       .values = (uint32_t []){},
-      .values_len = 0x200000000
+      .values_len = 0
     },
     .expected_output = {
       .bytes = (uint8_t []){},
       .bytes_len = 0,
-      .last_error_code = VtencErrorInputTooBig
+      .last_error_code = VtencErrorNoError
     }
   },
   {
@@ -525,6 +570,21 @@ static struct EncodeTestCase test_cases32[] = {
 };
 
 static struct EncodeTestCase test_cases64[] = {
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1
+      },
+      .values = (uint64_t []){},
+      .values_len = 0xffffffffffffffffULL
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .last_error_code = VtencErrorInputTooBig
+    }
+  },
   {
     .input = {
       .encoder = {
@@ -612,7 +672,7 @@ static struct EncodeTestCase test_cases64[] = {
     .expected_output = {
       .bytes = (uint8_t []){},
       .bytes_len = 0,
-      .last_error_code = VtencErrorInputTooSmall
+      .last_error_code = VtencErrorNoError
     }
   },
   {
