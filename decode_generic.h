@@ -15,7 +15,6 @@
 
 #define DecodeCtx(_width_) PASTE2(DecodeCtx, _width_)
 #define decctx_init(_width_) WIDTH_SUFFIX(decctx_init, _width_)
-#define decctx_init_with_decoder(_width_) WIDTH_SUFFIX(decctx_init_with_decoder, _width_)
 #define decctx_add_cluster(_width_) WIDTH_SUFFIX(decctx_add_cluster, _width_)
 #define decctx_close(_width_) WIDTH_SUFFIX(decctx_close, _width_)
 #define decode_lower_bits(_width_) WIDTH_SUFFIX(decode_lower_bits, _width_)
@@ -48,31 +47,22 @@ struct DecodeCtx(WIDTH) {
 };
 
 static VtencErrorCode decctx_init(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
-  const uint8_t *in, size_t in_len, TYPE *out, size_t out_len)
+  const VtencDecoder *dec, const uint8_t *in, size_t in_len,
+  TYPE *out, size_t out_len)
 {
   ctx->values = out;
   ctx->values_len = out_len;
-
-  ctx->reconstruct_full_subtrees = 0;
-
-  ctx->cl_stack = bclstack_new(WIDTH);
-  if (ctx->cl_stack == NULL) return VtencErrorMemoryAlloc;
-
-  bsreader_init(&(ctx->bits_reader), in, in_len);
-
-  return VtencErrorNoError;
-}
-
-static VtencErrorCode decctx_init_with_decoder(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
-  const VtencDecoder *dec, const uint8_t *in, size_t in_len, TYPE *out, size_t out_len)
-{
-  RETURN_IF_ERROR(decctx_init(WIDTH)(ctx, in, in_len, out, out_len));
 
   /**
    * `skip_full_subtrees` parameter is only applicable to sets, i.e. sequences
    * with no repeated values.
    */
   ctx->reconstruct_full_subtrees = !dec->allow_repeated_values && dec->skip_full_subtrees;
+
+  ctx->cl_stack = bclstack_new(WIDTH);
+  if (ctx->cl_stack == NULL) return VtencErrorMemoryAlloc;
+
+  bsreader_init(&(ctx->bits_reader), in, in_len);
 
   return VtencErrorNoError;
 }
@@ -209,7 +199,7 @@ void vtenc_decode(WIDTH)(VtencDecoder *dec, const uint8_t *in, size_t in_len,
   memset(out, 0, out_len * sizeof(*out));
 
   DEC_RETURN_ON_ERROR(&ctx, dec,
-    decctx_init_with_decoder(WIDTH)(&ctx, dec, in, in_len, out, out_len)
+    decctx_init(WIDTH)(&ctx, dec, in, in_len, out, out_len)
   );
 
   DEC_RETURN_ON_ERROR(&ctx, dec, decode_bits_tree(WIDTH)(&ctx));
