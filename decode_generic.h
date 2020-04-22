@@ -58,7 +58,9 @@ static VtencErrorCode decctx_init(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
   ctx->cl_stack = bclstack_new(WIDTH);
   if (ctx->cl_stack == NULL) return VtencErrorMemoryAlloc;
 
-  return bsreader_init(&(ctx->bits_reader), in, in_len);
+  bsreader_init(&(ctx->bits_reader), in, in_len);
+
+  return VtencErrorNoError;
 }
 
 static VtencErrorCode decctx_init_with_decoder(WIDTH)(struct DecodeCtx(WIDTH) *ctx,

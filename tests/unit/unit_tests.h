@@ -46,14 +46,13 @@ int test_bswriter_write_3(void);
 int test_bswriter_close_1(void);
 int test_bswriter_close_2(void);
 
-int test_bsreader_init_1(void);
-int test_bsreader_init_2(void);
 int test_bsreader_read_1(void);
 int test_bsreader_read_2(void);
 int test_bsreader_read_3(void);
 int test_bsreader_read_4(void);
 int test_bsreader_read_5(void);
 int test_bsreader_read_6(void);
+int test_bsreader_read_7(void);
 int test_bsreader_size(void);
 
 int test_bclstack_new(void);
