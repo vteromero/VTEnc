@@ -151,29 +151,21 @@ int test_bswriter_close_2(void)
   return 1;
 }
 
-int test_bsreader_init_1(void)
+int test_bsreader_read_1(void)
 {
   BSReader reader;
   const uint8_t buf[] = {};
   const size_t buf_len = sizeof(buf);
+  uint64_t val=0;
 
-  EXPECT_TRUE(bsreader_init(&reader, buf, buf_len) == VtencErrorBufferTooSmall);
+  bsreader_init(&reader, buf, buf_len);
 
-  return 1;
-}
-
-int test_bsreader_init_2(void)
-{
-  BSReader reader;
-  const uint8_t buf[] = {0xff};
-  const size_t buf_len = sizeof(buf);
-
-  EXPECT_TRUE(bsreader_init(&reader, buf, buf_len) == VtencErrorNoError);
+  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VtencErrorEndOfStream);
 
   return 1;
 }
 
-int test_bsreader_read_1(void)
+int test_bsreader_read_2(void)
 {
   BSReader reader;
   const uint8_t buf[] = {0xff};
@@ -188,7 +180,7 @@ int test_bsreader_read_1(void)
   return 1;
 }
 
-int test_bsreader_read_2(void)
+int test_bsreader_read_3(void)
 {
   BSReader reader;
   const uint8_t buf[] = {0xff, 0x66};
@@ -204,7 +196,7 @@ int test_bsreader_read_2(void)
   return 1;
 }
 
-int test_bsreader_read_3(void)
+int test_bsreader_read_4(void)
 {
   BSReader reader;
   const uint8_t buf[] = {0xba};
@@ -223,7 +215,7 @@ int test_bsreader_read_3(void)
   return 1;
 }
 
-int test_bsreader_read_4(void)
+int test_bsreader_read_5(void)
 {
   BSReader reader;
   const uint8_t buf[] = {
@@ -243,7 +235,7 @@ int test_bsreader_read_4(void)
   return 1;
 }
 
-int test_bsreader_read_5(void)
+int test_bsreader_read_6(void)
 {
   BSReader reader;
   const uint8_t buf[] = {
@@ -270,7 +262,7 @@ int test_bsreader_read_5(void)
   return 1;
 }
 
-int test_bsreader_read_6(void)
+int test_bsreader_read_7(void)
 {
   BSReader reader;
   const uint8_t buf[] = {

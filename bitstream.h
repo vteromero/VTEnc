@@ -96,7 +96,7 @@ typedef struct {
   const uint8_t *end_ptr;
 } BSReader;
 
-static inline VtencErrorCode bsreader_init(BSReader *reader, const uint8_t *buf, size_t buf_len)
+static inline void bsreader_init(BSReader *reader, const uint8_t *buf, size_t buf_len)
 {
   reader->bit_container = 0;
   reader->bits_loaded = 0;
@@ -104,9 +104,6 @@ static inline VtencErrorCode bsreader_init(BSReader *reader, const uint8_t *buf,
   reader->start_ptr = buf;
   reader->ptr = reader->start_ptr;
   reader->end_ptr = reader->start_ptr + buf_len;
-
-  if (buf_len == 0) return VtencErrorBufferTooSmall;
-  return VtencErrorNoError;
 }
 
 static inline VtencErrorCode bsreader_load(BSReader *reader)

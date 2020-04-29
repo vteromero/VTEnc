@@ -15,17 +15,13 @@
 
 #define DecodeCtx(_width_) PASTE2(DecodeCtx, _width_)
 #define decctx_init(_width_) WIDTH_SUFFIX(decctx_init, _width_)
-#define decctx_init_with_decoder(_width_) WIDTH_SUFFIX(decctx_init_with_decoder, _width_)
 #define decctx_add_cluster(_width_) WIDTH_SUFFIX(decctx_add_cluster, _width_)
 #define decctx_close(_width_) WIDTH_SUFFIX(decctx_close, _width_)
 #define decode_lower_bits(_width_) WIDTH_SUFFIX(decode_lower_bits, _width_)
 #define decode_full_subtree(_width_) WIDTH_SUFFIX(decode_full_subtree, _width_)
 #define set_ones_at_bit_pos(_width_) WIDTH_SUFFIX(set_ones_at_bit_pos, _width_)
 #define decode_bits_tree(_width_) WIDTH_SUFFIX(decode_bits_tree, _width_)
-#define list_read_cardinality(_width_) WIDTH_SUFFIX(list_read_cardinality, _width_)
-#define set_read_cardinality(_width_) WIDTH_SUFFIX(set_read_cardinality, _width_)
 #define vtenc_decode(_width_) WIDTH_SUFFIX(vtenc_decode, _width_)
-#define vtenc_decoded_size(_width_) WIDTH_SUFFIX(vtenc_decoded_size, _width_)
 
 #define DEC_RETURN_WITH_CODE(ctx, dec, code)  \
 do {                                          \
@@ -51,29 +47,22 @@ struct DecodeCtx(WIDTH) {
 };
 
 static VtencErrorCode decctx_init(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
-  const uint8_t *in, size_t in_len, TYPE *out, size_t out_len)
+  const VtencDecoder *dec, const uint8_t *in, size_t in_len,
+  TYPE *out, size_t out_len)
 {
   ctx->values = out;
   ctx->values_len = out_len;
-
-  ctx->reconstruct_full_subtrees = 0;
-
-  ctx->cl_stack = bclstack_new(WIDTH);
-  if (ctx->cl_stack == NULL) return VtencErrorMemoryAlloc;
-
-  return bsreader_init(&(ctx->bits_reader), in, in_len);
-}
-
-static VtencErrorCode decctx_init_with_decoder(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
-  const VtencDecoder *dec, const uint8_t *in, size_t in_len, TYPE *out, size_t out_len)
-{
-  RETURN_IF_ERROR(decctx_init(WIDTH)(ctx, in, in_len, out, out_len));
 
   /**
    * `skip_full_subtrees` parameter is only applicable to sets, i.e. sequences
    * with no repeated values.
    */
   ctx->reconstruct_full_subtrees = !dec->allow_repeated_values && dec->skip_full_subtrees;
+
+  ctx->cl_stack = bclstack_new(WIDTH);
+  if (ctx->cl_stack == NULL) return VtencErrorMemoryAlloc;
+
+  bsreader_init(&(ctx->bits_reader), in, in_len);
 
   return VtencErrorNoError;
 }
@@ -195,76 +184,25 @@ static VtencErrorCode decode_bits_tree(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
   return VtencErrorNoError;
 }
 
-static VtencErrorCode list_read_cardinality(WIDTH)(BSReader *reader, uint64_t *cardinality)
-{
-  return bsreader_read(reader, LIST_CARDINALITY_SIZE, cardinality);
-}
-
-static VtencErrorCode set_read_cardinality(WIDTH)(BSReader *reader, uint64_t *cardinality)
-{
-  RETURN_IF_ERROR(bsreader_read(reader, SET_CARDINALITY_SIZE, cardinality));
-  ++(*cardinality);
-  return VtencErrorNoError;
-}
-
 void vtenc_decode(WIDTH)(VtencDecoder *dec, const uint8_t *in, size_t in_len,
   TYPE *out, size_t out_len)
 {
   struct DecodeCtx(WIDTH) ctx;
   uint64_t max_values = dec->allow_repeated_values ? LIST_MAX_VALUES : SET_MAX_VALUES;
-  uint64_t cardinality = 0;
 
   dec->last_error_code = VtencErrorNoError;
+
+  if ((uint64_t)out_len > max_values) {
+    DEC_RETURN_WITH_CODE(&ctx, dec, VtencErrorOutputTooBig);
+  }
 
   memset(out, 0, out_len * sizeof(*out));
 
   DEC_RETURN_ON_ERROR(&ctx, dec,
-    decctx_init_with_decoder(WIDTH)(&ctx, dec, in, in_len, out, out_len)
+    decctx_init(WIDTH)(&ctx, dec, in, in_len, out, out_len)
   );
-
-  if (dec->allow_repeated_values) {
-    DEC_RETURN_ON_ERROR(&ctx, dec,
-      list_read_cardinality(WIDTH)(&(ctx.bits_reader), &cardinality)
-    );
-  } else {
-    DEC_RETURN_ON_ERROR(&ctx, dec,
-      set_read_cardinality(WIDTH)(&(ctx.bits_reader), &cardinality)
-    );
-  }
-
-  if (cardinality > max_values || cardinality != (uint64_t)out_len) {
-    DEC_RETURN_WITH_CODE(&ctx, dec, VtencErrorWrongFormat);
-  }
 
   DEC_RETURN_ON_ERROR(&ctx, dec, decode_bits_tree(WIDTH)(&ctx));
 
   decctx_close(WIDTH)(&ctx);
-}
-
-size_t vtenc_decoded_size(WIDTH)(VtencDecoder *dec, const uint8_t *in, size_t in_len)
-{
-  BSReader reader;
-  size_t dec_len;
-  VtencErrorCode code;
-
-  dec->last_error_code = VtencErrorNoError;
-
-  code = bsreader_init(&reader, in, in_len);
-  if (code != VtencErrorNoError) {
-    dec->last_error_code = code;
-    return 0;
-  }
-
-  if (dec->allow_repeated_values) {
-    code = list_read_cardinality(WIDTH)(&reader, &dec_len);
-  } else {
-    code = set_read_cardinality(WIDTH)(&reader, &dec_len);
-  }
-
-  if (code != VtencErrorNoError) {
-    dec->last_error_code = code;
-    return 0;
-  }
-
-  return dec_len;
 }

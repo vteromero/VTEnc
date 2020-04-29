@@ -16,6 +16,14 @@ do {                                      \
   }                                       \
 } while(0)
 
+#define EXPECT_TRUE_MSG(test, msg)                  \
+do {                                                \
+  if (!(test)) {                                    \
+    printf("\n\t\""#test"\" failed: %s\n", (msg));  \
+    return 0;                                       \
+  }                                                 \
+} while(0)
+
 int test_bits_swap_u16(void);
 int test_bits_swap_u32(void);
 int test_bits_swap_u64(void);
@@ -38,14 +46,13 @@ int test_bswriter_write_3(void);
 int test_bswriter_close_1(void);
 int test_bswriter_close_2(void);
 
-int test_bsreader_init_1(void);
-int test_bsreader_init_2(void);
 int test_bsreader_read_1(void);
 int test_bsreader_read_2(void);
 int test_bsreader_read_3(void);
 int test_bsreader_read_4(void);
 int test_bsreader_read_5(void);
 int test_bsreader_read_6(void);
+int test_bsreader_read_7(void);
 int test_bsreader_size(void);
 
 int test_bclstack_new(void);

@@ -28,9 +28,9 @@ typedef enum {
   VtencErrorBufferTooSmall  = 2,
   VtencErrorEndOfStream     = 3,
   VtencErrorNotEnoughBits   = 4,
-  VtencErrorInputTooSmall   = 5,
   VtencErrorInputTooBig     = 6,
-  VtencErrorWrongFormat     = 7
+  VtencErrorOutputTooBig    = 7,
+  VtencErrorWrongFormat     = 8
 } VtencErrorCode;
 
 /**
@@ -94,15 +94,15 @@ size_t vtenc_encode64(VtencEncoder *enc, const uint64_t *in, size_t in_len, uint
  * vtenc_max_encoded_size* functions.
  *
  * Functions to calculate the maximum encoded size in bytes when encoding a
- * sequence of size @in_len with the corresponding vtenc_encode* function.
+ * sequence of size @in_len with its corresponding vtenc_encode* function.
  *
  * Return an approximation of the encoded length, which is guaranteed to
  * be at least as big as the actual size.
  */
-size_t vtenc_max_encoded_size8(const VtencEncoder *enc, size_t in_len);
-size_t vtenc_max_encoded_size16(const VtencEncoder *enc, size_t in_len);
-size_t vtenc_max_encoded_size32(const VtencEncoder *enc, size_t in_len);
-size_t vtenc_max_encoded_size64(const VtencEncoder *enc, size_t in_len);
+size_t vtenc_max_encoded_size8(size_t in_len);
+size_t vtenc_max_encoded_size16(size_t in_len);
+size_t vtenc_max_encoded_size32(size_t in_len);
+size_t vtenc_max_encoded_size64(size_t in_len);
 
 /**
  * typedef VtencDecoder - VTEnc decoder.
@@ -154,19 +154,6 @@ void vtenc_decode8(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint8_t 
 void vtenc_decode16(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint16_t *out, size_t out_len);
 void vtenc_decode32(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint32_t *out, size_t out_len);
 void vtenc_decode64(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint64_t *out, size_t out_len);
-
-/**
- * vtenc_decoded_size* functions.
- *
- * Functions to extract the size of the decoded sequence from the encoded stream
- * of bytes @in of size @in_len. These functions are used to allocate memory
- * for the sequence to be decoded before calling the corresponding vtenc_decode*
- * function.
- */
-size_t vtenc_decoded_size8(VtencDecoder *dec, const uint8_t *in, size_t in_len);
-size_t vtenc_decoded_size16(VtencDecoder *dec, const uint8_t *in, size_t in_len);
-size_t vtenc_decoded_size32(VtencDecoder *dec, const uint8_t *in, size_t in_len);
-size_t vtenc_decoded_size64(VtencDecoder *dec, const uint8_t *in, size_t in_len);
 
 #ifdef __cplusplus
 }

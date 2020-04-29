@@ -43,6 +43,21 @@ static struct EncodeTestCase test_cases8[] = {
   {
     .input = {
       .encoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1
+      },
+      .values = (uint8_t []){},
+      .values_len = 0xffffffffffffffffULL
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .last_error_code = VtencErrorInputTooBig
+    }
+  },
+  {
+    .input = {
+      .encoder = {
         .allow_repeated_values = 1,
         .skip_full_subtrees = 0
       },
@@ -50,8 +65,8 @@ static struct EncodeTestCase test_cases8[] = {
       .values_len = 0
     },
     .expected_output = {
-      .bytes = (uint8_t []){0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-      .bytes_len = 8,
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -65,8 +80,8 @@ static struct EncodeTestCase test_cases8[] = {
       .values_len = 1
     },
     .expected_output = {
-      .bytes = (uint8_t []){0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4c, 0x00},
-      .bytes_len = 9,
+      .bytes = (uint8_t []){0x26},
+      .bytes_len = 1,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -81,10 +96,9 @@ static struct EncodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .bytes = (uint8_t []){
-        0x0b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x30, 0xcd, 0x92, 0xab, 0xa2,
-        0xcb, 0x72, 0x4e, 0xa8, 0x00
+        0x98, 0x66, 0xc9, 0x55, 0xd1, 0x65, 0x39, 0x27, 0x54
       },
-      .bytes_len = 17,
+      .bytes_len = 9,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -98,27 +112,9 @@ static struct EncodeTestCase test_cases8[] = {
       .values_len = 9
     },
     .expected_output = {
-      .bytes = (uint8_t []){
-        0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0e, 0x51, 0x1d, 0x08, 0x00,
-        0xc0, 0x03
-      },
-      .bytes_len = 14,
+      .bytes = (uint8_t []){0x87, 0xa8, 0x0e, 0x04, 0x00, 0xe0, 0x01},
+      .bytes_len = 7,
       .last_error_code = VtencErrorNoError
-    }
-  },
-  {
-    .input = {
-      .encoder = {
-        .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
-      },
-      .values = (uint8_t []){},
-      .values_len = 0
-    },
-    .expected_output = {
-      .bytes = (uint8_t []){},
-      .bytes_len = 0,
-      .last_error_code = VtencErrorInputTooSmall
     }
   },
   {
@@ -134,6 +130,21 @@ static struct EncodeTestCase test_cases8[] = {
       .bytes = (uint8_t []){},
       .bytes_len = 0,
       .last_error_code = VtencErrorInputTooBig
+    }
+  },
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1
+      },
+      .values = (uint8_t []){},
+      .values_len = 0
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .last_error_code = VtencErrorNoError
     }
   },
   {
@@ -164,8 +175,8 @@ static struct EncodeTestCase test_cases8[] = {
       .values_len = 256
     },
     .expected_output = {
-      .bytes = (uint8_t []){0xff},
-      .bytes_len = 1,
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -179,8 +190,8 @@ static struct EncodeTestCase test_cases8[] = {
       .values_len = 1
     },
     .expected_output = {
-      .bytes = (uint8_t []){0x00, 0x21},
-      .bytes_len = 2,
+      .bytes = (uint8_t []){0x21},
+      .bytes_len = 1,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -194,8 +205,8 @@ static struct EncodeTestCase test_cases8[] = {
       .values_len = 12
     },
     .expected_output = {
-      .bytes = (uint8_t []){0x0b, 0x48, 0x90, 0x44, 0x44, 0x04},
-      .bytes_len = 6,
+      .bytes = (uint8_t []){0x48, 0x90, 0x44, 0x44, 0x04},
+      .bytes_len = 5,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -209,14 +220,29 @@ static struct EncodeTestCase test_cases8[] = {
       .values_len = 6
     },
     .expected_output = {
-      .bytes = (uint8_t []){0x05, 0x8c, 0xaa, 0x72, 0x14, 0xdd, 0x00},
-      .bytes_len = 7,
+      .bytes = (uint8_t []){0x8c, 0xaa, 0x72, 0x14, 0xdd, 0x00},
+      .bytes_len = 6,
       .last_error_code = VtencErrorNoError
     }
   }
 };
 
 static struct EncodeTestCase test_cases16[] = {
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1
+      },
+      .values = (uint16_t []){},
+      .values_len = 0xffffffffffffffffULL
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .last_error_code = VtencErrorInputTooBig
+    }
+  },
   {
     .input = {
       .encoder = {
@@ -227,8 +253,8 @@ static struct EncodeTestCase test_cases16[] = {
       .values_len = 0
     },
     .expected_output = {
-      .bytes = (uint8_t []){0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-      .bytes_len = 8,
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -242,10 +268,8 @@ static struct EncodeTestCase test_cases16[] = {
       .values_len = 1
     },
     .expected_output = {
-      .bytes = (uint8_t []){
-        0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4c, 0x6c, 0x00
-      },
-      .bytes_len = 10,
+      .bytes = (uint8_t []){0x26, 0x36},
+      .bytes_len = 2,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -260,10 +284,10 @@ static struct EncodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .bytes = (uint8_t []){
-        0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xda, 0xe8, 0x70, 0xab, 0x8c,
-        0x92, 0xc2, 0x80, 0xd7, 0xf4, 0x9b, 0xc5, 0x12, 0x01
+        0x6d, 0x74, 0xb8, 0x55, 0x46, 0x49, 0x61, 0xc0, 0x6b, 0xfa, 0xcd, 0x62,
+        0x89
       },
-      .bytes_len = 21,
+      .bytes_len = 13,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -278,26 +302,10 @@ static struct EncodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .bytes = (uint8_t []){
-        0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0xa7, 0x2d, 0x8a, 0x02,
-        0x6d, 0xf1, 0x33, 0xf3, 0x0c
+        0x88, 0xd3, 0x16, 0x45, 0x81, 0xb6, 0xf8, 0x99, 0x79, 0x06
       },
-      .bytes_len = 17,
+      .bytes_len = 10,
       .last_error_code = VtencErrorNoError
-    }
-  },
-  {
-    .input = {
-      .encoder = {
-        .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
-      },
-      .values = (uint16_t []){},
-      .values_len = 0
-    },
-    .expected_output = {
-      .bytes = (uint8_t []){},
-      .bytes_len = 0,
-      .last_error_code = VtencErrorInputTooSmall
     }
   },
   {
@@ -321,12 +329,27 @@ static struct EncodeTestCase test_cases16[] = {
         .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
+      .values = (uint16_t []){},
+      .values_len = 0
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .last_error_code = VtencErrorNoError
+    }
+  },
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1
+      },
       .values = (uint16_t []){23091},
       .values_len = 1
     },
     .expected_output = {
-      .bytes = (uint8_t []){0x00, 0x00, 0x33, 0x5a},
-      .bytes_len = 4,
+      .bytes = (uint8_t []){0x33, 0x5a},
+      .bytes_len = 2,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -341,10 +364,10 @@ static struct EncodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .bytes = (uint8_t []){
-        0x07, 0x00, 0x96, 0xae, 0x18, 0x0e, 0x10, 0x42, 0xbe, 0x53, 0x26, 0x24,
-        0x7c, 0x80, 0x7e, 0x7a, 0x67
+        0x96, 0xae, 0x18, 0x0e, 0x10, 0x42, 0xbe, 0x53, 0x26, 0x24, 0x7c, 0x80,
+        0x7e, 0x7a, 0x67
       },
-      .bytes_len = 17,
+      .bytes_len = 15,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -362,16 +385,30 @@ static struct EncodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .bytes = (uint8_t []){
-        0x0b, 0x00, 0x8c, 0x24, 0x00, 0x92, 0x20, 0x09, 0x80, 0x00, 0x08, 0x08,
-        0x80
+        0x8c, 0x24, 0x00, 0x92, 0x20, 0x09, 0x80, 0x00, 0x08, 0x08, 0x80
       },
-      .bytes_len = 13,
+      .bytes_len = 11,
       .last_error_code = VtencErrorNoError
     }
   }
 };
 
 static struct EncodeTestCase test_cases32[] = {
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1
+      },
+      .values = (uint32_t []){},
+      .values_len = 0xffffffffffffffffULL
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .last_error_code = VtencErrorInputTooBig
+    }
+  },
   {
     .input = {
       .encoder = {
@@ -382,8 +419,8 @@ static struct EncodeTestCase test_cases32[] = {
       .values_len = 0
     },
     .expected_output = {
-      .bytes = (uint8_t []){0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-      .bytes_len = 8,
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -398,9 +435,9 @@ static struct EncodeTestCase test_cases32[] = {
     },
     .expected_output = {
       .bytes = (uint8_t []){
-        0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xb2, 0x90, 0x9c, 0x56, 0x00
+        0x59, 0x48, 0x4e, 0x2b
       },
-      .bytes_len = 12,
+      .bytes_len = 4,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -415,11 +452,10 @@ static struct EncodeTestCase test_cases32[] = {
     },
     .expected_output = {
       .bytes = (uint8_t []){
-        0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4a, 0x41, 0xf9, 0x44, 0x8b,
-        0x6b, 0x08, 0x3a, 0x81, 0xc5, 0x90, 0x0e, 0x4a, 0xab, 0xd1, 0x3d, 0x92,
-        0x53, 0x00, 0x00
+        0xa5, 0xa0, 0x7c, 0xa2, 0xc5, 0x35, 0x04, 0x9d, 0xc0, 0x62, 0x48, 0x07,
+        0xa5, 0xd5, 0xe8, 0x1e, 0xc9, 0x29, 0x00
       },
-      .bytes_len = 27,
+      .bytes_len = 19,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -436,27 +472,11 @@ static struct EncodeTestCase test_cases32[] = {
     },
     .expected_output = {
       .bytes = (uint8_t []){
-        0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x6c, 0x53, 0x11, 0x54, 0x50,
-        0x11, 0x55, 0x41, 0x90, 0x20, 0x41, 0x90, 0x20, 0x49, 0x90, 0x04, 0x40,
-        0x10, 0x20, 0x00
+        0xb6, 0xa9, 0x08, 0x2a, 0xa8, 0x88, 0xaa, 0x20, 0x48, 0x90, 0x20, 0x48,
+        0x90, 0x24, 0x48, 0x02, 0x20, 0x08, 0x10
       },
-      .bytes_len = 27,
+      .bytes_len = 19,
       .last_error_code = VtencErrorNoError
-    }
-  },
-  {
-    .input = {
-      .encoder = {
-        .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
-      },
-      .values = (uint32_t []){},
-      .values_len = 0
-    },
-    .expected_output = {
-      .bytes = (uint8_t []){},
-      .bytes_len = 0,
-      .last_error_code = VtencErrorInputTooSmall
     }
   },
   {
@@ -480,12 +500,27 @@ static struct EncodeTestCase test_cases32[] = {
         .allow_repeated_values = 0,
         .skip_full_subtrees = 1
       },
+      .values = (uint32_t []){},
+      .values_len = 0
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .last_error_code = VtencErrorNoError
+    }
+  },
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1
+      },
       .values = (uint32_t []){0x77e3ba42},
       .values_len = 1
     },
     .expected_output = {
-      .bytes = (uint8_t []){0x00, 0x00, 0x00, 0x00, 0x42, 0xba, 0xe3, 0x77},
-      .bytes_len = 8,
+      .bytes = (uint8_t []){0x42, 0xba, 0xe3, 0x77},
+      .bytes_len = 4,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -502,10 +537,10 @@ static struct EncodeTestCase test_cases32[] = {
     },
     .expected_output = {
       .bytes = (uint8_t []){
-        0x04, 0x00, 0x00, 0x00, 0xdc, 0x4d, 0x30, 0x20, 0xed, 0x71, 0x95, 0xf9,
-        0x16, 0xde, 0xd9, 0xf1, 0x46, 0xbb, 0xfa, 0x22, 0x04, 0xb2, 0x98, 0x00
+        0xdc, 0x4d, 0x30, 0x20, 0xed, 0x71, 0x95, 0xf9, 0x16, 0xde, 0xd9, 0xf1,
+        0x46, 0xbb, 0xfa, 0x22, 0x04, 0xb2, 0x98, 0x00
       },
-      .bytes_len = 24,
+      .bytes_len = 20,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -524,17 +559,32 @@ static struct EncodeTestCase test_cases32[] = {
     },
     .expected_output = {
       .bytes = (uint8_t []){
-        0x0d, 0x00, 0x00, 0x00, 0xee, 0xee, 0xee, 0xee, 0x06, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x88, 0x88, 0x48, 0x45, 0x40, 0x40, 0x50, 0x55,
-        0x49, 0x92, 0x04, 0x41, 0x82, 0x20, 0x49, 0x12
+        0xee, 0xee, 0xee, 0xee, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x88, 0x88, 0x48, 0x45, 0x40, 0x40, 0x50, 0x55, 0x49, 0x92, 0x04, 0x41,
+        0x82, 0x20, 0x49, 0x12
       },
-      .bytes_len = 32,
+      .bytes_len = 28,
       .last_error_code = VtencErrorNoError
     }
   }
 };
 
 static struct EncodeTestCase test_cases64[] = {
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1
+      },
+      .values = (uint64_t []){},
+      .values_len = 0xffffffffffffffffULL
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
+      .last_error_code = VtencErrorInputTooBig
+    }
+  },
   {
     .input = {
       .encoder = {
@@ -545,8 +595,8 @@ static struct EncodeTestCase test_cases64[] = {
       .values_len = 0
     },
     .expected_output = {
-      .bytes = (uint8_t []){0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-      .bytes_len = 8,
+      .bytes = (uint8_t []){},
+      .bytes_len = 0,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -561,10 +611,9 @@ static struct EncodeTestCase test_cases64[] = {
     },
     .expected_output = {
       .bytes = (uint8_t []){
-        0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc2, 0x44, 0x88, 0xfd, 0x21,
-        0x03, 0xef, 0x56, 0x01
+        0x61, 0x22, 0xc4, 0xfe, 0x90, 0x81, 0x77, 0xab
       },
-      .bytes_len = 16,
+      .bytes_len = 8,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -581,11 +630,11 @@ static struct EncodeTestCase test_cases64[] = {
     },
     .expected_output = {
       .bytes = (uint8_t []){
-        0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x48, 0x92, 0x24, 0x49, 0x92,
-        0x24, 0xc9, 0xa9, 0x6a, 0x8e, 0x3b, 0x96, 0x84, 0xff, 0xff, 0xff, 0xdd,
-        0xa5, 0x0d, 0xfd, 0xab, 0xaa, 0xc1, 0x77, 0x2b, 0x4c, 0x25, 0x00
+        0x24, 0x49, 0x92, 0x24, 0x49, 0x92, 0xe4, 0x54, 0x35, 0xc7, 0x1d, 0x4b,
+        0xc2, 0xff, 0xff, 0xff, 0xee, 0xd2, 0x86, 0xfe, 0x55, 0xd5, 0xe0, 0xbb,
+        0x15, 0xa6, 0x12, 0x00
       },
-      .bytes_len = 35,
+      .bytes_len = 28,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -603,12 +652,11 @@ static struct EncodeTestCase test_cases64[] = {
     },
     .expected_output = {
       .bytes = (uint8_t []){
-        0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xda, 0xb6, 0x6d, 0xdb, 0xb6,
-        0x6d, 0xdb, 0x4e, 0x45, 0x45, 0x45, 0x45, 0x45, 0x45, 0x45, 0x45, 0x45,
-        0x45, 0xe5, 0xff, 0xff, 0x7f, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66,
-        0x06
+        0x6d, 0xdb, 0xb6, 0x6d, 0xdb, 0xb6, 0x6d, 0xa7, 0xa2, 0xa2, 0xa2, 0xa2,
+        0xa2, 0xa2, 0xa2, 0xa2, 0xa2, 0xa2, 0xf2, 0xff, 0xff, 0x3f, 0x33, 0x33,
+        0x33, 0x33, 0x33, 0x33, 0x33, 0x03
       },
-      .bytes_len = 37,
+      .bytes_len = 30,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -624,7 +672,7 @@ static struct EncodeTestCase test_cases64[] = {
     .expected_output = {
       .bytes = (uint8_t []){},
       .bytes_len = 0,
-      .last_error_code = VtencErrorInputTooSmall
+      .last_error_code = VtencErrorNoError
     }
   },
   {
@@ -638,10 +686,9 @@ static struct EncodeTestCase test_cases64[] = {
     },
     .expected_output = {
       .bytes = (uint8_t []){
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0xef, 0xcc, 0xaa, 0x88,
-        0x66, 0x44, 0x22, 0x00
+        0x88, 0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11
       },
-      .bytes_len = 16,
+      .bytes_len = 8,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -659,13 +706,12 @@ static struct EncodeTestCase test_cases64[] = {
     },
     .expected_output = {
       .bytes = (uint8_t []){
-        0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfe, 0xff, 0xff, 0xff, 0xff,
-        0xff, 0x9b, 0xfb, 0xbf, 0xfb, 0xbf, 0xfb, 0x4f, 0x54, 0x65, 0x76, 0x87,
-        0x98, 0xb5, 0x6d, 0x5b, 0xc2, 0xc3, 0xc3, 0xc3, 0xc3, 0x57, 0x55, 0x55,
-        0x55, 0x55, 0x2d, 0x04, 0x04, 0x04, 0x04, 0xa8, 0xd6, 0xcd, 0xbc, 0xab,
-        0x22, 0x9a, 0x11, 0x89, 0x00
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xcd, 0xfd, 0xdf, 0xfd, 0xdf, 0xfd,
+        0x27, 0xaa, 0x32, 0xbb, 0x43, 0xcc, 0xda, 0xb6, 0x2d, 0xe1, 0xe1, 0xe1,
+        0xe1, 0xe1, 0xab, 0xaa, 0xaa, 0xaa, 0xaa, 0x16, 0x02, 0x02, 0x02, 0x02,
+        0x54, 0xeb, 0x66, 0xde, 0x55, 0x11, 0xcd, 0x88, 0x44, 0x00
       },
-      .bytes_len = 53,
+      .bytes_len = 46,
       .last_error_code = VtencErrorNoError
     }
   },
@@ -684,13 +730,12 @@ static struct EncodeTestCase test_cases64[] = {
     },
     .expected_output = {
       .bytes = (uint8_t []){
-        0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x11, 0x11, 0x11, 0x11,
-        0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x4d, 0x55, 0x55, 0x55,
-        0x55, 0x55, 0x55, 0x55, 0x55, 0xd5, 0xb6, 0x4d, 0x55, 0x55, 0x55, 0x55,
-        0x55, 0x55, 0x55, 0x25, 0x48, 0x92, 0x24, 0x49, 0x92, 0x24, 0x49, 0x92,
-        0x24, 0x49, 0x02
+        0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
+        0x88, 0xa6, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0x6a, 0xdb,
+        0xa6, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0x12, 0x24, 0x49, 0x92,
+        0x24, 0x49, 0x92, 0x24, 0x49, 0x92, 0x24, 0x01
       },
-      .bytes_len = 51,
+      .bytes_len = 44,
       .last_error_code = VtencErrorNoError
     }
   }
@@ -701,7 +746,7 @@ int vtenc_encode8_test_case(struct EncodeTestCase *test_case)
   struct EncodeTestCaseInput *input = &(test_case->input);
   struct EncodeTestCaseOutput *expected_output = &(test_case->expected_output);
   VtencEncoder *encoder = &(input->encoder);
-  const size_t out_cap = vtenc_max_encoded_size8(encoder, input->values_len);
+  const size_t out_cap = vtenc_max_encoded_size8(input->values_len);
   uint8_t out[out_cap & 0xffff]; // mask capacity to avoid large allocations on the stack
   size_t out_len;
 
@@ -725,7 +770,7 @@ int vtenc_encode16_test_case(struct EncodeTestCase *test_case)
   struct EncodeTestCaseInput *input = &(test_case->input);
   struct EncodeTestCaseOutput *expected_output = &(test_case->expected_output);
   VtencEncoder *encoder = &(input->encoder);
-  const size_t out_cap = vtenc_max_encoded_size16(encoder, input->values_len);
+  const size_t out_cap = vtenc_max_encoded_size16(input->values_len);
   uint8_t out[out_cap & 0xffff]; // mask capacity to avoid large allocations on the stack
   size_t out_len;
 
@@ -749,7 +794,7 @@ int vtenc_encode32_test_case(struct EncodeTestCase *test_case)
   struct EncodeTestCaseInput *input = &(test_case->input);
   struct EncodeTestCaseOutput *expected_output = &(test_case->expected_output);
   VtencEncoder *encoder = &(input->encoder);
-  const size_t out_cap = vtenc_max_encoded_size32(encoder, input->values_len);
+  const size_t out_cap = vtenc_max_encoded_size32(input->values_len);
   uint8_t out[out_cap & 0xffff]; // mask capacity to avoid large allocations on the stack
   size_t out_len;
 
@@ -773,7 +818,7 @@ int vtenc_encode64_test_case(struct EncodeTestCase *test_case)
   struct EncodeTestCaseInput *input = &(test_case->input);
   struct EncodeTestCaseOutput *expected_output = &(test_case->expected_output);
   VtencEncoder *encoder = &(input->encoder);
-  const size_t out_cap = vtenc_max_encoded_size64(encoder, input->values_len);
+  const size_t out_cap = vtenc_max_encoded_size64(input->values_len);
   uint8_t out[out_cap & 0xffff]; // mask capacity to avoid large allocations on the stack
   size_t out_len;
 
@@ -796,9 +841,11 @@ int test_vtenc_encode8(void)
 {
   const size_t test_cases8_size = sizeof(test_cases8) / sizeof(test_cases8[0]);
   size_t i;
+  char msg[30];
 
   for (i = 0; i < test_cases8_size; ++i) {
-    EXPECT_TRUE(vtenc_encode8_test_case(&test_cases8[i]));
+    sprintf(msg, "test case #%lu", i);
+    EXPECT_TRUE_MSG(vtenc_encode8_test_case(&test_cases8[i]), msg);
   }
 
   return 1;
@@ -808,9 +855,11 @@ int test_vtenc_encode16(void)
 {
   const size_t test_cases16_size = sizeof(test_cases16) / sizeof(test_cases16[0]);
   size_t i;
+  char msg[30];
 
   for (i = 0; i < test_cases16_size; ++i) {
-    EXPECT_TRUE(vtenc_encode16_test_case(&test_cases16[i]));
+    sprintf(msg, "test case #%lu", i);
+    EXPECT_TRUE_MSG(vtenc_encode16_test_case(&test_cases16[i]), msg);
   }
 
   return 1;
@@ -820,9 +869,11 @@ int test_vtenc_encode32(void)
 {
   const size_t test_cases32_size = sizeof(test_cases32) / sizeof(test_cases32[0]);
   size_t i;
+  char msg[30];
 
   for (i = 0; i < test_cases32_size; ++i) {
-    EXPECT_TRUE(vtenc_encode32_test_case(&test_cases32[i]));
+    sprintf(msg, "test case #%lu", i);
+    EXPECT_TRUE_MSG(vtenc_encode32_test_case(&test_cases32[i]), msg);
   }
 
   return 1;
@@ -832,9 +883,11 @@ int test_vtenc_encode64(void)
 {
   const size_t test_cases64_size = sizeof(test_cases64) / sizeof(test_cases64[0]);
   size_t i;
+  char msg[30];
 
   for (i = 0; i < test_cases64_size; ++i) {
-    EXPECT_TRUE(vtenc_encode64_test_case(&test_cases64[i]));
+    sprintf(msg, "test case #%lu", i);
+    EXPECT_TRUE_MSG(vtenc_encode64_test_case(&test_cases64[i]), msg);
   }
 
   return 1;
@@ -842,91 +895,56 @@ int test_vtenc_encode64(void)
 
 int test_vtenc_max_encoded_size8(void)
 {
-  VtencEncoder enc = {.allow_repeated_values = 1};
-
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 0) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 1) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 5) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 10) == 24);
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 100) == 112);
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 1000) == 1008);
-
-  enc.allow_repeated_values = 0;
-
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 0) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 1) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 5) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 10) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size8(&enc, 100) == 104);
+  EXPECT_TRUE(vtenc_max_encoded_size8(0) == 8);
+  EXPECT_TRUE(vtenc_max_encoded_size8(1) == 8);
+  EXPECT_TRUE(vtenc_max_encoded_size8(7) == 8);
+  EXPECT_TRUE(vtenc_max_encoded_size8(8) == 16);
+  EXPECT_TRUE(vtenc_max_encoded_size8(15) == 16);
+  EXPECT_TRUE(vtenc_max_encoded_size8(16) == 24);
+  EXPECT_TRUE(vtenc_max_encoded_size8(100) == 104);
+  EXPECT_TRUE(vtenc_max_encoded_size8(1000) == 1008);
 
   return 1;
 }
 
 int test_vtenc_max_encoded_size16(void)
 {
-  VtencEncoder enc = {.allow_repeated_values = 1};
-
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 0) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 1) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 5) == 24);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 10) == 32);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 100) == 216);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 1000) == 2016);
-
-  enc.allow_repeated_values = 0;
-
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 0) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 1) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 5) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 10) == 24);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 100) == 208);
-  EXPECT_TRUE(vtenc_max_encoded_size16(&enc, 1000) == 2008);
+  EXPECT_TRUE(vtenc_max_encoded_size16(0) == 8);
+  EXPECT_TRUE(vtenc_max_encoded_size16(1) == 8);
+  EXPECT_TRUE(vtenc_max_encoded_size16(3) == 8);
+  EXPECT_TRUE(vtenc_max_encoded_size16(4) == 16);
+  EXPECT_TRUE(vtenc_max_encoded_size16(7) == 16);
+  EXPECT_TRUE(vtenc_max_encoded_size16(8) == 24);
+  EXPECT_TRUE(vtenc_max_encoded_size16(10) == 24);
+  EXPECT_TRUE(vtenc_max_encoded_size16(100) == 208);
+  EXPECT_TRUE(vtenc_max_encoded_size16(1000) == 2008);
 
   return 1;
 }
 
 int test_vtenc_max_encoded_size32(void)
 {
-  VtencEncoder enc = {.allow_repeated_values = 1};
-
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 0) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 1) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 5) == 32);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 10) == 56);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 100) == 416);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 1000) == 4016);
-
-  enc.allow_repeated_values = 0;
-
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 0) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 1) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 5) == 32);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 10) == 48);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 100) == 408);
-  EXPECT_TRUE(vtenc_max_encoded_size32(&enc, 1000) == 4008);
+  EXPECT_TRUE(vtenc_max_encoded_size32(0) == 8);
+  EXPECT_TRUE(vtenc_max_encoded_size32(1) == 8);
+  EXPECT_TRUE(vtenc_max_encoded_size32(2) == 16);
+  EXPECT_TRUE(vtenc_max_encoded_size32(3) == 16);
+  EXPECT_TRUE(vtenc_max_encoded_size32(4) == 24);
+  EXPECT_TRUE(vtenc_max_encoded_size32(10) == 48);
+  EXPECT_TRUE(vtenc_max_encoded_size32(100) == 408);
+  EXPECT_TRUE(vtenc_max_encoded_size32(1000) == 4008);
 
   return 1;
 }
 
 int test_vtenc_max_encoded_size64(void)
 {
-  VtencEncoder enc = {.allow_repeated_values = 1};
-
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 0) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 1) == 24);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 5) == 56);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 10) == 96);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 100) == 816);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 1000) == 8016);
-
-  enc.allow_repeated_values = 0;
-
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 0) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 1) == 24);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 5) == 56);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 10) == 96);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 100) == 816);
-  EXPECT_TRUE(vtenc_max_encoded_size64(&enc, 1000) == 8016);
+  EXPECT_TRUE(vtenc_max_encoded_size64(0) == 8);
+  EXPECT_TRUE(vtenc_max_encoded_size64(1) == 16);
+  EXPECT_TRUE(vtenc_max_encoded_size64(2) == 24);
+  EXPECT_TRUE(vtenc_max_encoded_size64(3) == 32);
+  EXPECT_TRUE(vtenc_max_encoded_size64(10) == 88);
+  EXPECT_TRUE(vtenc_max_encoded_size64(100) == 808);
+  EXPECT_TRUE(vtenc_max_encoded_size64(1000) == 8008);
 
   return 1;
 }
