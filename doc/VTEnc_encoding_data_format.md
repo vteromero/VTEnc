@@ -6,41 +6,34 @@ It's assumed that you know the algorithm and you're familiar with concepts like 
 
 ## Introduction
 
-There are 8 different variations of the encoding data format (2 types of sequences x 4 supported data types) which differ slightly to one another. Yet, all of them share the same general structure.
+This is a **non-portable** format. An encoded stream with this format won't bear enough information to be decoded on its own. The user must know some extra context beforehand when encoding and decoding. Specifically, they must know:
+* The sequence's data type. There are 4 supported data types: `uint8_t`, `uint16_t`, `uint32_t` and `uint64_t`.
+* The sequence's size.
+* The encoding parameters.
 
-This encoding data format doesn't include information about neither the type of sequence nor the sequence's data type. It's up to the user to know that context when decoding an encoded stream.
+## Encoding parameters
 
-All the fields are encoded in **little-endian** format.
+* `allow_repeated_values`: This flag tells whether the sequence can or cannot have repeated values.
 
-## General data format
+* `skip_full_subtrees`: When enabled, if a full subtree is found, all the clusters in that subtree will be skipped from being encoded. On the decoding side, if a full subtree appears, this will be completely reconstructed without having to decode it from the input stream of bytes. `skip_full_subtrees` is ignored if `allow_repeated_values` is true.
 
-This is the general structure of an encoded stream:
+## Maximum sequence size
 
-|`Sequence_Size`|[`Cluster_Stream`]|
-|:-------------:|:-----------------:|
+The maximum allowed sequence size depends on the bitwidth of the sequence's data type and whether the sequence has repeated values or not.
 
-#### `Sequence_Size`
+Here are the maximum sizes on all the possible input sequences:
 
-Size of the encoded list or set.
+|                           |8 bits|16 bits|32 bits|64 bits|
+|:-------------------------:|:----:|:-----:|:-----:|:-----:|
+|`allow_repeated_values` = 1| 2^57 |  2^57 |  2^57 |  2^57 |
+|`allow_repeated_values` = 0|  2^8 |  2^16 |  2^32 |  2^57 |
 
-#### `Cluster_Stream`
+## Encoding data format
 
-Sequence of cluster lengths.
-
-This is the result of serialising the Bit Cluster Tree following a **pre-order traversal** order, which is a Depth-First Search (DFS) method. Therefore, clusters are serialised in depth from level `W-1` through level `0`; where `W` is the size (or width) of the sequence's data type.
+The encoding data format is the result of serialising the Bit Cluster Tree following a **pre-order traversal** order, which is a Depth-First Search (DFS) method. Therefore, cluster lengths are serialised in depth from level `W-1` through level `0`; where `W` is the size (or width) of the sequence's data type.
 
 When a cluster of length 1 is seen, the DFS serialisation for that cluster ends. The rest of clusters from there to the leaf node are **not** serialised in the same fashion. Instead, corresponding lower bits of the value that belongs to those clusters are encoded.
 
 The number of serialisation levels depends on the width of the sequence's data type. Thus, a 8-bit sequence has 8 levels, a 16-bit sequence has 16 levels, and so on.
 
-## Lists
-
-Lists use 57 bits to encode `Sequence_Size`.
-
-## Sets
-
-| Type size     | 8 bits | 16 bits | 32 bits | 64 bits |
-|:-------------:|:------:|:-------:|:-------:|:-------:|
-|`Sequence_Size`| 8 bits | 16 bits | 32 bits | 57 bits |
-
-Empty sets are not supported and the actual set size's value is `Sequence_Size` + 1.
+All the fields/values are encoded in **little-endian** format.
