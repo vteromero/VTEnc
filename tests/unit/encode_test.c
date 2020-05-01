@@ -43,8 +43,9 @@ static struct EncodeTestCase test_cases8[] = {
   {
     .input = {
       .encoder = {
-        .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint8_t []){},
       .values_len = 0xffffffffffffffffULL
@@ -59,7 +60,8 @@ static struct EncodeTestCase test_cases8[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 1,
-        .skip_full_subtrees = 0
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint8_t []){},
       .values_len = 0
@@ -74,7 +76,8 @@ static struct EncodeTestCase test_cases8[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 1,
-        .skip_full_subtrees = 0
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint8_t []){38},
       .values_len = 1
@@ -89,7 +92,8 @@ static struct EncodeTestCase test_cases8[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 1,
-        .skip_full_subtrees = 0
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint8_t []){5, 22, 23, 44, 62, 69, 109, 113, 178, 194, 206},
       .values_len = 11
@@ -106,7 +110,8 @@ static struct EncodeTestCase test_cases8[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 1,
-        .skip_full_subtrees = 0
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint8_t []){57, 57, 57, 111, 111, 111, 111, 208, 208},
       .values_len = 9
@@ -121,7 +126,8 @@ static struct EncodeTestCase test_cases8[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint8_t []){},
       .values_len = 257
@@ -136,7 +142,8 @@ static struct EncodeTestCase test_cases8[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint8_t []){},
       .values_len = 0
@@ -151,7 +158,8 @@ static struct EncodeTestCase test_cases8[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint8_t []){
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
@@ -184,7 +192,8 @@ static struct EncodeTestCase test_cases8[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint8_t []){33},
       .values_len = 1
@@ -199,7 +208,8 @@ static struct EncodeTestCase test_cases8[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint8_t []){0, 1, 2, 3, 4, 5, 6, 7, 160, 161, 162, 163},
       .values_len = 12
@@ -214,7 +224,8 @@ static struct EncodeTestCase test_cases8[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint8_t []){13, 77, 88, 93, 149, 212},
       .values_len = 6
@@ -231,8 +242,9 @@ static struct EncodeTestCase test_cases16[] = {
   {
     .input = {
       .encoder = {
-        .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint16_t []){},
       .values_len = 0xffffffffffffffffULL
@@ -247,7 +259,8 @@ static struct EncodeTestCase test_cases16[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 1,
-        .skip_full_subtrees = 0
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint16_t []){},
       .values_len = 0
@@ -262,7 +275,8 @@ static struct EncodeTestCase test_cases16[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 1,
-        .skip_full_subtrees = 0
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint16_t []){13862},
       .values_len = 1
@@ -277,7 +291,8 @@ static struct EncodeTestCase test_cases16[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 1,
-        .skip_full_subtrees = 0
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint16_t []){1099, 2227, 8102, 27654, 29001, 35511, 50083},
       .values_len = 7
@@ -295,7 +310,8 @@ static struct EncodeTestCase test_cases16[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 1,
-        .skip_full_subtrees = 0
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint16_t []){677, 677, 677, 8881, 8881, 8881, 8881, 8881},
       .values_len = 8
@@ -312,7 +328,8 @@ static struct EncodeTestCase test_cases16[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint16_t []){},
       .values_len = 65537
@@ -327,7 +344,8 @@ static struct EncodeTestCase test_cases16[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint16_t []){},
       .values_len = 0
@@ -342,7 +360,8 @@ static struct EncodeTestCase test_cases16[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint16_t []){23091},
       .values_len = 1
@@ -357,7 +376,8 @@ static struct EncodeTestCase test_cases16[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint16_t []){1655, 3391, 4111, 8770, 29006, 32712, 32993, 58042},
       .values_len = 8
@@ -375,7 +395,8 @@ static struct EncodeTestCase test_cases16[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint16_t []){
         14000, 14001, 14002, 14003, 14004, 14005, 14006, 14007,
@@ -397,8 +418,9 @@ static struct EncodeTestCase test_cases32[] = {
   {
     .input = {
       .encoder = {
-        .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint32_t []){},
       .values_len = 0xffffffffffffffffULL
@@ -413,7 +435,8 @@ static struct EncodeTestCase test_cases32[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 1,
-        .skip_full_subtrees = 0
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint32_t []){},
       .values_len = 0
@@ -428,7 +451,8 @@ static struct EncodeTestCase test_cases32[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 1,
-        .skip_full_subtrees = 0
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint32_t []){726550617},
       .values_len = 1
@@ -445,7 +469,8 @@ static struct EncodeTestCase test_cases32[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 1,
-        .skip_full_subtrees = 0
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint32_t []){5348, 13089333, 88199704, 271008013, 1451881090},
       .values_len = 5
@@ -463,7 +488,8 @@ static struct EncodeTestCase test_cases32[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 1,
-        .skip_full_subtrees = 0
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint32_t []){
         77865901, 77865901, 77865901, 77865901, 314976310, 314976310
@@ -483,7 +509,8 @@ static struct EncodeTestCase test_cases32[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint32_t []){},
       .values_len = 0x200000000
@@ -498,7 +525,8 @@ static struct EncodeTestCase test_cases32[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint32_t []){},
       .values_len = 0
@@ -513,7 +541,8 @@ static struct EncodeTestCase test_cases32[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint32_t []){0x77e3ba42},
       .values_len = 1
@@ -528,7 +557,8 @@ static struct EncodeTestCase test_cases32[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint32_t []){
         0x98b204, 0x122fabb4, 0x378ecef0, 0x77ccab8f, 0xa40609bb
@@ -548,7 +578,8 @@ static struct EncodeTestCase test_cases32[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint32_t []){
         0xa500, 0xa501, 0xa502, 0xa503,
@@ -573,8 +604,9 @@ static struct EncodeTestCase test_cases64[] = {
   {
     .input = {
       .encoder = {
-        .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint64_t []){},
       .values_len = 0xffffffffffffffffULL
@@ -589,7 +621,8 @@ static struct EncodeTestCase test_cases64[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 1,
-        .skip_full_subtrees = 0
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint64_t []){},
       .values_len = 0
@@ -604,7 +637,8 @@ static struct EncodeTestCase test_cases64[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 1,
-        .skip_full_subtrees = 0
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint64_t []){0xab778190fec42261ULL},
       .values_len = 1
@@ -621,7 +655,8 @@ static struct EncodeTestCase test_cases64[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 1,
-        .skip_full_subtrees = 0
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint64_t []){
         0x12a6ULL, 0x8addf0ULL, 0xffa1b4bbULL, 0x21258ee39aaaULL
@@ -642,7 +677,8 @@ static struct EncodeTestCase test_cases64[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 1,
-        .skip_full_subtrees = 0
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 1
       },
       .values = (uint64_t []){
         0x55555555ULL, 0x55555555ULL, 0x55555555ULL,
@@ -664,7 +700,8 @@ static struct EncodeTestCase test_cases64[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint64_t []){},
       .values_len = 0
@@ -679,7 +716,8 @@ static struct EncodeTestCase test_cases64[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint64_t []){0x1122334455667788ULL},
       .values_len = 1
@@ -696,7 +734,8 @@ static struct EncodeTestCase test_cases64[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint64_t []){
         0x11223344ULL, 0xaabbccddULL, 0x1010101010ULL, 0x5555555555ULL, 0xf0f0f0f0f0ULL,
@@ -719,7 +758,8 @@ static struct EncodeTestCase test_cases64[] = {
     .input = {
       .encoder = {
         .allow_repeated_values = 0,
-        .skip_full_subtrees = 1
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 1
       },
       .values = (uint64_t []){
         0x20000000ULL, 0x20000001ULL, 0x20000002ULL, 0x20000003ULL,
