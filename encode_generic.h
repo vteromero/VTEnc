@@ -19,6 +19,7 @@
 #define encctx_add_cluster(_width_) WIDTH_SUFFIX(encctx_add_cluster, _width_)
 #define encctx_close(_width_) WIDTH_SUFFIX(encctx_close, _width_)
 #define count_zeros_at_bit_pos(_width_) WIDTH_SUFFIX(count_zeros_at_bit_pos, _width_)
+#define encode_lower_bits_single(_width_) WIDTH_SUFFIX(encode_lower_bits_single, _width_)
 #define encode_lower_bits(_width_) WIDTH_SUFFIX(encode_lower_bits, _width_)
 #define encode_bits_tree(_width_) WIDTH_SUFFIX(encode_bits_tree, _width_)
 #define vtenc_encode(_width_) WIDTH_SUFFIX(vtenc_encode, _width_)
@@ -43,6 +44,7 @@ struct EncodeCtx(WIDTH) {
   const TYPE *values;
   size_t values_len;
   int skip_full_subtrees;
+  size_t min_cluster_length;
   struct BitClusterStack *cl_stack;
   BSWriter bits_writer;
 };
@@ -59,6 +61,8 @@ static VtencErrorCode encctx_init(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
    * with no repeated values.
    */
   ctx->skip_full_subtrees = !enc->allow_repeated_values && enc->skip_full_subtrees;
+
+  ctx->min_cluster_length = enc->min_cluster_length;
 
   ctx->cl_stack = bclstack_new(WIDTH);
   if (ctx->cl_stack == NULL) return VtencErrorMemoryAlloc;
@@ -85,7 +89,7 @@ static inline size_t encctx_close(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
   return bswriter_close(&(ctx->bits_writer));
 }
 
-static inline VtencErrorCode encode_lower_bits(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
+static inline VtencErrorCode encode_lower_bits_single(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
   uint64_t value, unsigned int n_bits)
 {
 #if WIDTH == 64
@@ -104,6 +108,18 @@ static inline VtencErrorCode encode_lower_bits(WIDTH)(struct EncodeCtx(WIDTH) *c
   return bswriter_write(&(ctx->bits_writer), value & BITS_SIZE_MASK[n_bits], n_bits);
 }
 
+static inline VtencErrorCode encode_lower_bits(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
+  const TYPE *values, size_t values_len, unsigned int n_bits)
+{
+  size_t i;
+
+  for (i = 0; i < values_len; ++i) {
+    RETURN_IF_ERROR(encode_lower_bits_single(WIDTH)(ctx, values[i], n_bits));
+  }
+
+  return VtencErrorNoError;
+}
+
 static VtencErrorCode encode_bits_tree(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
 {
   struct BitCluster *cluster;
@@ -119,8 +135,13 @@ static VtencErrorCode encode_bits_tree(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
     cl_bit_pos = cluster->bit_pos;
     cur_bit_pos = cl_bit_pos - 1;
 
-    if (cl_len == 1) {
-      RETURN_IF_ERROR(encode_lower_bits(WIDTH)(ctx, *(ctx->values + cl_from), cl_bit_pos));
+    if (cl_len <= ctx->min_cluster_length) {
+      RETURN_IF_ERROR(encode_lower_bits(WIDTH)(
+        ctx,
+        ctx->values + cl_from,
+        cl_len,
+        cl_bit_pos
+      ));
       continue;
     }
 
