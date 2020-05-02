@@ -125,7 +125,8 @@ int encdec_decode(struct EncDec *encdec)
 {
   VtencDecoder decoder = {
     .allow_repeated_values = encdec->allow_repeated_values,
-    .skip_full_subtrees = encdec->skip_full_subtrees
+    .skip_full_subtrees = encdec->skip_full_subtrees,
+    .min_cluster_length = encdec->min_cluster_length
   };
 
   encdec->ctx.dec_out_len = encdec->ctx.in_len;

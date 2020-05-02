@@ -17,6 +17,7 @@ int test_vtenc_encoder_init(void)
 
   EXPECT_TRUE(enc.allow_repeated_values == 1);
   EXPECT_TRUE(enc.skip_full_subtrees == 1);
+  EXPECT_TRUE(enc.min_cluster_length == 1);
   EXPECT_TRUE(enc.last_error_code == VtencErrorNoError);
 
   return 1;
