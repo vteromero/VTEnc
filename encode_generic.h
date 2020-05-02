@@ -92,7 +92,7 @@ static inline size_t encctx_close(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
 static inline VtencErrorCode encode_lower_bits_single(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
   uint64_t value, unsigned int n_bits)
 {
-#if WIDTH == 64
+#if WIDTH > BIT_STREAM_MAX_WRITE
   if (n_bits > BIT_STREAM_MAX_WRITE) {
     RETURN_IF_ERROR(bswriter_write(
       &(ctx->bits_writer),
