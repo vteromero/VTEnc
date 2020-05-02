@@ -11,6 +11,7 @@ void vtenc_decoder_init(VtencDecoder *dec)
 {
   dec->allow_repeated_values  = 1;
   dec->skip_full_subtrees     = 1;
+  dec->min_cluster_length     = 1;
   dec->last_error_code        = VtencErrorNoError;
 }
 

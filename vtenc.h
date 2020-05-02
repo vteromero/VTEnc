@@ -126,6 +126,11 @@ typedef struct {
   int skip_full_subtrees;
 
   /**
+   * Minimum cluster length to serialise.
+   */
+  size_t min_cluster_length;
+
+  /**
    * 'Returning state' after calling a decode function. It'll hold the error
    * code value if the decode function fails, or a 'VtencErrorNoError' value if
    * the function runs successfully.
