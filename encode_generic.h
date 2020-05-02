@@ -179,13 +179,13 @@ size_t vtenc_encode(WIDTH)(VtencEncoder *enc, const TYPE *in, size_t in_len,
 
   enc->last_error_code = VtencErrorNoError;
 
-  if ((uint64_t)in_len > max_values) {
-    ENC_RETURN_WITH_CODE(&ctx, enc, VtencErrorInputTooBig);
-  }
-
   ENC_RETURN_ON_ERROR(&ctx, enc,
     encctx_init(WIDTH)(&ctx, enc, in, in_len, out, out_cap)
   );
+
+  if ((uint64_t)in_len > max_values) {
+    ENC_RETURN_WITH_CODE(&ctx, enc, VtencErrorInputTooBig);
+  }
 
   ENC_RETURN_ON_ERROR(&ctx, enc, encode_bits_tree(WIDTH)(&ctx));
 

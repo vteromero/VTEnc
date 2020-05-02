@@ -213,15 +213,16 @@ void vtenc_decode(WIDTH)(VtencDecoder *dec, const uint8_t *in, size_t in_len,
 
   dec->last_error_code = VtencErrorNoError;
 
+  DEC_RETURN_ON_ERROR(&ctx, dec,
+    decctx_init(WIDTH)(&ctx, dec, in, in_len, out, out_len)
+  );
+
   if ((uint64_t)out_len > max_values) {
     DEC_RETURN_WITH_CODE(&ctx, dec, VtencErrorOutputTooBig);
   }
 
   memset(out, 0, out_len * sizeof(*out));
 
-  DEC_RETURN_ON_ERROR(&ctx, dec,
-    decctx_init(WIDTH)(&ctx, dec, in, in_len, out, out_len)
-  );
 
   DEC_RETURN_ON_ERROR(&ctx, dec, decode_bits_tree(WIDTH)(&ctx));
 
