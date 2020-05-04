@@ -236,6 +236,70 @@ static struct EncodeTestCase test_cases8[] = {
       .bytes_len = 6,
       .last_error_code = VtencErrorNoError
     }
+  },
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 2
+      },
+      .values = (uint8_t []){2, 3, 8, 11, 16, 122},
+      .values_len = 6
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){0xae, 0x5e, 0x82, 0x30, 0x0d},
+      .bytes_len = 5,
+      .last_error_code = VtencErrorNoError
+    }
+  },
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 3
+      },
+      .values = (uint8_t []){2, 3, 8, 11, 16, 122},
+      .values_len = 6
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){0xae, 0x5e, 0x82, 0x30, 0x0d},
+      .bytes_len = 5,
+      .last_error_code = VtencErrorNoError
+    }
+  },
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 4
+      },
+      .values = (uint8_t []){2, 3, 8, 11, 16, 122},
+      .values_len = 6
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){0xae, 0x5e, 0x82, 0x0c, 0x2e},
+      .bytes_len = 5,
+      .last_error_code = VtencErrorNoError
+    }
+  },
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 8
+      },
+      .values = (uint8_t []){2, 3, 8, 11, 16, 122},
+      .values_len = 6
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){0x02, 0x03, 0x08, 0x0b, 0x10, 0x7a},
+      .bytes_len = 6,
+      .last_error_code = VtencErrorNoError
+    }
   }
 };
 
@@ -410,6 +474,60 @@ static struct EncodeTestCase test_cases16[] = {
         0x8c, 0x24, 0x00, 0x92, 0x20, 0x09, 0x80, 0x00, 0x08, 0x08, 0x80
       },
       .bytes_len = 11,
+      .last_error_code = VtencErrorNoError
+    }
+  },
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 2
+      },
+      .values = (uint16_t []){543, 600, 9701, 9888, 32944},
+      .values_len = 5
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){
+        0x84, 0x05, 0x50, 0xe5, 0x05, 0xd4, 0x7c, 0x08, 0x2c, 0x01
+      },
+      .bytes_len = 10,
+      .last_error_code = VtencErrorNoError
+    }
+  },
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 4
+      },
+      .values = (uint16_t []){543, 600, 9701, 9888, 32944},
+      .values_len = 5
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){
+        0x84, 0x05, 0x7c, 0x08, 0xb0, 0x04, 0xe5, 0x25, 0x50, 0x13
+      },
+      .bytes_len = 10,
+      .last_error_code = VtencErrorNoError
+    }
+  },
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 8
+      },
+      .values = (uint16_t []){543, 600, 9701, 9888, 32944},
+      .values_len = 5
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){
+        0x1f, 0x02, 0x58, 0x02, 0xe5, 0x25, 0xa0, 0x26, 0xb0, 0x80
+      },
+      .bytes_len = 10,
       .last_error_code = VtencErrorNoError
     }
   }
@@ -598,6 +716,69 @@ static struct EncodeTestCase test_cases32[] = {
       .bytes_len = 28,
       .last_error_code = VtencErrorNoError
     }
+  },
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 2
+      },
+      .values = (uint32_t []){
+        0x88f1ab05, 0x88f1ab09, 0x89633bd0, 0x89633bdf, 0xc8116ffe
+      },
+      .values_len = 5
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){
+        0xa0, 0xff, 0x5b, 0x04, 0x42, 0x82, 0x14, 0xf4, 0xce, 0xd8, 0xf7, 0xce,
+        0x58, 0xc1, 0x6a, 0x7c, 0xc2, 0x6a, 0x3c
+      },
+      .bytes_len = 19,
+      .last_error_code = VtencErrorNoError
+    }
+  },
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 4
+      },
+      .values = (uint32_t []){
+        0x88f1ab05, 0x88f1ab09, 0x89633bd0, 0x89633bdf, 0xc8116ffe
+      },
+      .values_len = 5
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){
+        0xa0, 0xff, 0x5b, 0x04, 0x52, 0xb0, 0x1a, 0x8f, 0x24, 0xac, 0xc6, 0x23,
+        0xd0, 0x3b, 0x63, 0xc9, 0xf7, 0xce, 0x58, 0x02
+      },
+      .bytes_len = 20,
+      .last_error_code = VtencErrorNoError
+    }
+  },
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 8
+      },
+      .values = (uint32_t []){
+        0x88f1ab05, 0x88f1ab09, 0x89633bd0, 0x89633bdf, 0xc8116ffe
+      },
+      .values_len = 5
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){
+        0x05, 0xab, 0xf1, 0x88, 0x09, 0xab, 0xf1, 0x88, 0xd0, 0x3b, 0x63, 0x89,
+        0xdf, 0x3b, 0x63, 0x89, 0xfe, 0x6f, 0x11, 0xc8
+      },
+      .bytes_len = 20,
+      .last_error_code = VtencErrorNoError
+    }
   }
 };
 
@@ -777,6 +958,81 @@ static struct EncodeTestCase test_cases64[] = {
         0x24, 0x49, 0x92, 0x24, 0x49, 0x92, 0x24, 0x01
       },
       .bytes_len = 44,
+      .last_error_code = VtencErrorNoError
+    }
+  },
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 2
+      },
+      .values = (uint64_t []){
+        0x300000000001ULL, 0x30000000000fULL,
+        0x300000010001ULL, 0x30000001000fULL,
+        0x600000000001ULL, 0x60000000000fULL
+      },
+      .values_len = 6
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){
+        0xb6, 0x6d, 0xdb, 0xb6, 0x6d, 0xdb, 0x66, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0xf8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x24, 0x49, 0x92, 0x24, 0x49,
+        0x92, 0x24, 0x49, 0x92, 0x24, 0x15, 0x00, 0xf0, 0x00, 0x10, 0x00, 0xf0,
+        0x00, 0x00
+      },
+      .bytes_len = 38,
+      .last_error_code = VtencErrorNoError
+    }
+  },
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 4
+      },
+      .values = (uint64_t []){
+        0x300000000001ULL, 0x30000000000fULL,
+        0x300000010001ULL, 0x30000001000fULL,
+        0x600000000001ULL, 0x60000000000fULL
+      },
+      .values_len = 6
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){
+        0xb6, 0x6d, 0xdb, 0xb6, 0x6d, 0xdb, 0x66, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0xf8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0xc0,
+        0x0f, 0x00, 0x00, 0x00, 0x00, 0x70, 0x00, 0x40, 0x00, 0x00, 0x00, 0xfc,
+        0x00, 0x10, 0x00, 0x00, 0x00, 0x03
+      },
+      .bytes_len = 42,
+      .last_error_code = VtencErrorNoError
+    }
+  },
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
+        .min_cluster_length = 8
+      },
+      .values = (uint64_t []){
+        0x300000000001ULL, 0x30000000000fULL,
+        0x300000010001ULL, 0x30000001000fULL,
+        0x600000000001ULL, 0x60000000000fULL
+      },
+      .values_len = 6
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){
+        0x01, 0x00, 0x00, 0x00, 0x00, 0x30, 0x00, 0x00, 0x0f, 0x00, 0x00, 0x00,
+        0x00, 0x30, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x30, 0x00, 0x00,
+        0x0f, 0x00, 0x01, 0x00, 0x00, 0x30, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
+        0x00, 0x60, 0x00, 0x00, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x60, 0x00, 0x00
+      },
+      .bytes_len = 48,
       .last_error_code = VtencErrorNoError
     }
   }
