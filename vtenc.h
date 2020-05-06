@@ -50,6 +50,11 @@ typedef struct {
   int skip_full_subtrees;
 
   /**
+   * Minimum cluster length to serialise.
+   */
+  size_t min_cluster_length;
+
+  /**
    * 'Returning state' after calling a encode function. It'll hold the error
    * code value if the encode function fails, or a 'VtencErrorNoError' value if
    * the function runs successfully.
@@ -119,6 +124,11 @@ typedef struct {
    * values. It's ignored if `allow_repeated_values` is set to 1.
    */
   int skip_full_subtrees;
+
+  /**
+   * Minimum cluster length to serialise.
+   */
+  size_t min_cluster_length;
 
   /**
    * 'Returning state' after calling a decode function. It'll hold the error

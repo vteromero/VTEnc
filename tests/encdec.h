@@ -35,6 +35,7 @@ struct EncDecCtx {
 struct EncDec {
   int allow_repeated_values;
   int skip_full_subtrees;
+  size_t min_cluster_length;
   struct EncDecCtx ctx;
   const struct EncDecFuncs *funcs;
 };
