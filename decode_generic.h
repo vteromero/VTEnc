@@ -161,6 +161,11 @@ static VtencErrorCode decode_bits_tree(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
     cl_bit_pos = cluster->bit_pos;
     cur_bit_pos = cl_bit_pos - 1;
 
+    if (ctx->reconstruct_full_subtrees && is_full_subtree(cl_len, cl_bit_pos)) {
+      decode_full_subtree(WIDTH)(ctx->values + cl_from, cl_len);
+      continue;
+    }
+
     if (cl_len <= ctx->min_cluster_length) {
       RETURN_IF_ERROR(decode_lower_bits(WIDTH)(
         ctx,
@@ -168,11 +173,6 @@ static VtencErrorCode decode_bits_tree(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
         cl_len,
         cl_bit_pos
       ));
-      continue;
-    }
-
-    if (ctx->reconstruct_full_subtrees && is_full_subtree(cl_len, cl_bit_pos)) {
-      decode_full_subtree(WIDTH)(ctx->values + cl_from, cl_len);
       continue;
     }
 
