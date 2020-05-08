@@ -273,8 +273,8 @@ static struct DecodeTestCase test_cases8[] = {
   {
     .input = {
       .decoder = {
-        .allow_repeated_values = 0,
-        .skip_full_subtrees = 1,
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
         .min_cluster_length = 2
       },
       .bytes = (uint8_t []){0xae, 0x5e, 0x82, 0x30, 0x0d},
@@ -289,8 +289,8 @@ static struct DecodeTestCase test_cases8[] = {
   {
     .input = {
       .decoder = {
-        .allow_repeated_values = 0,
-        .skip_full_subtrees = 1,
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
         .min_cluster_length = 3
       },
       .bytes = (uint8_t []){0xae, 0x5e, 0x82, 0x30, 0x0d},
@@ -305,8 +305,8 @@ static struct DecodeTestCase test_cases8[] = {
   {
     .input = {
       .decoder = {
-        .allow_repeated_values = 0,
-        .skip_full_subtrees = 1,
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
         .min_cluster_length = 4
       },
       .bytes = (uint8_t []){0xae, 0x5e, 0x82, 0x0c, 0x2e},
@@ -321,8 +321,8 @@ static struct DecodeTestCase test_cases8[] = {
   {
     .input = {
       .decoder = {
-        .allow_repeated_values = 0,
-        .skip_full_subtrees = 1,
+        .allow_repeated_values = 1,
+        .skip_full_subtrees = 0,
         .min_cluster_length = 8
       },
       .bytes = (uint8_t []){0x02, 0x03, 0x08, 0x0b, 0x10, 0x7a},
@@ -331,6 +331,22 @@ static struct DecodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .values = (uint8_t []){2, 3, 8, 11, 16, 122},
+      .last_error_code = VtencErrorNoError
+    }
+  },
+  {
+    .input = {
+      .decoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 8
+      },
+      .bytes = (uint8_t []){0x99, 0x99, 0x28},
+      .bytes_len = 3,
+      .values_len = 9,
+    },
+    .expected_output = {
+      .values = (uint8_t []){0, 1, 2, 3, 4, 5, 6, 7, 10},
       .last_error_code = VtencErrorNoError
     }
   }
@@ -593,6 +609,22 @@ static struct DecodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .values = (uint16_t []){543, 600, 9701, 9888, 32944},
+      .last_error_code = VtencErrorNoError
+    }
+  },
+  {
+    .input = {
+      .decoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 8
+      },
+      .bytes = (uint8_t []){0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x28},
+      .bytes_len = 7,
+      .values_len = 9,
+    },
+    .expected_output = {
+      .values = (uint16_t []){0, 1, 2, 3, 4, 5, 6, 7, 10},
       .last_error_code = VtencErrorNoError
     }
   }
@@ -874,6 +906,25 @@ static struct DecodeTestCase test_cases32[] = {
       .values = (uint32_t []){
         0x88f1ab05, 0x88f1ab09, 0x89633bd0, 0x89633bdf, 0xc8116ffe
       },
+      .last_error_code = VtencErrorNoError
+    }
+  },
+  {
+    .input = {
+      .decoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 8
+      },
+      .bytes = (uint8_t []){
+        0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99,
+        0x99, 0x99, 0x28
+      },
+      .bytes_len = 15,
+      .values_len = 9,
+    },
+    .expected_output = {
+      .values = (uint32_t []){0, 1, 2, 3, 4, 5, 6, 7, 10},
       .last_error_code = VtencErrorNoError
     }
   }
@@ -1177,6 +1228,28 @@ static struct DecodeTestCase test_cases64[] = {
         0x300000000001ULL, 0x30000000000fULL,
         0x300000010001ULL, 0x30000001000fULL,
         0x600000000001ULL, 0x60000000000fULL
+      },
+      .last_error_code = VtencErrorNoError
+    }
+  },
+  {
+    .input = {
+      .decoder = {
+        .allow_repeated_values = 0,
+        .skip_full_subtrees = 1,
+        .min_cluster_length = 8
+      },
+      .bytes = (uint8_t []){
+        0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99,
+        0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99,
+        0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x28
+      },
+      .bytes_len = 31,
+      .values_len = 9,
+    },
+    .expected_output = {
+      .values = (uint64_t []){
+        0ULL, 1ULL, 2ULL, 3ULL, 4ULL, 5ULL, 6ULL, 7ULL, 10ULL
       },
       .last_error_code = VtencErrorNoError
     }
