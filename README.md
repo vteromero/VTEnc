@@ -1,38 +1,27 @@
 # VTEnc
 
-[VTEnc](https://vteromero.github.io/2019/07/28/vtenc.html) is a compression algorithm for sorted lists of unsigned integers. This C library provides an interface to use VTEnc with different data types (8, 16, 32 and 64 bits) and with both lists and sets.
+[VTEnc](https://vteromero.github.io/2019/07/28/vtenc.html) is a compression algorithm for sorted lists of unsigned integers. This C library provides an interface to use VTEnc with sequences of various data types (8, 16, 32 and 64 bits).
 
 **WARNING: This project is in its initial stages of development and might dramatically change on each version. Have a look at the [Development philosophy](https://github.com/vteromero/VTEnc#development-philosophy) section to understand the rationale behind it.**
 
 ## Results
 
-*This is a work-in-progress section. Last updated on: 2020-03-26*
+*This is a work-in-progress section. Last updated on: 2020-05-20*
 
 For reference, VTEnc has been tested on a laptop Ubuntu Desktop 19.10 with a Core i7-6700HQ CPU @ 2.60GHz x 8, using different data sets and comparing it with other integer compression algorithms. See [Tests](https://github.com/vteromero/VTEnc#tests) and [Benchmarks](https://github.com/vteromero/VTEnc#benchmarks) below for further information.
 
-* Timestamps (`ts.txt`):
-
-| Algorithm          |Encoded Size|Ratio %    |Encoding Speed |Decoding Speed|
-|:-------------------|-----------:|----------:|--------------:|-------------:|
-| VTEnc              |  **21,686**| **0.0038**| **101.26 G/s**|    770.98 M/s|
-| Delta+FastPFor256  |   1,179,312|       0.20|       1.60 G/s|      3.52 G/s|
-| Delta+FastPFor128  |   2,306,544|       0.40|       1.38 G/s|      3.82 G/s|
-| Delta+BinaryPacking|   4,552,280|       0.79|       6.30 G/s|      4.27 G/s|
-| Delta+VariableByte | 144,285,504|       25.0|       3.57 G/s|      3.76 G/s|
-| Delta+VarIntGB     | 180,356,880|      31.25|       5.03 G/s|  **6.99 G/s**|
-| Copy               | 577,141,992|      100.0|      10.36 G/s|       -      |
-
 * `gov2.sorted`:
 
-| Algorithm          |Encoded Size     |Ratio %  |Encoding Speed|Decoding Speed|
-|:-------------------|----------------:|--------:|-------------:|-------------:|
-| VTEnc              |**2,889,599,350**|**12.08**|    169.07 M/s|    173.65 M/s|
-| Delta+FastPFor128  |    3,849,161,656|    16.09|    653.85 M/s|    655.78 M/s|
-| Delta+FastPFor256  |    3,899,341,376|    16.30|    667.72 M/s|    669.19 M/s|
-| Delta+BinaryPacking|    4,329,919,808|    18.10|  **2.36 G/s**|      2.26 G/s|
-| Delta+VariableByte |    6,572,084,696|    27.48|      1.52 G/s|      1.67 G/s|
-| Delta+VarIntGB     |    7,923,819,720|    33.13|      2.02 G/s|  **2.92 G/s**|
-| Copy               |   23,918,861,764|    100.0|      4.96 G/s|       -      |
+ | ![Encoding speed vs ratio](doc/images/gov2_enc_speed_vs_ratio.png) | ![Decoding speed](doc/images/gov2_dec_speed.png) |
+ |:---:|:---:|
+
+ _(\*) VTEnc's results on "Encoding speed vs ratio" chart are for the following values of the encoding parameter `min_cluster_length`: 1, 2, 4, 8, 16, 32, 64, 128 and 256._  
+ _(\*\*) VTEnc's decoding speed is for `min_cluster_length` = 256._
+
+* Timestamps (`ts.txt`):
+
+ | ![Encoding speed vs ratio](doc/images/ts_enc_speed_vs_ratio.png) | ![Decoding speed](doc/images/ts_dec_speed.png) |
+ |:---:|:---:|
 
 ## API
 
@@ -101,19 +90,11 @@ int main()
     0x24, 0x8d, 0x75, 0xfd, 0x95, 0x83, 0x9b, 0x03};
   const size_t in_len = sizeof(in) / sizeof(in[0]);
   uint8_t *out = NULL;
-  size_t out_len;
+  size_t out_len = 12; /* the decoded sequence's size needs to be known here */
   VtencDecoder decoder;
 
   /* initialise decoder */
   vtenc_decoder_init(&decoder);
-
-  /* get decoded size */
-  out_len = vtenc_decoded_size8(&decoder, in, in_len);
-  if (decoder.last_error_code != VtencErrorNoError) {
-    fprintf(stderr, "getting decoded size failed with code: %d\n",
-      decoder.last_error_code);
-    return 1;
-  }
 
   /* allocate `out_len` items */
   out = (uint8_t *) malloc(out_len * sizeof(uint8_t));
