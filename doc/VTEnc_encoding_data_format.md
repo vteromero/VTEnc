@@ -1,6 +1,6 @@
 # VTEnc encoding data format
 
-This document briefly describes the encoding data format produced and consumed by VTEnc.
+This document briefly describes the encoding data format produced by VTEnc.
 
 It's assumed that you know the algorithm and you're familiar with concepts like "Bit Cluster" or "Bit Cluster Tree". If not, you can learn about them in this [article](https://vteromero.github.io/2019/07/28/vtenc.html).
 
@@ -11,29 +11,36 @@ This is a **non-portable** format. An encoded stream with this format won't bear
 * The sequence's size.
 * The encoding parameters.
 
-## Encoding parameters
-
-* `allow_repeated_values`: This flag tells whether the sequence can or cannot have repeated values.
-
-* `skip_full_subtrees`: When enabled, if a full subtree is found, all the clusters in that subtree will be skipped from being encoded. On the decoding side, if a full subtree appears, this will be completely reconstructed without having to decode it from the input stream of bytes. `skip_full_subtrees` is ignored if `allow_repeated_values` is true.
-
-## Maximum sequence size
-
-The maximum allowed sequence size depends on the bitwidth of the sequence's data type and whether the sequence has repeated values or not.
-
-Here are the maximum sizes on all the possible input sequences:
-
-|                           |8 bits|16 bits|32 bits|64 bits|
-|:-------------------------:|:----:|:-----:|:-----:|:-----:|
-|`allow_repeated_values` = 1| 2^57 |  2^57 |  2^57 |  2^57 |
-|`allow_repeated_values` = 0|  2^8 |  2^16 |  2^32 |  2^57 |
-
 ## Encoding data format
 
-The encoding data format is the result of serialising the Bit Cluster Tree following a **pre-order traversal** order, which is a Depth-First Search (DFS) method. Therefore, cluster lengths are serialised in depth from level `W-1` through level `0`; where `W` is the size (or width) of the sequence's data type.
+This is the general structure of VTEnc's encoding data format:
 
-When a cluster of length 1 is seen, the DFS serialisation for that cluster ends. The rest of clusters from there to the leaf node are **not** serialised in the same fashion. Instead, corresponding lower bits of the value that belongs to those clusters are encoded.
+|`clusters_chunk`|[`lower_bits`|[`clusters_chunk`|[`lower_bits`| ... ]]] |
+|:--------------:|:-----------:|:--------------:|:------------:|:-------:|
 
-The number of serialisation levels depends on the width of the sequence's data type. Thus, a 8-bit sequence has 8 levels, a 16-bit sequence has 16 levels, and so on.
+The combination of all the `clusters_chunk` forms what is the result of serialising the Bit Cluster Tree following a **pre-order traversal** order, which is a Depth-First Search (DFS) method. Therefore, clusters are serialised in depth first from level `W-1` through level `0`; where `W` is the bitwidth of the sequence's data type.
 
-All the fields/values are encoded in **little-endian** format.
+Each `clusters_chunk` is made up of a sequence of encoded cluster lengths:
+
+|`cluster_length`|`cluster_length`| ... |
+|:--------------:|:--------------:|:---:|
+
+A `cluster_length` represents the length of a bit cluster node. It's encoded using the minimum required bits to represent its parent bit cluster node within the Bit Cluster Tree.
+
+In the Bit Cluster Tree serialisation, for each visited bit cluster node `Cl` of length `Len` at the tree level `Lvl`, a couple of special cases are checked:
+
+* If `Len` is equal to 2<sup>`Lvl`</sup> and the encoding parameter `skip_full_subtrees` is true and applicable (i.e. the encoding parameter `allow_repeated_values` is also false), then the rest of nodes for the subtree in which `Cl` is the root node are skipped from being visited (and hence, encoded).
+
+* If `Len` is less than or equal to the value of the encoding parameter `min_cluster_length`, `Cl` is the last node to be visited for that `clusters_chunk`. The rest of nodes (if there is any) for the subtree in which `Cl` is the root node are **not** serialised in the same fashion. Instead, corresponding `lower_bits` of the values that belong to those clusters are encoded.
+
+ `lower_bits` is a sequence of encoded least significant bits (`lsb`):
+
+ | `lsb` | `lsb` | `lsb` | ... |
+ |:-----:|:-----:|:-----:|:---:|
+
+ The size of `lower_bits` sequence is `Len`. Each `lsb` field is encoded with `Lvl` bits.
+
+## Notes
+
+* All the fields are encoded in **little-endian** format.
+* An empty stream of bytes is a valid encoding data format.
