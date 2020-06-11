@@ -16,12 +16,15 @@
 
 #define EncodeCtx(_width_) PASTE2(EncodeCtx, _width_)
 #define encctx_init(_width_) WIDTH_SUFFIX(encctx_init, _width_)
-#define encctx_add_cluster(_width_) WIDTH_SUFFIX(encctx_add_cluster, _width_)
 #define encctx_close(_width_) WIDTH_SUFFIX(encctx_close, _width_)
 #define count_zeros_at_bit_pos(_width_) WIDTH_SUFFIX(count_zeros_at_bit_pos, _width_)
-#define encode_lower_bits_single(_width_) WIDTH_SUFFIX(encode_lower_bits_single, _width_)
+#define encode_lower_bits_step(_width_) WIDTH_SUFFIX(encode_lower_bits_step, _width_)
 #define encode_lower_bits(_width_) WIDTH_SUFFIX(encode_lower_bits, _width_)
-#define encode_bits_tree(_width_) WIDTH_SUFFIX(encode_bits_tree, _width_)
+#define bcltree_add(_width_) WIDTH_SUFFIX(bcltree_add, _width_)
+#define bcltree_visit(_width_) WIDTH_SUFFIX(bcltree_visit, _width_)
+#define bcltree_has_more(_width_) WIDTH_SUFFIX(bcltree_has_more, _width_)
+#define bcltree_next(_width_) WIDTH_SUFFIX(bcltree_next, _width_)
+#define encode_bit_cluster_tree(_width_) WIDTH_SUFFIX(encode_bit_cluster_tree, _width_)
 #define vtenc_encode(_width_) WIDTH_SUFFIX(vtenc_encode, _width_)
 #define vtenc_max_encoded_size(_width_) WIDTH_SUFFIX(vtenc_max_encoded_size, _width_)
 
@@ -41,12 +44,12 @@ do {                                        \
 } while(0)
 
 struct EncodeCtx(WIDTH) {
-  const TYPE *values;
-  size_t values_len;
-  int skip_full_subtrees;
-  size_t min_cluster_length;
-  struct BitClusterStack *cl_stack;
-  BSWriter bits_writer;
+  const TYPE              *values;
+  size_t                  values_len;
+  int                     skip_full_subtrees;
+  size_t                  min_cluster_length;
+  struct BitClusterStack  *cl_stack;
+  BSWriter                bits_writer;
 };
 
 static VtencErrorCode encctx_init(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
@@ -70,18 +73,6 @@ static VtencErrorCode encctx_init(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
   return bswriter_init(&(ctx->bits_writer), out, out_cap);
 }
 
-static inline void encctx_add_cluster(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
-  size_t cl_from, size_t cl_len, unsigned int cl_bit_pos)
-{
-  if (cl_len == 0)
-    return;
-
-  if (ctx->skip_full_subtrees && is_full_subtree(cl_len, cl_bit_pos))
-    return;
-
-  bclstack_put(ctx->cl_stack, cl_from, cl_len, cl_bit_pos);
-}
-
 static inline size_t encctx_close(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
 {
   if (ctx->cl_stack != NULL) bclstack_free(&(ctx->cl_stack));
@@ -89,7 +80,7 @@ static inline size_t encctx_close(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
   return bswriter_close(&(ctx->bits_writer));
 }
 
-static inline VtencErrorCode encode_lower_bits_single(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
+static inline VtencErrorCode encode_lower_bits_step(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
   uint64_t value, unsigned int n_bits)
 {
 #if WIDTH > BIT_STREAM_MAX_WRITE
@@ -114,58 +105,59 @@ static inline VtencErrorCode encode_lower_bits(WIDTH)(struct EncodeCtx(WIDTH) *c
   size_t i;
 
   for (i = 0; i < values_len; ++i) {
-    RETURN_IF_ERROR(encode_lower_bits_single(WIDTH)(ctx, values[i], n_bits));
+    RETURN_IF_ERROR(encode_lower_bits_step(WIDTH)(ctx, values[i], n_bits));
   }
 
   return VtencErrorNoError;
 }
 
-static VtencErrorCode encode_bits_tree(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
+static inline void bcltree_add(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
+  size_t cl_from, size_t cl_len, unsigned int cl_bit_pos)
 {
-  struct BitCluster *cluster;
-  size_t cl_from, cl_len, n_zeros;
-  unsigned int cl_bit_pos, cur_bit_pos, enc_len;
+  if (cl_bit_pos == 0)
+    return;
 
-  encctx_add_cluster(WIDTH)(ctx, 0, ctx->values_len, WIDTH);
+  if (cl_len == 0)
+    return;
 
-  while (!bclstack_empty(ctx->cl_stack)) {
-    cluster = bclstack_get(ctx->cl_stack);
-    cl_from = cluster->from;
-    cl_len = cluster->length;
-    cl_bit_pos = cluster->bit_pos;
-    cur_bit_pos = cl_bit_pos - 1;
+  bclstack_put(ctx->cl_stack, cl_from, cl_len, cl_bit_pos);
+}
+
+static inline int bcltree_has_more(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
+{
+  return !bclstack_empty(ctx->cl_stack);
+}
+
+static inline struct BitCluster *bcltree_next(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
+{
+  return bclstack_get(ctx->cl_stack);
+}
+
+static VtencErrorCode encode_bit_cluster_tree(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
+{
+  bcltree_add(WIDTH)(ctx, 0, ctx->values_len, WIDTH);
+
+  while (bcltree_has_more(WIDTH)(ctx)) {
+    struct BitCluster *cluster = bcltree_next(WIDTH)(ctx);
+    size_t cl_from = cluster->from;
+    size_t cl_len = cluster->length;
+    unsigned int cl_bit_pos = cluster->bit_pos;
+    unsigned int cur_bit_pos = cl_bit_pos - 1;
+
+    if (ctx->skip_full_subtrees && is_full_subtree(cl_len, cl_bit_pos))
+      continue;
 
     if (cl_len <= ctx->min_cluster_length) {
-      RETURN_IF_ERROR(encode_lower_bits(WIDTH)(
-        ctx,
-        ctx->values + cl_from,
-        cl_len,
-        cl_bit_pos
-      ));
+      RETURN_IF_ERROR(encode_lower_bits(WIDTH)(ctx, ctx->values + cl_from, cl_len, cl_bit_pos));
       continue;
     }
 
-    n_zeros = count_zeros_at_bit_pos(WIDTH)(
-      ctx->values + cl_from,
-      cl_len,
-      cur_bit_pos
-    );
-    enc_len = bits_len_u64(cl_len);
-
+    size_t n_zeros = count_zeros_at_bit_pos(WIDTH)(ctx->values + cl_from, cl_len, cur_bit_pos);
+    unsigned int enc_len = bits_len_u64(cl_len);
     RETURN_IF_ERROR(bswriter_write(&(ctx->bits_writer), n_zeros, enc_len));
 
-    if (cur_bit_pos == 0) continue;
-
-    encctx_add_cluster(WIDTH)(ctx,
-      cl_from,
-      n_zeros,
-      cur_bit_pos
-    );
-    encctx_add_cluster(WIDTH)(ctx,
-      cl_from + n_zeros,
-      cl_len - n_zeros,
-      cur_bit_pos
-    );
+    bcltree_add(WIDTH)(ctx, cl_from + n_zeros, cl_len - n_zeros, cur_bit_pos);
+    bcltree_add(WIDTH)(ctx, cl_from, n_zeros, cur_bit_pos);
   }
 
   return VtencErrorNoError;
@@ -187,7 +179,7 @@ size_t vtenc_encode(WIDTH)(VtencEncoder *enc, const TYPE *in, size_t in_len,
     ENC_RETURN_WITH_CODE(&ctx, enc, VtencErrorInputTooBig);
   }
 
-  ENC_RETURN_ON_ERROR(&ctx, enc, encode_bits_tree(WIDTH)(&ctx));
+  ENC_RETURN_ON_ERROR(&ctx, enc, encode_bit_cluster_tree(WIDTH)(&ctx));
 
   return encctx_close(WIDTH)(&ctx);
 }
