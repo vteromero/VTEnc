@@ -16,56 +16,39 @@ struct BitCluster {
   unsigned int bit_pos;
 };
 
+#define BIT_CLUSTER_STACK_MAX_SIZE 64
+
 /**
  * BitClusterStack is a LIFO stack with a fixed maximum size.
  */
 struct BitClusterStack {
-  struct BitCluster *start;
-  struct BitCluster *end;
-  struct BitCluster *head;
+  struct BitCluster clusters[BIT_CLUSTER_STACK_MAX_SIZE];
+  size_t head;
 };
 
-static struct BitClusterStack *bclstack_new(size_t max_size)
+static inline void bclstack_init(struct BitClusterStack *s)
 {
-  struct BitClusterStack *s = (struct BitClusterStack *) malloc(sizeof(struct BitClusterStack));
-  if (s == NULL) return NULL;
-
-  s->start = (struct BitCluster *) malloc(max_size * sizeof(struct BitCluster));
-  if (s->start == NULL) {
-    free(s);
-    return NULL;
-  }
-
-  s->end = s->start + max_size;
-  s->head = s->start;
-
-  return s;
-}
-
-static inline void bclstack_free(struct BitClusterStack **s)
-{
-  free((*s)->start);
-  free(*s);
+  s->head = 0;
 }
 
 static inline int bclstack_empty(struct BitClusterStack *s)
 {
-  return s->head == s->start;
+  return s->head == 0;
 }
 
 static inline size_t bclstack_length(struct BitClusterStack *s)
 {
-  return s->head - s->start;
+  return s->head;
 }
 
-static inline void bclstack_put(struct BitClusterStack *s, size_t cl_from,
-  size_t cl_len, unsigned int bit_pos)
+static inline void bclstack_put(struct BitClusterStack *s,
+  size_t from, size_t length, unsigned int bit_pos)
 {
-  assert(s->head < s->end);
+  assert(s->head < BIT_CLUSTER_STACK_MAX_SIZE);
 
-  *(s->head++) = (struct BitCluster) {
-    .from = cl_from,
-    .length = cl_len,
+  s->clusters[s->head++] = (struct BitCluster) {
+    .from = from,
+    .length = length,
     .bit_pos = bit_pos
   };
 }
@@ -74,7 +57,7 @@ static inline struct BitCluster *bclstack_get(struct BitClusterStack *s)
 {
   if (bclstack_empty(s)) return NULL;
 
-  return --s->head;
+  return &s->clusters[--s->head];
 }
 
 #endif /* VTENC_BITCLUSTER_H_ */
