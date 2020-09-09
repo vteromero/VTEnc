@@ -18,6 +18,7 @@ int test_vtenc_encoder_init(void)
   EXPECT_TRUE(enc.allow_repeated_values == 1);
   EXPECT_TRUE(enc.skip_full_subtrees == 1);
   EXPECT_TRUE(enc.min_cluster_length == 1);
+  EXPECT_TRUE(enc.bit_width == 0);
   EXPECT_TRUE(enc.last_error_code == VtencErrorNoError);
 
   return 1;
@@ -314,6 +315,22 @@ static struct EncodeTestCase test_cases8[] = {
     .expected_output = {
       .bytes = (uint8_t []){0x99, 0x99, 0x28},
       .bytes_len = 3,
+      .last_error_code = VtencErrorNoError
+    }
+  },
+  {
+    .input = {
+      .encoder = {
+        .allow_repeated_values = 1,
+        .min_cluster_length = 1,
+        .bit_width = 4
+      },
+      .values = (uint8_t []){13},
+      .values_len = 1
+    },
+    .expected_output = {
+      .bytes = (uint8_t []){0x0d},
+      .bytes_len = 1,
       .last_error_code = VtencErrorNoError
     }
   }

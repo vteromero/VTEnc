@@ -349,6 +349,22 @@ static struct DecodeTestCase test_cases8[] = {
       .values = (uint8_t []){0, 1, 2, 3, 4, 5, 6, 7, 10},
       .last_error_code = VtencErrorNoError
     }
+  },
+  {
+    .input = {
+      .decoder = {
+        .allow_repeated_values = 1,
+        .min_cluster_length = 1,
+        .bit_width = 4
+      },
+      .bytes = (uint8_t []){0x0d},
+      .bytes_len = 1,
+      .values_len = 1
+    },
+    .expected_output = {
+      .values = (uint8_t []){13},
+      .last_error_code = VtencErrorNoError
+    }
   }
 };
 

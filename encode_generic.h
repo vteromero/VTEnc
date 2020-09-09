@@ -48,6 +48,7 @@ struct EncodeCtx(WIDTH) {
   size_t                  values_len;
   int                     skip_full_subtrees;
   size_t                  min_cluster_length;
+  unsigned int            bit_width;
   struct BitClusterStack  cl_stack;
   struct BSWriter         bits_writer;
 };
@@ -66,6 +67,8 @@ static VtencErrorCode encctx_init(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
   ctx->skip_full_subtrees = !enc->allow_repeated_values && enc->skip_full_subtrees;
 
   ctx->min_cluster_length = enc->min_cluster_length;
+
+  ctx->bit_width = enc->bit_width == 0 ? WIDTH : MIN(enc->bit_width, WIDTH);
 
   bclstack_init(&ctx->cl_stack);
 
@@ -132,7 +135,7 @@ static inline struct BitCluster *bcltree_next(WIDTH)(struct EncodeCtx(WIDTH) *ct
 
 static VtencErrorCode encode_bit_cluster_tree(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
 {
-  bcltree_add(WIDTH)(ctx, 0, ctx->values_len, WIDTH);
+  bcltree_add(WIDTH)(ctx, 0, ctx->values_len, ctx->bit_width);
 
   while (bcltree_has_more(WIDTH)(ctx)) {
     struct BitCluster *cluster = bcltree_next(WIDTH)(ctx);

@@ -55,6 +55,11 @@ typedef struct {
   size_t min_cluster_length;
 
   /**
+   * Bit width
+   */
+  unsigned int bit_width;
+
+  /**
    * 'Returning state' after calling a encode function. It'll hold the error
    * code value if the encode function fails, or a 'VtencErrorNoError' value if
    * the function runs successfully.
@@ -129,6 +134,11 @@ typedef struct {
    * Minimum cluster length to serialise.
    */
   size_t min_cluster_length;
+
+  /**
+   * Bit width
+   */
+  unsigned int bit_width;
 
   /**
    * 'Returning state' after calling a decode function. It'll hold the error

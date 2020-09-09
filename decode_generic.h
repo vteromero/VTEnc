@@ -45,6 +45,7 @@ struct DecodeCtx(WIDTH) {
   size_t                  values_len;
   int                     reconstruct_full_subtrees;
   size_t                  min_cluster_length;
+  unsigned int            bit_width;
   struct BitClusterStack  cl_stack;
   struct BSReader         bits_reader;
 };
@@ -63,6 +64,8 @@ static VtencErrorCode decctx_init(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
   ctx->reconstruct_full_subtrees = !dec->allow_repeated_values && dec->skip_full_subtrees;
 
   ctx->min_cluster_length = dec->min_cluster_length;
+
+  ctx->bit_width = dec->bit_width == 0 ? WIDTH : MIN(dec->bit_width, WIDTH);
 
   bclstack_init(&ctx->cl_stack);
 
@@ -155,7 +158,7 @@ static inline struct BitCluster *bcltree_next(WIDTH)(struct DecodeCtx(WIDTH) *ct
 
 static VtencErrorCode decode_bit_cluster_tree(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
 {
-  bcltree_add(WIDTH)(ctx, 0, ctx->values_len, WIDTH);
+  bcltree_add(WIDTH)(ctx, 0, ctx->values_len, ctx->bit_width);
 
   while (bcltree_has_more(WIDTH)(ctx)) {
     struct BitCluster *cluster = bcltree_next(WIDTH)(ctx);
