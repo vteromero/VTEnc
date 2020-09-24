@@ -50,7 +50,7 @@ int main()
   RUN_TEST(test_bsreader_read_7);
   RUN_TEST(test_bsreader_size);
 
-  RUN_TEST(test_bclstack_new);
+  RUN_TEST(test_bclstack_init);
   RUN_TEST(test_bclstack_put_and_get);
 
   RUN_TEST(test_count_zeros_at_bit_pos8);

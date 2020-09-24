@@ -55,7 +55,7 @@ int test_bsreader_read_6(void);
 int test_bsreader_read_7(void);
 int test_bsreader_size(void);
 
-int test_bclstack_new(void);
+int test_bclstack_init(void);
 int test_bclstack_put_and_get(void);
 
 int test_count_zeros_at_bit_pos8(void);
