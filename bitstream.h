@@ -16,13 +16,13 @@
 #define BIT_STREAM_MAX_WRITE 57
 #define BIT_STREAM_MAX_READ BIT_STREAM_MAX_WRITE
 
-typedef struct {
-  uint64_t bit_container;
-  unsigned int bit_pos;
-  uint8_t *start_ptr;
-  uint8_t *ptr;
-  uint8_t *end_ptr;
-} BSWriter;
+struct BSWriter {
+  uint64_t      bit_container;
+  unsigned int  bit_pos;
+  uint8_t       *start_ptr;
+  uint8_t       *ptr;
+  uint8_t       *end_ptr;
+};
 
 static inline size_t bswriter_align_buffer_size(size_t orig_size)
 {
@@ -30,7 +30,8 @@ static inline size_t bswriter_align_buffer_size(size_t orig_size)
   return orig_size + 8 - (orig_size % 8);
 }
 
-static inline VtencErrorCode bswriter_init(BSWriter *writer, uint8_t *out_buf, size_t out_capacity)
+static inline VtencErrorCode bswriter_init(struct BSWriter *writer,
+  uint8_t *out_buf, size_t out_capacity)
 {
   writer->bit_container = 0;
   writer->bit_pos = 0;
@@ -42,7 +43,8 @@ static inline VtencErrorCode bswriter_init(BSWriter *writer, uint8_t *out_buf, s
   return VtencErrorNoError;
 }
 
-static inline void bswriter_append(BSWriter *writer, uint64_t value, unsigned int n_bits)
+static inline void bswriter_append(struct BSWriter *writer,
+  uint64_t value, unsigned int n_bits)
 {
   assert(n_bits <= BIT_STREAM_MAX_WRITE);
   assert(n_bits + writer->bit_pos < 64);
@@ -51,7 +53,7 @@ static inline void bswriter_append(BSWriter *writer, uint64_t value, unsigned in
   writer->bit_pos += n_bits;
 }
 
-static inline VtencErrorCode bswriter_flush(BSWriter *writer)
+static inline VtencErrorCode bswriter_flush(struct BSWriter *writer)
 {
   size_t const n_bytes = writer->bit_pos >> 3;
 
@@ -65,7 +67,8 @@ static inline VtencErrorCode bswriter_flush(BSWriter *writer)
   return VtencErrorNoError;
 }
 
-static inline VtencErrorCode bswriter_write(BSWriter *writer, uint64_t value, unsigned int n_bits)
+static inline VtencErrorCode bswriter_write(struct BSWriter *writer,
+  uint64_t value, unsigned int n_bits)
 {
   assert(n_bits <= BIT_STREAM_MAX_WRITE);
 
@@ -79,7 +82,7 @@ static inline VtencErrorCode bswriter_write(BSWriter *writer, uint64_t value, un
   return VtencErrorNoError;
 }
 
-static inline size_t bswriter_close(BSWriter *writer)
+static inline size_t bswriter_close(struct BSWriter *writer)
 {
   if (writer->ptr <= writer->end_ptr)
     bswriter_flush(writer);
@@ -87,16 +90,17 @@ static inline size_t bswriter_close(BSWriter *writer)
   return (writer->ptr - writer->start_ptr) + (writer->bit_pos > 0);
 }
 
-typedef struct {
-  uint64_t bit_container;
-  unsigned int bits_loaded;
-  unsigned int bits_consumed;
+struct BSReader {
+  uint64_t      bit_container;
+  unsigned int  bits_loaded;
+  unsigned int  bits_consumed;
   const uint8_t *start_ptr;
   const uint8_t *ptr;
   const uint8_t *end_ptr;
-} BSReader;
+};
 
-static inline void bsreader_init(BSReader *reader, const uint8_t *buf, size_t buf_len)
+static inline void bsreader_init(struct BSReader *reader,
+  const uint8_t *buf, size_t buf_len)
 {
   reader->bit_container = 0;
   reader->bits_loaded = 0;
@@ -106,7 +110,7 @@ static inline void bsreader_init(BSReader *reader, const uint8_t *buf, size_t bu
   reader->end_ptr = reader->start_ptr + buf_len;
 }
 
-static inline VtencErrorCode bsreader_load(BSReader *reader)
+static inline VtencErrorCode bsreader_load(struct BSReader *reader)
 {
   size_t n_bytes;
 
@@ -141,7 +145,8 @@ static inline VtencErrorCode bsreader_load(BSReader *reader)
   return VtencErrorNoError;
 }
 
-static inline VtencErrorCode bsreader_read(BSReader *reader, unsigned int n_bits, uint64_t *read_value)
+static inline VtencErrorCode bsreader_read(struct BSReader *reader,
+  unsigned int n_bits, uint64_t *read_value)
 {
   assert(n_bits <= BIT_STREAM_MAX_READ);
 
@@ -158,7 +163,7 @@ static inline VtencErrorCode bsreader_read(BSReader *reader, unsigned int n_bits
   return VtencErrorNoError;
 }
 
-static inline size_t bsreader_size(BSReader *reader)
+static inline size_t bsreader_size(struct BSReader *reader)
 {
   return (reader->ptr - reader->start_ptr) + (reader->bits_consumed >> 3) + ((reader->bits_consumed & 7) > 0);
 }
