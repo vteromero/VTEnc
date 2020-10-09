@@ -49,7 +49,7 @@ struct EncodeCtx(WIDTH) {
   int                     skip_full_subtrees;
   size_t                  min_cluster_length;
   struct BitClusterStack  cl_stack;
-  BSWriter                bits_writer;
+  struct BSWriter         bits_writer;
 };
 
 static VtencErrorCode encctx_init(WIDTH)(struct EncodeCtx(WIDTH) *ctx,

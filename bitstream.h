@@ -16,13 +16,13 @@
 #define BIT_STREAM_MAX_WRITE 57
 #define BIT_STREAM_MAX_READ BIT_STREAM_MAX_WRITE
 
-typedef struct {
-  uint64_t bit_container;
-  unsigned int bit_pos;
-  uint8_t *start_ptr;
-  uint8_t *ptr;
-  uint8_t *end_ptr;
-} BSWriter;
+struct BSWriter {
+  uint64_t      bit_container;
+  unsigned int  bit_pos;
+  uint8_t       *start_ptr;
+  uint8_t       *ptr;
+  uint8_t       *end_ptr;
+};
 
 static inline size_t bswriter_align_buffer_size(size_t orig_size)
 {
@@ -30,7 +30,8 @@ static inline size_t bswriter_align_buffer_size(size_t orig_size)
   return orig_size + 8 - (orig_size % 8);
 }
 
-static inline VtencErrorCode bswriter_init(BSWriter *writer, uint8_t *out_buf, size_t out_capacity)
+static inline VtencErrorCode bswriter_init(struct BSWriter *writer,
+  uint8_t *out_buf, size_t out_capacity)
 {
   writer->bit_container = 0;
   writer->bit_pos = 0;
@@ -42,7 +43,8 @@ static inline VtencErrorCode bswriter_init(BSWriter *writer, uint8_t *out_buf, s
   return VtencErrorNoError;
 }
 
-static inline void bswriter_append(BSWriter *writer, uint64_t value, unsigned int n_bits)
+static inline void bswriter_append(struct BSWriter *writer,
+  uint64_t value, unsigned int n_bits)
 {
   assert(n_bits <= BIT_STREAM_MAX_WRITE);
   assert(n_bits + writer->bit_pos < 64);
@@ -51,7 +53,7 @@ static inline void bswriter_append(BSWriter *writer, uint64_t value, unsigned in
   writer->bit_pos += n_bits;
 }
 
-static inline VtencErrorCode bswriter_flush(BSWriter *writer)
+static inline VtencErrorCode bswriter_flush(struct BSWriter *writer)
 {
   size_t const n_bytes = writer->bit_pos >> 3;
 
@@ -65,7 +67,8 @@ static inline VtencErrorCode bswriter_flush(BSWriter *writer)
   return VtencErrorNoError;
 }
 
-static inline VtencErrorCode bswriter_write(BSWriter *writer, uint64_t value, unsigned int n_bits)
+static inline VtencErrorCode bswriter_write(struct BSWriter *writer,
+  uint64_t value, unsigned int n_bits)
 {
   assert(n_bits <= BIT_STREAM_MAX_WRITE);
 
@@ -79,7 +82,7 @@ static inline VtencErrorCode bswriter_write(BSWriter *writer, uint64_t value, un
   return VtencErrorNoError;
 }
 
-static inline size_t bswriter_close(BSWriter *writer)
+static inline size_t bswriter_close(struct BSWriter *writer)
 {
   if (writer->ptr <= writer->end_ptr)
     bswriter_flush(writer);
