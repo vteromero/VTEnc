@@ -53,6 +53,9 @@ int main()
   RUN_TEST(test_bclstack_init);
   RUN_TEST(test_bclstack_put_and_get);
 
+  RUN_TEST(test_stack_init);
+  RUN_TEST(test_stack_push_and_pop);
+
   RUN_TEST(test_count_zeros_at_bit_pos8);
   RUN_TEST(test_count_zeros_at_bit_pos16);
   RUN_TEST(test_count_zeros_at_bit_pos32);
