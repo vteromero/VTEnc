@@ -7,7 +7,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "bitcluster.h"
 #include "bitstream.h"
 #include "common.h"
 #include "countbits.h"
@@ -48,7 +47,7 @@ struct EncodeCtx(WIDTH) {
   size_t                  values_len;
   int                     skip_full_subtrees;
   size_t                  min_cluster_length;
-  struct BitClusterStack  cl_stack;
+  struct encode_stack     stack;
   struct BSWriter         bits_writer;
 };
 
@@ -67,7 +66,7 @@ static VtencErrorCode encctx_init(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
 
   ctx->min_cluster_length = enc->min_cluster_length;
 
-  bclstack_init(&ctx->cl_stack);
+  encode_stack_init(&ctx->stack);
 
   return bswriter_init(&(ctx->bits_writer), out, out_cap);
 }
@@ -117,17 +116,17 @@ static inline void bcltree_add(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
   if (cl_len == 0)
     return;
 
-  bclstack_put(&ctx->cl_stack, cl_from, cl_len, cl_bit_pos);
+  encode_stack_push(&ctx->stack, &(struct BitCluster){cl_from, cl_len, cl_bit_pos});
 }
 
 static inline int bcltree_has_more(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
 {
-  return !bclstack_empty(&ctx->cl_stack);
+  return !encode_stack_empty(&ctx->stack);
 }
 
 static inline struct BitCluster *bcltree_next(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
 {
-  return bclstack_get(&ctx->cl_stack);
+  return encode_stack_pop(&ctx->stack);
 }
 
 static VtencErrorCode encode_bit_cluster_tree(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
