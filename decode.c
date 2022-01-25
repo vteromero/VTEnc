@@ -5,7 +5,6 @@
  */
 #include "vtenc.h"
 
-#include "bitcluster.h"
 #include "internals.h"
 #include "stack.h"
 
@@ -19,7 +18,14 @@ void vtenc_decoder_init(VtencDecoder *dec)
 
 #define DECODE_STACK_MAX_SIZE 64
 
-CREATE_STACK(decode_stack, struct BitCluster, DECODE_STACK_MAX_SIZE)
+struct decode_bit_cluster {
+  size_t from;
+  size_t length;
+  unsigned int bit_pos;
+  uint64_t higher_bits;
+};
+
+CREATE_STACK(decode_stack, struct decode_bit_cluster, DECODE_STACK_MAX_SIZE)
 
 #define LIST_MAX_VALUES VTENC_LIST_MAX_VALUES
 
