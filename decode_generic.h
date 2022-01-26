@@ -39,12 +39,12 @@ do {                                    \
 } while (0)
 
 struct DecodeCtx(WIDTH) {
-  TYPE                    *values;
-  size_t                  values_len;
-  int                     reconstruct_full_subtrees;
-  size_t                  min_cluster_length;
-  struct decode_stack     stack;
-  struct BSReader         bits_reader;
+  TYPE              *values;
+  size_t            values_len;
+  int               reconstruct_full_subtrees;
+  size_t            min_cluster_length;
+  struct dec_stack  stack;
+  struct BSReader   bits_reader;
 };
 
 static VtencErrorCode decctx_init(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
@@ -62,7 +62,7 @@ static VtencErrorCode decctx_init(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
 
   ctx->min_cluster_length = dec->min_cluster_length;
 
-  decode_stack_init(&ctx->stack);
+  dec_stack_init(&ctx->stack);
 
   bsreader_init(&(ctx->bits_reader), in, in_len);
 
@@ -125,17 +125,17 @@ static inline void bcltree_add(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
   if (cluster->length == 0)
     return;
 
-  decode_stack_push(&ctx->stack, cluster);
+  dec_stack_push(&ctx->stack, cluster);
 }
 
 static inline int bcltree_has_more(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
 {
-  return !decode_stack_empty(&ctx->stack);
+  return !dec_stack_empty(&ctx->stack);
 }
 
 static inline struct decode_bit_cluster *bcltree_next(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
 {
-  return decode_stack_pop(&ctx->stack);
+  return dec_stack_pop(&ctx->stack);
 }
 
 static VtencErrorCode decode_bit_cluster_tree(WIDTH)(struct DecodeCtx(WIDTH) *ctx)

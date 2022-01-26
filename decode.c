@@ -25,7 +25,7 @@ struct decode_bit_cluster {
   uint64_t higher_bits;
 };
 
-CREATE_STACK(decode_stack, struct decode_bit_cluster, DECODE_STACK_MAX_SIZE)
+CREATE_STACK(dec_stack, struct decode_bit_cluster, DECODE_STACK_MAX_SIZE)
 
 #define LIST_MAX_VALUES VTENC_LIST_MAX_VALUES
 
