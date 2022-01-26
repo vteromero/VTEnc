@@ -17,7 +17,6 @@
 #define decode_lower_bits_step(_width_) WIDTH_SUFFIX(decode_lower_bits_step, _width_)
 #define decode_lower_bits(_width_) WIDTH_SUFFIX(decode_lower_bits, _width_)
 #define decode_full_subtree(_width_) WIDTH_SUFFIX(decode_full_subtree, _width_)
-#define set_ones_at_bit_pos(_width_) WIDTH_SUFFIX(set_ones_at_bit_pos, _width_)
 #define bcltree_add(_width_) WIDTH_SUFFIX(bcltree_add, _width_)
 #define bcltree_visit(_width_) WIDTH_SUFFIX(bcltree_visit, _width_)
 #define bcltree_has_more(_width_) WIDTH_SUFFIX(bcltree_has_more, _width_)
@@ -99,43 +98,30 @@ static inline VtencErrorCode decode_lower_bits_step(WIDTH)(struct DecodeCtx(WIDT
 }
 
 static inline VtencErrorCode decode_lower_bits(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
-  TYPE *values, size_t values_len, unsigned int n_bits)
+  TYPE *values, size_t values_len, unsigned int n_bits, TYPE higher_bits)
 {
   size_t i;
 
   for (i = 0; i < values_len; ++i) {
+    values[i] = higher_bits;
     RETURN_IF_ERROR(decode_lower_bits_step(WIDTH)(ctx, &values[i], n_bits));
   }
 
   return VtencErrorNoError;
 }
 
-static inline void decode_full_subtree(WIDTH)(TYPE *values, size_t values_len)
+static inline void decode_full_subtree(WIDTH)(TYPE *values, size_t values_len, TYPE higher_bits)
 {
   size_t i;
 
   for (i = 0; i < values_len; ++i) {
-    values[i] |= (TYPE)i;
-  }
-}
-
-static inline void set_ones_at_bit_pos(WIDTH)(TYPE *values,
-  size_t values_len, unsigned int bit_pos)
-{
-  const TYPE mask = (TYPE)1 << bit_pos;
-  size_t i;
-
-  for (i = 0; i < values_len; ++i) {
-    values[i] |= mask;
+    values[i] = higher_bits | (TYPE)i;
   }
 }
 
 static inline void bcltree_add(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
   const struct decode_bit_cluster *cluster)
 {
-  if (cluster->bit_pos == 0)
-    return;
-
   if (cluster->length == 0)
     return;
 
@@ -161,30 +147,40 @@ static VtencErrorCode decode_bit_cluster_tree(WIDTH)(struct DecodeCtx(WIDTH) *ct
     size_t cl_from = cluster->from;
     size_t cl_len = cluster->length;
     unsigned int cl_bit_pos = cluster->bit_pos;
-    unsigned int cur_bit_pos = cl_bit_pos - 1;
-    unsigned int enc_len;
+    uint64_t cl_higher_bits = cluster->higher_bits;
     uint64_t n_zeros;
+    unsigned int enc_len;
+
+    if (cl_bit_pos == 0) {
+      size_t i;
+
+      for (i = 0; i < cl_len; i++) {
+        ctx->values[cl_from + i] = (TYPE)cl_higher_bits;
+      }
+
+      continue;
+    }
 
     if (ctx->reconstruct_full_subtrees && is_full_subtree(cl_len, cl_bit_pos)) {
-      decode_full_subtree(WIDTH)(ctx->values + cl_from, cl_len);
+      decode_full_subtree(WIDTH)(ctx->values + cl_from, cl_len, cl_higher_bits);
       continue;
     }
 
     if (cl_len <= ctx->min_cluster_length) {
-      RETURN_IF_ERROR(decode_lower_bits(WIDTH)(ctx, ctx->values + cl_from, cl_len, cl_bit_pos));
+      RETURN_IF_ERROR(decode_lower_bits(WIDTH)(ctx, ctx->values + cl_from, cl_len, cl_bit_pos, cl_higher_bits));
       continue;
     }
 
     enc_len = bits_len_u64(cl_len);
+
     RETURN_IF_ERROR(bsreader_read(&(ctx->bits_reader), enc_len, &n_zeros));
 
     if (n_zeros > (uint64_t)cl_len) return VtencErrorWrongFormat;
 
-    set_ones_at_bit_pos(WIDTH)(ctx->values + cl_from + n_zeros, cl_len - n_zeros, cur_bit_pos);
-
     {
-      struct decode_bit_cluster zeros_cluster = {cl_from, n_zeros, cur_bit_pos};
-      struct decode_bit_cluster ones_cluster = {cl_from + n_zeros, cl_len - n_zeros, cur_bit_pos};
+      unsigned int next_bit_pos = cl_bit_pos - 1;
+      struct decode_bit_cluster zeros_cluster = {cl_from, n_zeros, next_bit_pos, cl_higher_bits};
+      struct decode_bit_cluster ones_cluster = {cl_from + n_zeros, cl_len - n_zeros, next_bit_pos, cl_higher_bits | (1LL << (next_bit_pos))};
 
       bcltree_add(WIDTH)(ctx, &ones_cluster);
       bcltree_add(WIDTH)(ctx, &zeros_cluster);
