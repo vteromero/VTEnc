@@ -18,13 +18,13 @@ void vtenc_encoder_init(VtencEncoder *enc)
 
 #define ENCODE_STACK_MAX_SIZE 64
 
-struct encode_bit_cluster {
-  size_t from;
-  size_t length;
-  unsigned int bit_pos;
+struct enc_bit_cluster {
+  size_t        from;
+  size_t        length;
+  unsigned int  bit_pos;
 };
 
-CREATE_STACK(enc_stack, struct encode_bit_cluster, ENCODE_STACK_MAX_SIZE)
+CREATE_STACK(enc_stack, struct enc_bit_cluster, ENCODE_STACK_MAX_SIZE)
 
 #define LIST_MAX_VALUES VTENC_LIST_MAX_VALUES
 
