@@ -24,7 +24,7 @@ struct encode_bit_cluster {
   unsigned int bit_pos;
 };
 
-CREATE_STACK(encode_stack, struct encode_bit_cluster, ENCODE_STACK_MAX_SIZE)
+CREATE_STACK(enc_stack, struct encode_bit_cluster, ENCODE_STACK_MAX_SIZE)
 
 #define LIST_MAX_VALUES VTENC_LIST_MAX_VALUES
 
