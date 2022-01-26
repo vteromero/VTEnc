@@ -120,7 +120,7 @@ static inline void decode_full_subtree(WIDTH)(TYPE *values, size_t values_len, T
 }
 
 static inline void bcltree_add(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
-  const struct decode_bit_cluster *cluster)
+  const struct dec_bit_cluster *cluster)
 {
   if (cluster->length == 0)
     return;
@@ -133,17 +133,17 @@ static inline int bcltree_has_more(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
   return !dec_stack_empty(&ctx->stack);
 }
 
-static inline struct decode_bit_cluster *bcltree_next(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
+static inline struct dec_bit_cluster *bcltree_next(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
 {
   return dec_stack_pop(&ctx->stack);
 }
 
 static VtencErrorCode decode_bit_cluster_tree(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
 {
-  bcltree_add(WIDTH)(ctx, &(struct decode_bit_cluster){0, ctx->values_len, WIDTH, 0});
+  bcltree_add(WIDTH)(ctx, &(struct dec_bit_cluster){0, ctx->values_len, WIDTH, 0});
 
   while (bcltree_has_more(WIDTH)(ctx)) {
-    struct decode_bit_cluster *cluster = bcltree_next(WIDTH)(ctx);
+    struct dec_bit_cluster *cluster = bcltree_next(WIDTH)(ctx);
     size_t cl_from = cluster->from;
     size_t cl_len = cluster->length;
     unsigned int cl_bit_pos = cluster->bit_pos;
@@ -179,8 +179,8 @@ static VtencErrorCode decode_bit_cluster_tree(WIDTH)(struct DecodeCtx(WIDTH) *ct
 
     {
       unsigned int next_bit_pos = cl_bit_pos - 1;
-      struct decode_bit_cluster zeros_cluster = {cl_from, n_zeros, next_bit_pos, cl_higher_bits};
-      struct decode_bit_cluster ones_cluster = {cl_from + n_zeros, cl_len - n_zeros, next_bit_pos, cl_higher_bits | (1LL << (next_bit_pos))};
+      struct dec_bit_cluster zeros_cluster = {cl_from, n_zeros, next_bit_pos, cl_higher_bits};
+      struct dec_bit_cluster ones_cluster = {cl_from + n_zeros, cl_len - n_zeros, next_bit_pos, cl_higher_bits | (1LL << (next_bit_pos))};
 
       bcltree_add(WIDTH)(ctx, &ones_cluster);
       bcltree_add(WIDTH)(ctx, &zeros_cluster);

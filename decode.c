@@ -18,14 +18,14 @@ void vtenc_decoder_init(VtencDecoder *dec)
 
 #define DECODE_STACK_MAX_SIZE 64
 
-struct decode_bit_cluster {
-  size_t from;
-  size_t length;
-  unsigned int bit_pos;
-  uint64_t higher_bits;
+struct dec_bit_cluster {
+  size_t        from;
+  size_t        length;
+  unsigned int  bit_pos;
+  uint64_t      higher_bits;
 };
 
-CREATE_STACK(dec_stack, struct decode_bit_cluster, DECODE_STACK_MAX_SIZE)
+CREATE_STACK(dec_stack, struct dec_bit_cluster, DECODE_STACK_MAX_SIZE)
 
 #define LIST_MAX_VALUES VTENC_LIST_MAX_VALUES
 
