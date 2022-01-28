@@ -43,12 +43,12 @@ do {                                        \
 } while(0)
 
 struct EncodeCtx(WIDTH) {
-  const TYPE              *values;
-  size_t                  values_len;
-  int                     skip_full_subtrees;
-  size_t                  min_cluster_length;
-  struct encode_stack     stack;
-  struct BSWriter         bits_writer;
+  const TYPE        *values;
+  size_t            values_len;
+  int               skip_full_subtrees;
+  size_t            min_cluster_length;
+  struct enc_stack  stack;
+  struct BSWriter   bits_writer;
 };
 
 static VtencErrorCode encctx_init(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
@@ -66,7 +66,7 @@ static VtencErrorCode encctx_init(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
 
   ctx->min_cluster_length = enc->min_cluster_length;
 
-  encode_stack_init(&ctx->stack);
+  enc_stack_init(&ctx->stack);
 
   return bswriter_init(&(ctx->bits_writer), out, out_cap);
 }
@@ -108,7 +108,7 @@ static inline VtencErrorCode encode_lower_bits(WIDTH)(struct EncodeCtx(WIDTH) *c
 }
 
 static inline void bcltree_add(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
-  const struct BitCluster *cluster)
+  const struct enc_bit_cluster *cluster)
 {
   if (cluster->bit_pos == 0)
     return;
@@ -116,25 +116,25 @@ static inline void bcltree_add(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
   if (cluster->length == 0)
     return;
 
-  encode_stack_push(&ctx->stack, cluster);
+  enc_stack_push(&ctx->stack, cluster);
 }
 
 static inline int bcltree_has_more(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
 {
-  return !encode_stack_empty(&ctx->stack);
+  return !enc_stack_empty(&ctx->stack);
 }
 
-static inline struct BitCluster *bcltree_next(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
+static inline struct enc_bit_cluster *bcltree_next(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
 {
-  return encode_stack_pop(&ctx->stack);
+  return enc_stack_pop(&ctx->stack);
 }
 
 static VtencErrorCode encode_bit_cluster_tree(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
 {
-  bcltree_add(WIDTH)(ctx, &(struct BitCluster){0, ctx->values_len, WIDTH});
+  bcltree_add(WIDTH)(ctx, &(struct enc_bit_cluster){0, ctx->values_len, WIDTH});
 
   while (bcltree_has_more(WIDTH)(ctx)) {
-    struct BitCluster *cluster = bcltree_next(WIDTH)(ctx);
+    struct enc_bit_cluster *cluster = bcltree_next(WIDTH)(ctx);
     size_t cl_from = cluster->from;
     size_t cl_len = cluster->length;
     unsigned int cl_bit_pos = cluster->bit_pos;
@@ -153,8 +153,8 @@ static VtencErrorCode encode_bit_cluster_tree(WIDTH)(struct EncodeCtx(WIDTH) *ct
     RETURN_IF_ERROR(bswriter_write(&(ctx->bits_writer), n_zeros, enc_len));
 
     {
-      struct BitCluster zeros_cluster = {cl_from, n_zeros, cur_bit_pos};
-      struct BitCluster ones_cluster = {cl_from + n_zeros, cl_len - n_zeros, cur_bit_pos};
+      struct enc_bit_cluster zeros_cluster = {cl_from, n_zeros, cur_bit_pos};
+      struct enc_bit_cluster ones_cluster = {cl_from + n_zeros, cl_len - n_zeros, cur_bit_pos};
 
       bcltree_add(WIDTH)(ctx, &ones_cluster);
       bcltree_add(WIDTH)(ctx, &zeros_cluster);

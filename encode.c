@@ -5,7 +5,6 @@
  */
 #include "vtenc.h"
 
-#include "bitcluster.h"
 #include "internals.h"
 #include "stack.h"
 
@@ -19,7 +18,13 @@ void vtenc_encoder_init(VtencEncoder *enc)
 
 #define ENCODE_STACK_MAX_SIZE 64
 
-CREATE_STACK(encode_stack, struct BitCluster, ENCODE_STACK_MAX_SIZE)
+struct enc_bit_cluster {
+  size_t        from;
+  size_t        length;
+  unsigned int  bit_pos;
+};
+
+CREATE_STACK(enc_stack, struct enc_bit_cluster, ENCODE_STACK_MAX_SIZE)
 
 #define LIST_MAX_VALUES VTENC_LIST_MAX_VALUES
 
