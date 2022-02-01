@@ -13,7 +13,7 @@
 #include "error.h"
 #include "internals.h"
 
-#define EncodeCtx(_width_) PASTE2(EncodeCtx, _width_)
+#define encctx(_width_) PASTE2(encctx, _width_)
 #define encctx_init(_width_) WIDTH_SUFFIX(encctx_init, _width_)
 #define encctx_close(_width_) WIDTH_SUFFIX(encctx_close, _width_)
 #define count_zeros_at_bit_pos(_width_) WIDTH_SUFFIX(count_zeros_at_bit_pos, _width_)
@@ -42,7 +42,7 @@ do {                                        \
   }                                         \
 } while(0)
 
-struct EncodeCtx(WIDTH) {
+struct encctx(WIDTH) {
   const TYPE        *values;
   size_t            values_len;
   int               skip_full_subtrees;
@@ -51,7 +51,7 @@ struct EncodeCtx(WIDTH) {
   struct bswriter   bits_writer;
 };
 
-static VtencErrorCode encctx_init(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
+static VtencErrorCode encctx_init(WIDTH)(struct encctx(WIDTH) *ctx,
   const VtencEncoder *enc, const TYPE *in, size_t in_len,
   uint8_t *out, size_t out_cap)
 {
@@ -71,12 +71,12 @@ static VtencErrorCode encctx_init(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
   return bswriter_init(&(ctx->bits_writer), out, out_cap);
 }
 
-static inline size_t encctx_close(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
+static inline size_t encctx_close(WIDTH)(struct encctx(WIDTH) *ctx)
 {
   return bswriter_close(&(ctx->bits_writer));
 }
 
-static inline VtencErrorCode encode_lower_bits_step(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
+static inline VtencErrorCode encode_lower_bits_step(WIDTH)(struct encctx(WIDTH) *ctx,
   uint64_t value, unsigned int n_bits)
 {
 #if WIDTH > BIT_STREAM_MAX_WRITE
@@ -95,7 +95,7 @@ static inline VtencErrorCode encode_lower_bits_step(WIDTH)(struct EncodeCtx(WIDT
   return bswriter_write(&(ctx->bits_writer), value & BITS_SIZE_MASK[n_bits], n_bits);
 }
 
-static inline VtencErrorCode encode_lower_bits(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
+static inline VtencErrorCode encode_lower_bits(WIDTH)(struct encctx(WIDTH) *ctx,
   const TYPE *values, size_t values_len, unsigned int n_bits)
 {
   size_t i;
@@ -107,7 +107,7 @@ static inline VtencErrorCode encode_lower_bits(WIDTH)(struct EncodeCtx(WIDTH) *c
   return VtencErrorNoError;
 }
 
-static inline void bcltree_add(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
+static inline void bcltree_add(WIDTH)(struct encctx(WIDTH) *ctx,
   const struct enc_bit_cluster *cluster)
 {
   if (cluster->bit_pos == 0)
@@ -119,17 +119,17 @@ static inline void bcltree_add(WIDTH)(struct EncodeCtx(WIDTH) *ctx,
   enc_stack_push(&ctx->stack, cluster);
 }
 
-static inline int bcltree_has_more(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
+static inline int bcltree_has_more(WIDTH)(struct encctx(WIDTH) *ctx)
 {
   return !enc_stack_empty(&ctx->stack);
 }
 
-static inline struct enc_bit_cluster *bcltree_next(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
+static inline struct enc_bit_cluster *bcltree_next(WIDTH)(struct encctx(WIDTH) *ctx)
 {
   return enc_stack_pop(&ctx->stack);
 }
 
-static VtencErrorCode encode_bit_cluster_tree(WIDTH)(struct EncodeCtx(WIDTH) *ctx)
+static VtencErrorCode encode_bit_cluster_tree(WIDTH)(struct encctx(WIDTH) *ctx)
 {
   bcltree_add(WIDTH)(ctx, &(struct enc_bit_cluster){0, ctx->values_len, WIDTH});
 
@@ -167,7 +167,7 @@ static VtencErrorCode encode_bit_cluster_tree(WIDTH)(struct EncodeCtx(WIDTH) *ct
 size_t vtenc_encode(WIDTH)(VtencEncoder *enc, const TYPE *in, size_t in_len,
   uint8_t *out, size_t out_cap)
 {
-  struct EncodeCtx(WIDTH) ctx;
+  struct encctx(WIDTH) ctx;
   uint64_t max_values = enc->allow_repeated_values ? LIST_MAX_VALUES : SET_MAX_VALUES;
 
   enc->last_error_code = VtencErrorNoError;
