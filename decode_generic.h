@@ -12,7 +12,7 @@
 #include "error.h"
 #include "internals.h"
 
-#define DecodeCtx(_width_) PASTE2(DecodeCtx, _width_)
+#define decctx(_width_) PASTE2(decctx, _width_)
 #define decctx_init(_width_) WIDTH_SUFFIX(decctx_init, _width_)
 #define decode_lower_bits_step(_width_) WIDTH_SUFFIX(decode_lower_bits_step, _width_)
 #define decode_lower_bits(_width_) WIDTH_SUFFIX(decode_lower_bits, _width_)
@@ -38,7 +38,7 @@ do {                                    \
   }                                     \
 } while (0)
 
-struct DecodeCtx(WIDTH) {
+struct decctx(WIDTH) {
   TYPE              *values;
   size_t            values_len;
   int               reconstruct_full_subtrees;
@@ -47,7 +47,7 @@ struct DecodeCtx(WIDTH) {
   struct bsreader   bits_reader;
 };
 
-static VtencErrorCode decctx_init(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
+static VtencErrorCode decctx_init(WIDTH)(struct decctx(WIDTH) *ctx,
   const VtencDecoder *dec, const uint8_t *in, size_t in_len,
   TYPE *out, size_t out_len)
 {
@@ -69,7 +69,7 @@ static VtencErrorCode decctx_init(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
   return VtencErrorNoError;
 }
 
-static inline VtencErrorCode decode_lower_bits_step(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
+static inline VtencErrorCode decode_lower_bits_step(WIDTH)(struct decctx(WIDTH) *ctx,
   TYPE *value, unsigned int n_bits)
 {
 #if WIDTH > BIT_STREAM_MAX_READ
@@ -97,7 +97,7 @@ static inline VtencErrorCode decode_lower_bits_step(WIDTH)(struct DecodeCtx(WIDT
 #endif
 }
 
-static inline VtencErrorCode decode_lower_bits(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
+static inline VtencErrorCode decode_lower_bits(WIDTH)(struct decctx(WIDTH) *ctx,
   TYPE *values, size_t values_len, unsigned int n_bits, TYPE higher_bits)
 {
   size_t i;
@@ -119,7 +119,7 @@ static inline void decode_full_subtree(WIDTH)(TYPE *values, size_t values_len, T
   }
 }
 
-static inline void bcltree_add(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
+static inline void bcltree_add(WIDTH)(struct decctx(WIDTH) *ctx,
   const struct dec_bit_cluster *cluster)
 {
   if (cluster->length == 0)
@@ -128,17 +128,17 @@ static inline void bcltree_add(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
   dec_stack_push(&ctx->stack, cluster);
 }
 
-static inline int bcltree_has_more(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
+static inline int bcltree_has_more(WIDTH)(struct decctx(WIDTH) *ctx)
 {
   return !dec_stack_empty(&ctx->stack);
 }
 
-static inline struct dec_bit_cluster *bcltree_next(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
+static inline struct dec_bit_cluster *bcltree_next(WIDTH)(struct decctx(WIDTH) *ctx)
 {
   return dec_stack_pop(&ctx->stack);
 }
 
-static VtencErrorCode decode_bit_cluster_tree(WIDTH)(struct DecodeCtx(WIDTH) *ctx)
+static VtencErrorCode decode_bit_cluster_tree(WIDTH)(struct decctx(WIDTH) *ctx)
 {
   bcltree_add(WIDTH)(ctx, &(struct dec_bit_cluster){0, ctx->values_len, WIDTH, 0});
 
@@ -193,7 +193,7 @@ static VtencErrorCode decode_bit_cluster_tree(WIDTH)(struct DecodeCtx(WIDTH) *ct
 void vtenc_decode(WIDTH)(VtencDecoder *dec, const uint8_t *in, size_t in_len,
   TYPE *out, size_t out_len)
 {
-  struct DecodeCtx(WIDTH) ctx;
+  struct decctx(WIDTH) ctx;
   uint64_t max_values = dec->allow_repeated_values ? LIST_MAX_VALUES : SET_MAX_VALUES;
 
   dec->last_error_code = VtencErrorNoError;
