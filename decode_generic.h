@@ -44,7 +44,7 @@ struct DecodeCtx(WIDTH) {
   int               reconstruct_full_subtrees;
   size_t            min_cluster_length;
   struct dec_stack  stack;
-  struct BSReader   bits_reader;
+  struct bsreader   bits_reader;
 };
 
 static VtencErrorCode decctx_init(WIDTH)(struct DecodeCtx(WIDTH) *ctx,
