@@ -12,26 +12,26 @@
 #include "error.h"
 #include "internals.h"
 
-#define decctx_(_width_) PASTE2(decctx, _width_)
-#define decctx decctx_(WIDTH)
-#define decctx_init_(_width_) WIDTH_SUFFIX(decctx_init, _width_)
-#define decctx_init decctx_init_(WIDTH)
-#define decode_lower_bits_step_(_width_) WIDTH_SUFFIX(decode_lower_bits_step, _width_)
-#define decode_lower_bits_step decode_lower_bits_step_(WIDTH)
-#define decode_lower_bits_(_width_) WIDTH_SUFFIX(decode_lower_bits, _width_)
-#define decode_lower_bits decode_lower_bits_(WIDTH)
-#define decode_full_subtree_(_width_) WIDTH_SUFFIX(decode_full_subtree, _width_)
-#define decode_full_subtree decode_full_subtree_(WIDTH)
-#define bcltree_add_(_width_) WIDTH_SUFFIX(bcltree_add, _width_)
-#define bcltree_add bcltree_add_(WIDTH)
-#define bcltree_has_more_(_width_) WIDTH_SUFFIX(bcltree_has_more, _width_)
-#define bcltree_has_more bcltree_has_more_(WIDTH)
-#define bcltree_next_(_width_) WIDTH_SUFFIX(bcltree_next, _width_)
-#define bcltree_next bcltree_next_(WIDTH)
-#define decode_bit_cluster_tree_(_width_) WIDTH_SUFFIX(decode_bit_cluster_tree, _width_)
-#define decode_bit_cluster_tree decode_bit_cluster_tree_(WIDTH)
-#define vtenc_decode_(_width_) WIDTH_SUFFIX(vtenc_decode, _width_)
-#define vtenc_decode vtenc_decode_(WIDTH)
+#define decctx_(_width_) BITWIDTH_SUFFIX(decctx, _width_)
+#define decctx decctx_(BITWIDTH)
+#define decctx_init_(_width_) BITWIDTH_SUFFIX(decctx_init, _width_)
+#define decctx_init decctx_init_(BITWIDTH)
+#define decode_lower_bits_step_(_width_) BITWIDTH_SUFFIX(decode_lower_bits_step, _width_)
+#define decode_lower_bits_step decode_lower_bits_step_(BITWIDTH)
+#define decode_lower_bits_(_width_) BITWIDTH_SUFFIX(decode_lower_bits, _width_)
+#define decode_lower_bits decode_lower_bits_(BITWIDTH)
+#define decode_full_subtree_(_width_) BITWIDTH_SUFFIX(decode_full_subtree, _width_)
+#define decode_full_subtree decode_full_subtree_(BITWIDTH)
+#define bcltree_add_(_width_) BITWIDTH_SUFFIX(bcltree_add, _width_)
+#define bcltree_add bcltree_add_(BITWIDTH)
+#define bcltree_has_more_(_width_) BITWIDTH_SUFFIX(bcltree_has_more, _width_)
+#define bcltree_has_more bcltree_has_more_(BITWIDTH)
+#define bcltree_next_(_width_) BITWIDTH_SUFFIX(bcltree_next, _width_)
+#define bcltree_next bcltree_next_(BITWIDTH)
+#define decode_bit_cluster_tree_(_width_) BITWIDTH_SUFFIX(decode_bit_cluster_tree, _width_)
+#define decode_bit_cluster_tree decode_bit_cluster_tree_(BITWIDTH)
+#define vtenc_decode_(_width_) BITWIDTH_SUFFIX(vtenc_decode, _width_)
+#define vtenc_decode vtenc_decode_(BITWIDTH)
 
 #define dec_return_with_code(dec, code) \
 do {                                    \
@@ -81,7 +81,7 @@ static VtencErrorCode decctx_init(struct decctx *ctx,
 static inline VtencErrorCode decode_lower_bits_step(struct decctx *ctx,
   TYPE *value, unsigned int n_bits)
 {
-#if WIDTH > BIT_STREAM_MAX_READ
+#if BITWIDTH > BIT_STREAM_MAX_READ
   uint64_t lower;
   unsigned int shift = 0;
 
@@ -149,7 +149,7 @@ static inline struct dec_bit_cluster *bcltree_next(struct decctx *ctx)
 
 static VtencErrorCode decode_bit_cluster_tree(struct decctx *ctx)
 {
-  bcltree_add(ctx, &(struct dec_bit_cluster){0, ctx->values_len, WIDTH, 0});
+  bcltree_add(ctx, &(struct dec_bit_cluster){0, ctx->values_len, BITWIDTH, 0});
 
   while (bcltree_has_more(ctx)) {
     struct dec_bit_cluster *cluster = bcltree_next(ctx);

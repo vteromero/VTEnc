@@ -13,30 +13,30 @@
 #include "error.h"
 #include "internals.h"
 
-#define encctx_(_width_) PASTE2(encctx, _width_)
-#define encctx encctx_(WIDTH)
-#define encctx_init_(_width_) WIDTH_SUFFIX(encctx_init, _width_)
-#define encctx_init encctx_init_(WIDTH)
-#define encctx_close_(_width_) WIDTH_SUFFIX(encctx_close, _width_)
-#define encctx_close encctx_close_(WIDTH)
-#define count_zeros_at_bit_pos_(_width_) WIDTH_SUFFIX(count_zeros_at_bit_pos, _width_)
-#define count_zeros_at_bit_pos count_zeros_at_bit_pos_(WIDTH)
-#define encode_lower_bits_step_(_width_) WIDTH_SUFFIX(encode_lower_bits_step, _width_)
-#define encode_lower_bits_step encode_lower_bits_step_(WIDTH)
-#define encode_lower_bits_(_width_) WIDTH_SUFFIX(encode_lower_bits, _width_)
-#define encode_lower_bits encode_lower_bits_(WIDTH)
-#define bcltree_add_(_width_) WIDTH_SUFFIX(bcltree_add, _width_)
-#define bcltree_add bcltree_add_(WIDTH)
-#define bcltree_has_more_(_width_) WIDTH_SUFFIX(bcltree_has_more, _width_)
-#define bcltree_has_more bcltree_has_more_(WIDTH)
-#define bcltree_next_(_width_) WIDTH_SUFFIX(bcltree_next, _width_)
-#define bcltree_next bcltree_next_(WIDTH)
-#define encode_bit_cluster_tree_(_width_) WIDTH_SUFFIX(encode_bit_cluster_tree, _width_)
-#define encode_bit_cluster_tree encode_bit_cluster_tree_(WIDTH)
-#define vtenc_encode_(_width_) WIDTH_SUFFIX(vtenc_encode, _width_)
-#define vtenc_encode vtenc_encode_(WIDTH)
-#define vtenc_max_encoded_size_(_width_) WIDTH_SUFFIX(vtenc_max_encoded_size, _width_)
-#define vtenc_max_encoded_size vtenc_max_encoded_size_(WIDTH)
+#define encctx_(_width_) BITWIDTH_SUFFIX(encctx, _width_)
+#define encctx encctx_(BITWIDTH)
+#define encctx_init_(_width_) BITWIDTH_SUFFIX(encctx_init, _width_)
+#define encctx_init encctx_init_(BITWIDTH)
+#define encctx_close_(_width_) BITWIDTH_SUFFIX(encctx_close, _width_)
+#define encctx_close encctx_close_(BITWIDTH)
+#define count_zeros_at_bit_pos_(_width_) BITWIDTH_SUFFIX(count_zeros_at_bit_pos, _width_)
+#define count_zeros_at_bit_pos count_zeros_at_bit_pos_(BITWIDTH)
+#define encode_lower_bits_step_(_width_) BITWIDTH_SUFFIX(encode_lower_bits_step, _width_)
+#define encode_lower_bits_step encode_lower_bits_step_(BITWIDTH)
+#define encode_lower_bits_(_width_) BITWIDTH_SUFFIX(encode_lower_bits, _width_)
+#define encode_lower_bits encode_lower_bits_(BITWIDTH)
+#define bcltree_add_(_width_) BITWIDTH_SUFFIX(bcltree_add, _width_)
+#define bcltree_add bcltree_add_(BITWIDTH)
+#define bcltree_has_more_(_width_) BITWIDTH_SUFFIX(bcltree_has_more, _width_)
+#define bcltree_has_more bcltree_has_more_(BITWIDTH)
+#define bcltree_next_(_width_) BITWIDTH_SUFFIX(bcltree_next, _width_)
+#define bcltree_next bcltree_next_(BITWIDTH)
+#define encode_bit_cluster_tree_(_width_) BITWIDTH_SUFFIX(encode_bit_cluster_tree, _width_)
+#define encode_bit_cluster_tree encode_bit_cluster_tree_(BITWIDTH)
+#define vtenc_encode_(_width_) BITWIDTH_SUFFIX(vtenc_encode, _width_)
+#define vtenc_encode vtenc_encode_(BITWIDTH)
+#define vtenc_max_encoded_size_(_width_) BITWIDTH_SUFFIX(vtenc_max_encoded_size, _width_)
+#define vtenc_max_encoded_size vtenc_max_encoded_size_(BITWIDTH)
 
 #define ENC_RETURN_WITH_CODE(ctx, enc, code)  \
 do {                                          \
@@ -90,7 +90,7 @@ static inline size_t encctx_close(struct encctx *ctx)
 static inline VtencErrorCode encode_lower_bits_step(struct encctx *ctx,
   uint64_t value, unsigned int n_bits)
 {
-#if WIDTH > BIT_STREAM_MAX_WRITE
+#if BITWIDTH > BIT_STREAM_MAX_WRITE
   if (n_bits > BIT_STREAM_MAX_WRITE) {
     return_if_error(bswriter_write(
       &(ctx->bits_writer),
@@ -142,7 +142,7 @@ static inline struct enc_bit_cluster *bcltree_next(struct encctx *ctx)
 
 static VtencErrorCode encode_bit_cluster_tree(struct encctx *ctx)
 {
-  bcltree_add(ctx, &(struct enc_bit_cluster){0, ctx->values_len, WIDTH});
+  bcltree_add(ctx, &(struct enc_bit_cluster){0, ctx->values_len, BITWIDTH});
 
   while (bcltree_has_more(ctx)) {
     struct enc_bit_cluster *cluster = bcltree_next(ctx);
@@ -198,5 +198,5 @@ size_t vtenc_encode(VtencEncoder *enc, const TYPE *in, size_t in_len,
 
 size_t vtenc_max_encoded_size(size_t in_len)
 {
-  return bswriter_align_buffer_size((WIDTH / 8) * (in_len + 1));
+  return bswriter_align_buffer_size((BITWIDTH / 8) * (in_len + 1));
 }
