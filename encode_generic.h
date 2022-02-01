@@ -92,7 +92,7 @@ static inline VtencErrorCode encode_lower_bits_step(struct encctx *ctx,
 {
 #if WIDTH > BIT_STREAM_MAX_WRITE
   if (n_bits > BIT_STREAM_MAX_WRITE) {
-    RETURN_IF_ERROR(bswriter_write(
+    return_if_error(bswriter_write(
       &(ctx->bits_writer),
       value & BITS_SIZE_MASK[BIT_STREAM_MAX_WRITE],
       BIT_STREAM_MAX_WRITE
@@ -112,7 +112,7 @@ static inline VtencErrorCode encode_lower_bits(struct encctx *ctx,
   size_t i;
 
   for (i = 0; i < values_len; ++i) {
-    RETURN_IF_ERROR(encode_lower_bits_step(ctx, values[i], n_bits));
+    return_if_error(encode_lower_bits_step(ctx, values[i], n_bits));
   }
 
   return VtencErrorNoError;
@@ -155,13 +155,13 @@ static VtencErrorCode encode_bit_cluster_tree(struct encctx *ctx)
       continue;
 
     if (cl_len <= ctx->min_cluster_length) {
-      RETURN_IF_ERROR(encode_lower_bits(ctx, ctx->values + cl_from, cl_len, cl_bit_pos));
+      return_if_error(encode_lower_bits(ctx, ctx->values + cl_from, cl_len, cl_bit_pos));
       continue;
     }
 
     size_t n_zeros = count_zeros_at_bit_pos(ctx->values + cl_from, cl_len, cur_bit_pos);
     unsigned int enc_len = bits_len_u64(cl_len);
-    RETURN_IF_ERROR(bswriter_write(&(ctx->bits_writer), n_zeros, enc_len));
+    return_if_error(bswriter_write(&(ctx->bits_writer), n_zeros, enc_len));
 
     {
       struct enc_bit_cluster zeros_cluster = {cl_from, n_zeros, cur_bit_pos};

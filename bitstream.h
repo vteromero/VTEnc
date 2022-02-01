@@ -75,7 +75,7 @@ static inline VtencErrorCode bswriter_write(struct bswriter *writer,
   if (writer->ptr > writer->end_ptr) return VtencErrorEndOfStream;
 
   if (n_bits + writer->bit_pos >= 64)
-    RETURN_IF_ERROR(bswriter_flush(writer));
+    return_if_error(bswriter_flush(writer));
 
   bswriter_append(writer, value, n_bits);
 
@@ -151,7 +151,7 @@ static inline VtencErrorCode bsreader_read(struct bsreader *reader,
   assert(n_bits <= BIT_STREAM_MAX_READ);
 
   if (n_bits + reader->bits_consumed > reader->bits_loaded) {
-    RETURN_IF_ERROR(bsreader_load(reader));
+    return_if_error(bsreader_load(reader));
 
     if (n_bits + reader->bits_consumed > reader->bits_loaded)
       return VtencErrorNotEnoughBits;

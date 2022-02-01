@@ -33,17 +33,17 @@
 #define vtenc_decode_(_width_) WIDTH_SUFFIX(vtenc_decode, _width_)
 #define vtenc_decode vtenc_decode_(WIDTH)
 
-#define DEC_RETURN_WITH_CODE(dec, code) \
+#define dec_return_with_code(dec, code) \
 do {                                    \
   (dec)->last_error_code = code;        \
   return;                               \
 } while (0)
 
-#define DEC_RETURN_ON_ERROR(dec, exp)   \
+#define dec_return_on_error(dec, exp)   \
 do {                                    \
   const VtencErrorCode code = (exp);    \
   if (code != VtencErrorNoError) {      \
-    DEC_RETURN_WITH_CODE(dec, code);    \
+    dec_return_with_code(dec, code);    \
   }                                     \
 } while (0)
 
@@ -86,20 +86,20 @@ static inline VtencErrorCode decode_lower_bits_step(struct decctx *ctx,
   unsigned int shift = 0;
 
   if (n_bits > BIT_STREAM_MAX_READ) {
-    RETURN_IF_ERROR(bsreader_read(&(ctx->bits_reader), BIT_STREAM_MAX_READ, &lower));
+    return_if_error(bsreader_read(&(ctx->bits_reader), BIT_STREAM_MAX_READ, &lower));
     *value |= lower;
     shift = BIT_STREAM_MAX_READ;
     n_bits -= BIT_STREAM_MAX_READ;
   }
 
-  RETURN_IF_ERROR(bsreader_read(&(ctx->bits_reader), n_bits, &lower));
+  return_if_error(bsreader_read(&(ctx->bits_reader), n_bits, &lower));
   *value |= lower << shift;
 
   return VtencErrorNoError;
 #else
   uint64_t lower;
 
-  RETURN_IF_ERROR(bsreader_read(&(ctx->bits_reader), n_bits, &lower));
+  return_if_error(bsreader_read(&(ctx->bits_reader), n_bits, &lower));
   *value |= (TYPE)lower;
 
   return VtencErrorNoError;
@@ -113,7 +113,7 @@ static inline VtencErrorCode decode_lower_bits(struct decctx *ctx,
 
   for (i = 0; i < values_len; ++i) {
     values[i] = higher_bits;
-    RETURN_IF_ERROR(decode_lower_bits_step(ctx, &values[i], n_bits));
+    return_if_error(decode_lower_bits_step(ctx, &values[i], n_bits));
   }
 
   return VtencErrorNoError;
@@ -176,13 +176,13 @@ static VtencErrorCode decode_bit_cluster_tree(struct decctx *ctx)
     }
 
     if (cl_len <= ctx->min_cluster_length) {
-      RETURN_IF_ERROR(decode_lower_bits(ctx, ctx->values + cl_from, cl_len, cl_bit_pos, cl_higher_bits));
+      return_if_error(decode_lower_bits(ctx, ctx->values + cl_from, cl_len, cl_bit_pos, cl_higher_bits));
       continue;
     }
 
     enc_len = bits_len_u64(cl_len);
 
-    RETURN_IF_ERROR(bsreader_read(&(ctx->bits_reader), enc_len, &n_zeros));
+    return_if_error(bsreader_read(&(ctx->bits_reader), enc_len, &n_zeros));
 
     if (n_zeros > (uint64_t)cl_len) return VtencErrorWrongFormat;
 
@@ -207,15 +207,15 @@ void vtenc_decode(VtencDecoder *dec, const uint8_t *in, size_t in_len,
 
   dec->last_error_code = VtencErrorNoError;
 
-  DEC_RETURN_ON_ERROR(dec,
+  dec_return_on_error(dec,
     decctx_init(&ctx, dec, in, in_len, out, out_len)
   );
 
   if ((uint64_t)out_len > max_values) {
-    DEC_RETURN_WITH_CODE(dec, VtencErrorOutputTooBig);
+    dec_return_with_code(dec, VtencErrorOutputTooBig);
   }
 
   memset(out, 0, out_len * sizeof(*out));
 
-  DEC_RETURN_ON_ERROR(dec, decode_bit_cluster_tree(&ctx));
+  dec_return_on_error(dec, decode_bit_cluster_tree(&ctx));
 }
