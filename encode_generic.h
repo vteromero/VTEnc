@@ -48,7 +48,7 @@ struct EncodeCtx(WIDTH) {
   int               skip_full_subtrees;
   size_t            min_cluster_length;
   struct enc_stack  stack;
-  struct BSWriter   bits_writer;
+  struct bswriter   bits_writer;
 };
 
 static VtencErrorCode encctx_init(WIDTH)(struct EncodeCtx(WIDTH) *ctx,

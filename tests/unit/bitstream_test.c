@@ -26,7 +26,7 @@ int test_bswriter_align_buffer_size(void)
 
 int test_bswriter_init_1(void)
 {
-  struct BSWriter writer;
+  struct bswriter writer;
   const size_t buf_cap = 4;
   uint8_t buf[buf_cap];
 
@@ -37,7 +37,7 @@ int test_bswriter_init_1(void)
 
 int test_bswriter_init_2(void)
 {
-  struct BSWriter writer;
+  struct bswriter writer;
   const size_t buf_cap = 8;
   uint8_t buf[buf_cap];
 
@@ -48,7 +48,7 @@ int test_bswriter_init_2(void)
 
 int test_bswriter_write_1(void)
 {
-  struct BSWriter writer;
+  struct bswriter writer;
   const size_t buf_cap = 16;
   uint8_t buf[buf_cap];
 
@@ -73,7 +73,7 @@ int test_bswriter_write_1(void)
 
 int test_bswriter_write_2(void)
 {
-  struct BSWriter writer;
+  struct bswriter writer;
   const size_t buf_cap = 8;
   uint8_t buf[buf_cap];
 
@@ -99,7 +99,7 @@ int test_bswriter_write_2(void)
 
 int test_bswriter_write_3(void)
 {
-  struct BSWriter writer;
+  struct bswriter writer;
   const size_t buf_cap = 24;
   uint8_t buf[buf_cap];
 
@@ -123,7 +123,7 @@ int test_bswriter_write_3(void)
 
 int test_bswriter_close_1(void)
 {
-  struct BSWriter writer;
+  struct bswriter writer;
   const size_t buf_cap = 8;
   uint8_t buf[buf_cap];
 
@@ -135,7 +135,7 @@ int test_bswriter_close_1(void)
 
 int test_bswriter_close_2(void)
 {
-  struct BSWriter writer;
+  struct bswriter writer;
   const size_t buf_cap = 8;
   uint8_t buf[buf_cap];
 
