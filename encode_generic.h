@@ -38,18 +38,18 @@
 #define vtenc_max_encoded_size_(_width_) BITWIDTH_SUFFIX(vtenc_max_encoded_size, _width_)
 #define vtenc_max_encoded_size vtenc_max_encoded_size_(BITWIDTH)
 
-#define ENC_RETURN_WITH_CODE(ctx, enc, code)  \
+#define enc_return_with_code(ctx, enc, code)  \
 do {                                          \
   (enc)->last_error_code = code;              \
   encctx_close((ctx));                        \
   return 0;                                   \
 } while (0)
 
-#define ENC_RETURN_ON_ERROR(ctx, enc, exp)  \
+#define enc_return_on_error(ctx, enc, exp)  \
 do {                                        \
   const VtencErrorCode code = (exp);        \
   if (code != VtencErrorNoError) {          \
-    ENC_RETURN_WITH_CODE(ctx, enc, code);   \
+    enc_return_with_code(ctx, enc, code);   \
   }                                         \
 } while(0)
 
@@ -183,15 +183,15 @@ size_t vtenc_encode(VtencEncoder *enc, const TYPE *in, size_t in_len,
 
   enc->last_error_code = VtencErrorNoError;
 
-  ENC_RETURN_ON_ERROR(&ctx, enc,
+  enc_return_on_error(&ctx, enc,
     encctx_init(&ctx, enc, in, in_len, out, out_cap)
   );
 
   if ((uint64_t)in_len > max_values) {
-    ENC_RETURN_WITH_CODE(&ctx, enc, VtencErrorInputTooBig);
+    enc_return_with_code(&ctx, enc, VtencErrorInputTooBig);
   }
 
-  ENC_RETURN_ON_ERROR(&ctx, enc, encode_bit_cluster_tree(&ctx));
+  enc_return_on_error(&ctx, enc, encode_bit_cluster_tree(&ctx));
 
   return encctx_close(&ctx);
 }
