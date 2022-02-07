@@ -29,35 +29,35 @@ CREATE_STACK(enc_stack, struct enc_bit_cluster, ENCODE_STACK_MAX_SIZE)
 #define LIST_MAX_VALUES VTENC_LIST_MAX_VALUES
 
 #define TYPE uint8_t
-#define WIDTH 8
+#define BITWIDTH 8
 #define SET_MAX_VALUES VTENC_SET_MAX_VALUES8
 #include "encode_generic.h"
 #undef TYPE
-#undef WIDTH
+#undef BITWIDTH
 #undef SET_MAX_VALUES
 
 #define TYPE uint16_t
-#define WIDTH 16
+#define BITWIDTH 16
 #define SET_MAX_VALUES VTENC_SET_MAX_VALUES16
 #include "encode_generic.h"
 #undef TYPE
-#undef WIDTH
+#undef BITWIDTH
 #undef SET_MAX_VALUES
 
 #define TYPE uint32_t
-#define WIDTH 32
+#define BITWIDTH 32
 #define SET_MAX_VALUES VTENC_SET_MAX_VALUES32
 #include "encode_generic.h"
 #undef TYPE
-#undef WIDTH
+#undef BITWIDTH
 #undef SET_MAX_VALUES
 
 #define TYPE uint64_t
-#define WIDTH 64
+#define BITWIDTH 64
 #define SET_MAX_VALUES VTENC_SET_MAX_VALUES64
 #include "encode_generic.h"
 #undef TYPE
-#undef WIDTH
+#undef BITWIDTH
 #undef SET_MAX_VALUES
 
 #undef LIST_MAX_VALUES

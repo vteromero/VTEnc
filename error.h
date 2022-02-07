@@ -8,27 +8,12 @@
 
 #include "vtenc.h"
 
-#define RETURN_IF_ERROR(exp)          \
+#define return_if_error(exp)          \
 do {                                  \
   const VtencErrorCode code = (exp);  \
-  if (code != VtencErrorNoError)      \
+  if (code != VtencErrorNoError) {    \
     return code;                      \
-} while(0)
-
-#define RETURN_IF_ERROR_WITH(exp, cleanup)  \
-do {                                        \
-  const VtencErrorCode code = (exp);        \
-  if (code != VtencErrorNoError) {          \
-    (cleanup);                              \
-    return code;                            \
-  }                                         \
-} while(0)
-
-#define RETURN_ZERO_IF_ERROR(exp)     \
-do {                                  \
-  const VtencErrorCode code = (exp);  \
-  if (code != VtencErrorNoError)      \
-    return 0;                         \
+  }                                   \
 } while(0)
 
 #endif /* VTENC_ERROR_H_ */

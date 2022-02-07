@@ -26,7 +26,7 @@ int test_bswriter_align_buffer_size(void)
 
 int test_bswriter_init_1(void)
 {
-  struct BSWriter writer;
+  struct bswriter writer;
   const size_t buf_cap = 4;
   uint8_t buf[buf_cap];
 
@@ -37,7 +37,7 @@ int test_bswriter_init_1(void)
 
 int test_bswriter_init_2(void)
 {
-  struct BSWriter writer;
+  struct bswriter writer;
   const size_t buf_cap = 8;
   uint8_t buf[buf_cap];
 
@@ -48,7 +48,7 @@ int test_bswriter_init_2(void)
 
 int test_bswriter_write_1(void)
 {
-  struct BSWriter writer;
+  struct bswriter writer;
   const size_t buf_cap = 16;
   uint8_t buf[buf_cap];
 
@@ -73,7 +73,7 @@ int test_bswriter_write_1(void)
 
 int test_bswriter_write_2(void)
 {
-  struct BSWriter writer;
+  struct bswriter writer;
   const size_t buf_cap = 8;
   uint8_t buf[buf_cap];
 
@@ -99,7 +99,7 @@ int test_bswriter_write_2(void)
 
 int test_bswriter_write_3(void)
 {
-  struct BSWriter writer;
+  struct bswriter writer;
   const size_t buf_cap = 24;
   uint8_t buf[buf_cap];
 
@@ -123,7 +123,7 @@ int test_bswriter_write_3(void)
 
 int test_bswriter_close_1(void)
 {
-  struct BSWriter writer;
+  struct bswriter writer;
   const size_t buf_cap = 8;
   uint8_t buf[buf_cap];
 
@@ -135,7 +135,7 @@ int test_bswriter_close_1(void)
 
 int test_bswriter_close_2(void)
 {
-  struct BSWriter writer;
+  struct bswriter writer;
   const size_t buf_cap = 8;
   uint8_t buf[buf_cap];
 
@@ -153,7 +153,7 @@ int test_bswriter_close_2(void)
 
 int test_bsreader_read_1(void)
 {
-  struct BSReader reader;
+  struct bsreader reader;
   const uint8_t buf[] = {};
   const size_t buf_len = sizeof(buf);
   uint64_t val=0;
@@ -167,7 +167,7 @@ int test_bsreader_read_1(void)
 
 int test_bsreader_read_2(void)
 {
-  struct BSReader reader;
+  struct bsreader reader;
   const uint8_t buf[] = {0xff};
   const size_t buf_len = sizeof(buf);
   uint64_t val=0;
@@ -182,7 +182,7 @@ int test_bsreader_read_2(void)
 
 int test_bsreader_read_3(void)
 {
-  struct BSReader reader;
+  struct bsreader reader;
   const uint8_t buf[] = {0xff, 0x66};
   const size_t buf_len = sizeof(buf);
   uint64_t val=0;
@@ -198,7 +198,7 @@ int test_bsreader_read_3(void)
 
 int test_bsreader_read_4(void)
 {
-  struct BSReader reader;
+  struct bsreader reader;
   const uint8_t buf[] = {0xba};
   const size_t buf_len = sizeof(buf);
   uint64_t val=0;
@@ -217,7 +217,7 @@ int test_bsreader_read_4(void)
 
 int test_bsreader_read_5(void)
 {
-  struct BSReader reader;
+  struct bsreader reader;
   const uint8_t buf[] = {
     0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22,
     0x33, 0x33, 0x33, 0x33, 0x33, 0x33
@@ -237,7 +237,7 @@ int test_bsreader_read_5(void)
 
 int test_bsreader_read_6(void)
 {
-  struct BSReader reader;
+  struct bsreader reader;
   const uint8_t buf[] = {
     0xff, 0xab, 0x11, 0xcd, 0x55, 0x55, 0x55, 0x55, 0x66, 0x66, 0x66, 0x66
   };
@@ -264,7 +264,7 @@ int test_bsreader_read_6(void)
 
 int test_bsreader_read_7(void)
 {
-  struct BSReader reader;
+  struct bsreader reader;
   const uint8_t buf[] = {
     0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
     0x55, 0x55, 0x55
@@ -283,7 +283,7 @@ int test_bsreader_read_7(void)
 
 int test_bsreader_size(void)
 {
-  struct BSReader reader;
+  struct bsreader reader;
   const uint8_t buf[] = {
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
   };
