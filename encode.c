@@ -3,8 +3,6 @@
   Licensed under the MIT License.
   See LICENSE file in the project root for full license information.
  */
-#include "vtenc.h"
-
 #include "internals.h"
 #include "stack.h"
 
@@ -16,7 +14,7 @@ void vtenc_encoder_init(VtencEncoder *enc)
   enc->last_error_code        = VtencErrorNoError;
 }
 
-#define ENCODE_STACK_MAX_SIZE 64
+#define ENC_STACK_MAX_SIZE 64
 
 struct enc_bit_cluster {
   size_t        from;
@@ -24,7 +22,7 @@ struct enc_bit_cluster {
   unsigned int  bit_pos;
 };
 
-CREATE_STACK(enc_stack, struct enc_bit_cluster, ENCODE_STACK_MAX_SIZE)
+CREATE_STACK(enc_stack, struct enc_bit_cluster, ENC_STACK_MAX_SIZE)
 
 #define LIST_MAX_VALUES VTENC_LIST_MAX_VALUES
 

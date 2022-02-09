@@ -6,7 +6,7 @@
 #ifndef VTENC_ERROR_H_
 #define VTENC_ERROR_H_
 
-#include "vtenc.h"
+#include "internals.h"
 
 #define return_if_error(exp)          \
 do {                                  \

@@ -10,11 +10,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "internals.h"
 #include "error.h"
 #include "mem.h"
-
-#define BIT_STREAM_MAX_WRITE 57
-#define BIT_STREAM_MAX_READ BIT_STREAM_MAX_WRITE
 
 struct bswriter {
   uint64_t      bit_container;

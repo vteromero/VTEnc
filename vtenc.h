@@ -35,6 +35,12 @@ extern "C" {
 #define VTENC_ERR_OUTPUT_TOO_BIG    (-5)  /* Output size too big */
 #define VTENC_ERR_WRONG_FORMAT      (-6)  /* Wrong encoded format */
 
+/* Encoding/decoding handler */
+typedef struct vtenc vtenc;
+
+/* Initialises the encoding/decoding handler */
+int vtenc_init(vtenc *handler);
+
 /* Error codes */
 typedef enum {
   VtencErrorNoError         = 0,
