@@ -13,13 +13,27 @@
 extern "C" {
 #endif
 
-/**
+/*
  * This library provides a series of functions to encode and decode sorted
  * sequences of unsigned integers using VTEnc algorithm.
  *
  * It supports sequences of 4 different types: uint8_t, uint16_t, uint32_t and
  * uint64_t.
  */
+
+/*
+ * Result codes.
+ *
+ * Most VTEnc functions return an integer result code from the following set
+ * to indicate success or failure.
+ */
+#define VTENC_OK                    0     /* Successful code */
+#define VTENC_ERR_BUFFER_TOO_SMALL  (-1)  /* Buffer too small */
+#define VTENC_ERR_END_OF_STREAM     (-2)  /* Write or Read reaches end of the stream */
+#define VTENC_ERR_NOT_ENOUGH_BITS   (-3)  /* Not enough bits to read */
+#define VTENC_ERR_INPUT_TOO_BIG     (-4)  /* Input size too big */
+#define VTENC_ERR_OUTPUT_TOO_BIG    (-5)  /* Output size too big */
+#define VTENC_ERR_WRONG_FORMAT      (-6)  /* Wrong encoded format */
 
 /* Error codes */
 typedef enum {
