@@ -39,8 +39,11 @@ extern "C" {
 /* Encoding/decoding handler */
 typedef struct vtenc vtenc;
 
-/* Initialise the encoding/decoding handler */
-int vtenc_init(vtenc *handler);
+/* Create a new encoding/decoding handler */
+vtenc *vtenc_create(void);
+
+/* Destroy an encoding/decoding handler */
+void vtenc_destroy(vtenc *handler);
 
 /*
  * Configuration options.

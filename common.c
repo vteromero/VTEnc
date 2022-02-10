@@ -4,17 +4,25 @@
   See LICENSE file in the project root for full license information.
  */
 #include <stdarg.h>
+#include <stdlib.h>
 
 #include "internals.h"
 
-int vtenc_init(vtenc *handler)
+vtenc *vtenc_create(void)
 {
-  handler->params.allow_repeated_values = 1;
-  handler->params.skip_full_subtrees    = 1;
-  handler->params.min_cluster_length    = 1;
-  handler->out_size                     = 0;
+  vtenc *handler;
 
-  return VTENC_OK;
+  handler = malloc(sizeof(*handler));
+
+  return handler;
+}
+
+void vtenc_destroy(vtenc *handler)
+{
+  if (!handler)
+    return;
+
+  free(handler);
 }
 
 int vtenc_config(vtenc *handler, int op, ...)
