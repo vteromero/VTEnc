@@ -41,18 +41,6 @@ typedef struct vtenc vtenc;
 /* Initialises the encoding/decoding handler */
 int vtenc_init(vtenc *handler);
 
-/* Error codes */
-typedef enum {
-  VtencErrorNoError         = 0,
-  VtencErrorMemoryAlloc     = 1,
-  VtencErrorBufferTooSmall  = 2,
-  VtencErrorEndOfStream     = 3,
-  VtencErrorNotEnoughBits   = 4,
-  VtencErrorInputTooBig     = 6,
-  VtencErrorOutputTooBig    = 7,
-  VtencErrorWrongFormat     = 8
-} VtencErrorCode;
-
 /**
  * typedef VtencEncoder - VTEnc encoder.
  */
@@ -79,7 +67,7 @@ typedef struct {
    * code value if the encode function fails, or a 'VtencErrorNoError' value if
    * the function runs successfully.
    */
-  VtencErrorCode last_error_code;
+  int last_error_code;
 } VtencEncoder;
 
 /**
@@ -155,7 +143,7 @@ typedef struct {
    * code value if the decode function fails, or a 'VtencErrorNoError' value if
    * the function runs successfully.
    */
-  VtencErrorCode last_error_code;
+  int last_error_code;
 } VtencDecoder;
 
 /**

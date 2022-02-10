@@ -8,12 +8,12 @@
 
 #include "internals.h"
 
-#define return_if_error(exp)          \
-do {                                  \
-  const VtencErrorCode code = (exp);  \
-  if (code != VtencErrorNoError) {    \
-    return code;                      \
-  }                                   \
+#define return_if_error(exp)  \
+do {                          \
+  const int code = (exp);     \
+  if (code != VTENC_OK) {     \
+    return code;              \
+  }                           \
 } while(0)
 
 #endif /* VTENC_ERROR_H_ */

@@ -47,8 +47,8 @@ do {                                          \
 
 #define enc_return_on_error(ctx, enc, exp)  \
 do {                                        \
-  const VtencErrorCode code = (exp);        \
-  if (code != VtencErrorNoError) {          \
+  const int code = (exp);                   \
+  if (code != VTENC_OK) {                   \
     enc_return_with_code(ctx, enc, code);   \
   }                                         \
 } while(0)
@@ -62,7 +62,7 @@ struct encctx {
   struct bswriter   bits_writer;
 };
 
-static VtencErrorCode encctx_init(struct encctx *ctx,
+static int encctx_init(struct encctx *ctx,
   const VtencEncoder *enc, const TYPE *in, size_t in_len,
   uint8_t *out, size_t out_cap)
 {
@@ -87,7 +87,7 @@ static inline size_t encctx_close(struct encctx *ctx)
   return bswriter_close(&(ctx->bits_writer));
 }
 
-static inline VtencErrorCode encode_lower_bits_step(struct encctx *ctx,
+static inline int encode_lower_bits_step(struct encctx *ctx,
   uint64_t value, unsigned int n_bits)
 {
 #if BITWIDTH > BIT_STREAM_MAX_WRITE
@@ -106,7 +106,7 @@ static inline VtencErrorCode encode_lower_bits_step(struct encctx *ctx,
   return bswriter_write(&(ctx->bits_writer), value & BITS_SIZE_MASK[n_bits], n_bits);
 }
 
-static inline VtencErrorCode encode_lower_bits(struct encctx *ctx,
+static inline int encode_lower_bits(struct encctx *ctx,
   const TYPE *values, size_t values_len, unsigned int n_bits)
 {
   size_t i;
@@ -115,7 +115,7 @@ static inline VtencErrorCode encode_lower_bits(struct encctx *ctx,
     return_if_error(encode_lower_bits_step(ctx, values[i], n_bits));
   }
 
-  return VtencErrorNoError;
+  return VTENC_OK;
 }
 
 static inline void bcltree_add(struct encctx *ctx,
@@ -140,7 +140,7 @@ static inline struct enc_bit_cluster *bcltree_next(struct encctx *ctx)
   return enc_stack_pop(&ctx->stack);
 }
 
-static VtencErrorCode encode_bit_cluster_tree(struct encctx *ctx)
+static int encode_bit_cluster_tree(struct encctx *ctx)
 {
   bcltree_add(ctx, &(struct enc_bit_cluster){0, ctx->values_len, BITWIDTH});
 
@@ -172,7 +172,7 @@ static VtencErrorCode encode_bit_cluster_tree(struct encctx *ctx)
     }
   }
 
-  return VtencErrorNoError;
+  return VTENC_OK;
 }
 
 size_t vtenc_encode(VtencEncoder *enc, const TYPE *in, size_t in_len,
@@ -181,14 +181,14 @@ size_t vtenc_encode(VtencEncoder *enc, const TYPE *in, size_t in_len,
   struct encctx ctx;
   uint64_t max_values = enc->allow_repeated_values ? LIST_MAX_VALUES : SET_MAX_VALUES;
 
-  enc->last_error_code = VtencErrorNoError;
+  enc->last_error_code = VTENC_OK;
 
   enc_return_on_error(&ctx, enc,
     encctx_init(&ctx, enc, in, in_len, out, out_cap)
   );
 
   if ((uint64_t)in_len > max_values) {
-    enc_return_with_code(&ctx, enc, VtencErrorInputTooBig);
+    enc_return_with_code(&ctx, enc, VTENC_ERR_INPUT_TOO_BIG);
   }
 
   enc_return_on_error(&ctx, enc, encode_bit_cluster_tree(&ctx));

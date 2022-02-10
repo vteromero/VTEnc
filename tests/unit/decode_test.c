@@ -19,7 +19,7 @@ int test_vtenc_decoder_init(void)
   EXPECT_TRUE(dec.allow_repeated_values == 1);
   EXPECT_TRUE(dec.skip_full_subtrees == 1);
   EXPECT_TRUE(dec.min_cluster_length == 1);
-  EXPECT_TRUE(dec.last_error_code == VtencErrorNoError);
+  EXPECT_TRUE(dec.last_error_code == VTENC_OK);
 
   return 1;
 }
@@ -33,7 +33,7 @@ struct DecodeTestCaseInput {
 
 struct DecodeTestCaseOutput {
   void *values;
-  VtencErrorCode last_error_code;
+  int last_error_code;
 };
 
 struct DecodeTestCase {
@@ -55,7 +55,7 @@ static struct DecodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .values = (uint8_t []){},
-      .last_error_code = VtencErrorWrongFormat
+      .last_error_code = VTENC_ERR_WRONG_FORMAT
     }
   },
   {
@@ -71,7 +71,7 @@ static struct DecodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .values = (uint8_t []){},
-      .last_error_code = VtencErrorOutputTooBig
+      .last_error_code = VTENC_ERR_OUTPUT_TOO_BIG
     }
   },
   {
@@ -87,7 +87,7 @@ static struct DecodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .values = (uint8_t []){},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -103,7 +103,7 @@ static struct DecodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .values = (uint8_t []){38},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -121,7 +121,7 @@ static struct DecodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .values = (uint8_t []){5, 22, 23, 44, 62, 69, 109, 113, 178, 194, 206},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -137,7 +137,7 @@ static struct DecodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .values = (uint8_t []){57, 57, 57, 111, 111, 111, 111, 208, 208},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -153,7 +153,7 @@ static struct DecodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .values = (uint8_t []){},
-      .last_error_code = VtencErrorWrongFormat
+      .last_error_code = VTENC_ERR_WRONG_FORMAT
     }
   },
   {
@@ -169,7 +169,7 @@ static struct DecodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .values = (uint8_t []){},
-      .last_error_code = VtencErrorOutputTooBig
+      .last_error_code = VTENC_ERR_OUTPUT_TOO_BIG
     }
   },
   {
@@ -185,7 +185,7 @@ static struct DecodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .values = (uint8_t []){},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -219,7 +219,7 @@ static struct DecodeTestCase test_cases8[] = {
         234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247,
         248, 249, 250, 251, 252, 253, 254, 255
       },
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -235,7 +235,7 @@ static struct DecodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .values = (uint8_t []){33},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -251,7 +251,7 @@ static struct DecodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .values = (uint8_t []){0, 1, 2, 3, 4, 5, 6, 7, 160, 161, 162, 163},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -267,7 +267,7 @@ static struct DecodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .values = (uint8_t []){13, 77, 88, 93, 149, 212},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -283,7 +283,7 @@ static struct DecodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .values = (uint8_t []){2, 3, 8, 11, 16, 122},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -299,7 +299,7 @@ static struct DecodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .values = (uint8_t []){2, 3, 8, 11, 16, 122},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -315,7 +315,7 @@ static struct DecodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .values = (uint8_t []){2, 3, 8, 11, 16, 122},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -331,7 +331,7 @@ static struct DecodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .values = (uint8_t []){2, 3, 8, 11, 16, 122},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -347,7 +347,7 @@ static struct DecodeTestCase test_cases8[] = {
     },
     .expected_output = {
       .values = (uint8_t []){0, 1, 2, 3, 4, 5, 6, 7, 10},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   }
 };
@@ -366,7 +366,7 @@ static struct DecodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .values = (uint16_t []){},
-      .last_error_code = VtencErrorWrongFormat
+      .last_error_code = VTENC_ERR_WRONG_FORMAT
     }
   },
   {
@@ -382,7 +382,7 @@ static struct DecodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .values = (uint16_t []){},
-      .last_error_code = VtencErrorOutputTooBig
+      .last_error_code = VTENC_ERR_OUTPUT_TOO_BIG
     }
   },
   {
@@ -398,7 +398,7 @@ static struct DecodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .values = (uint16_t []){},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -414,7 +414,7 @@ static struct DecodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .values = (uint16_t []){13862},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -433,7 +433,7 @@ static struct DecodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .values = (uint16_t []){1099, 2227, 8102, 27654, 29001, 35511, 50083},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -451,7 +451,7 @@ static struct DecodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .values = (uint16_t []){677, 677, 677, 8881, 8881, 8881, 8881, 8881},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -467,7 +467,7 @@ static struct DecodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .values = (uint16_t []){},
-      .last_error_code = VtencErrorWrongFormat
+      .last_error_code = VTENC_ERR_WRONG_FORMAT
     }
   },
   {
@@ -483,7 +483,7 @@ static struct DecodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .values = (uint16_t []){},
-      .last_error_code = VtencErrorOutputTooBig
+      .last_error_code = VTENC_ERR_OUTPUT_TOO_BIG
     }
   },
   {
@@ -499,7 +499,7 @@ static struct DecodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .values = (uint16_t []){},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -515,7 +515,7 @@ static struct DecodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .values = (uint16_t []){23091},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -534,7 +534,7 @@ static struct DecodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .values = (uint16_t []){1655, 3391, 4111, 8770, 29006, 32712, 32993, 58042},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -555,7 +555,7 @@ static struct DecodeTestCase test_cases16[] = {
         14000, 14001, 14002, 14003, 14004, 14005, 14006, 14007,
         20000, 20001, 20002, 20003
       },
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -573,7 +573,7 @@ static struct DecodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .values = (uint16_t []){543, 600, 9701, 9888, 32944},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -591,7 +591,7 @@ static struct DecodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .values = (uint16_t []){543, 600, 9701, 9888, 32944},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -609,7 +609,7 @@ static struct DecodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .values = (uint16_t []){543, 600, 9701, 9888, 32944},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -625,7 +625,7 @@ static struct DecodeTestCase test_cases16[] = {
     },
     .expected_output = {
       .values = (uint16_t []){0, 1, 2, 3, 4, 5, 6, 7, 10},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   }
 };
@@ -644,7 +644,7 @@ static struct DecodeTestCase test_cases32[] = {
     },
     .expected_output = {
       .values = (uint32_t []){},
-      .last_error_code = VtencErrorWrongFormat
+      .last_error_code = VTENC_ERR_WRONG_FORMAT
     }
   },
   {
@@ -660,7 +660,7 @@ static struct DecodeTestCase test_cases32[] = {
     },
     .expected_output = {
       .values = (uint32_t []){},
-      .last_error_code = VtencErrorOutputTooBig
+      .last_error_code = VTENC_ERR_OUTPUT_TOO_BIG
     }
   },
   {
@@ -676,7 +676,7 @@ static struct DecodeTestCase test_cases32[] = {
     },
     .expected_output = {
       .values = (uint32_t []){},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -692,7 +692,7 @@ static struct DecodeTestCase test_cases32[] = {
     },
     .expected_output = {
       .values = (uint32_t []){726550617},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -713,7 +713,7 @@ static struct DecodeTestCase test_cases32[] = {
       .values = (uint32_t []){
         5348, 13089333, 88199704, 271008013, 1451881090
       },
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -734,7 +734,7 @@ static struct DecodeTestCase test_cases32[] = {
       .values = (uint32_t []){
         77865901, 77865901, 77865901, 77865901, 314976310, 314976310
       },
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -750,7 +750,7 @@ static struct DecodeTestCase test_cases32[] = {
     },
     .expected_output = {
       .values = (uint32_t []){},
-      .last_error_code = VtencErrorWrongFormat
+      .last_error_code = VTENC_ERR_WRONG_FORMAT
     }
   },
   {
@@ -766,7 +766,7 @@ static struct DecodeTestCase test_cases32[] = {
     },
     .expected_output = {
       .values = (uint32_t []){},
-      .last_error_code = VtencErrorOutputTooBig
+      .last_error_code = VTENC_ERR_OUTPUT_TOO_BIG
     }
   },
   {
@@ -782,7 +782,7 @@ static struct DecodeTestCase test_cases32[] = {
     },
     .expected_output = {
       .values = (uint32_t []){},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -798,7 +798,7 @@ static struct DecodeTestCase test_cases32[] = {
     },
     .expected_output = {
       .values = (uint32_t []){0x77e3ba42},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -819,7 +819,7 @@ static struct DecodeTestCase test_cases32[] = {
       .values = (uint32_t []){
         0x98b204, 0x122fabb4, 0x378ecef0, 0x77ccab8f, 0xa40609bb
       },
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -843,7 +843,7 @@ static struct DecodeTestCase test_cases32[] = {
         0x4bbb00, 0x4bbb01,
         0xffff00, 0xffff01, 0xffff02, 0xffff03, 0xffff04, 0xffff05, 0xffff06, 0xffff07
       },
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -864,7 +864,7 @@ static struct DecodeTestCase test_cases32[] = {
       .values = (uint32_t []){
         0x88f1ab05, 0x88f1ab09, 0x89633bd0, 0x89633bdf, 0xc8116ffe
       },
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -885,7 +885,7 @@ static struct DecodeTestCase test_cases32[] = {
       .values = (uint32_t []){
         0x88f1ab05, 0x88f1ab09, 0x89633bd0, 0x89633bdf, 0xc8116ffe
       },
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -906,7 +906,7 @@ static struct DecodeTestCase test_cases32[] = {
       .values = (uint32_t []){
         0x88f1ab05, 0x88f1ab09, 0x89633bd0, 0x89633bdf, 0xc8116ffe
       },
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -925,7 +925,7 @@ static struct DecodeTestCase test_cases32[] = {
     },
     .expected_output = {
       .values = (uint32_t []){0, 1, 2, 3, 4, 5, 6, 7, 10},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   }
 };
@@ -944,7 +944,7 @@ static struct DecodeTestCase test_cases64[] = {
     },
     .expected_output = {
       .values = (uint64_t []){},
-      .last_error_code = VtencErrorWrongFormat
+      .last_error_code = VTENC_ERR_WRONG_FORMAT
     }
   },
   {
@@ -960,7 +960,7 @@ static struct DecodeTestCase test_cases64[] = {
     },
     .expected_output = {
       .values = (uint64_t []){},
-      .last_error_code = VtencErrorOutputTooBig
+      .last_error_code = VTENC_ERR_OUTPUT_TOO_BIG
     }
   },
   {
@@ -976,7 +976,7 @@ static struct DecodeTestCase test_cases64[] = {
     },
     .expected_output = {
       .values = (uint64_t []){},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -994,7 +994,7 @@ static struct DecodeTestCase test_cases64[] = {
     },
     .expected_output = {
       .values = (uint64_t []){0xab778190fec42261ULL},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -1016,7 +1016,7 @@ static struct DecodeTestCase test_cases64[] = {
       .values = (uint64_t []){
         0x12a6ULL, 0x8addf0ULL, 0xffa1b4bbULL, 0x21258ee39aaaULL
       },
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -1039,7 +1039,7 @@ static struct DecodeTestCase test_cases64[] = {
         0x55555555ULL, 0x55555555ULL, 0x55555555ULL,
         0x111111111111ULL, 0x111111111111ULL
       },
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -1055,7 +1055,7 @@ static struct DecodeTestCase test_cases64[] = {
     },
     .expected_output = {
       .values = (uint64_t []){},
-      .last_error_code = VtencErrorWrongFormat
+      .last_error_code = VTENC_ERR_WRONG_FORMAT
     }
   },
   {
@@ -1071,7 +1071,7 @@ static struct DecodeTestCase test_cases64[] = {
     },
     .expected_output = {
       .values = (uint64_t []){},
-      .last_error_code = VtencErrorOutputTooBig
+      .last_error_code = VTENC_ERR_OUTPUT_TOO_BIG
     }
   },
   {
@@ -1087,7 +1087,7 @@ static struct DecodeTestCase test_cases64[] = {
     },
     .expected_output = {
       .values = (uint64_t []){},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -1105,7 +1105,7 @@ static struct DecodeTestCase test_cases64[] = {
     },
     .expected_output = {
       .values = (uint64_t []){0x1122334455667788ULL},
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -1129,7 +1129,7 @@ static struct DecodeTestCase test_cases64[] = {
         0x11223344ULL, 0xaabbccddULL, 0x1010101010ULL, 0x5555555555ULL, 0xf0f0f0f0f0ULL,
         0x998877665544ULL, 0xffeeffeeffeeULL
       },
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -1154,7 +1154,7 @@ static struct DecodeTestCase test_cases64[] = {
         0x80000000ULL, 0x80000001ULL,
         0x2000000000ULL, 0x2000000001ULL
       },
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -1179,7 +1179,7 @@ static struct DecodeTestCase test_cases64[] = {
         0x300000010001ULL, 0x30000001000fULL,
         0x600000000001ULL, 0x60000000000fULL
       },
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -1204,7 +1204,7 @@ static struct DecodeTestCase test_cases64[] = {
         0x300000010001ULL, 0x30000001000fULL,
         0x600000000001ULL, 0x60000000000fULL
       },
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -1229,7 +1229,7 @@ static struct DecodeTestCase test_cases64[] = {
         0x300000010001ULL, 0x30000001000fULL,
         0x600000000001ULL, 0x60000000000fULL
       },
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   },
   {
@@ -1251,7 +1251,7 @@ static struct DecodeTestCase test_cases64[] = {
       .values = (uint64_t []){
         0ULL, 1ULL, 2ULL, 3ULL, 4ULL, 5ULL, 6ULL, 7ULL, 10ULL
       },
-      .last_error_code = VtencErrorNoError
+      .last_error_code = VTENC_OK
     }
   }
 };
@@ -1272,7 +1272,7 @@ int vtenc_decode8_test_case(struct DecodeTestCase *test_case)
   );
 
   EXPECT_TRUE(decoder->last_error_code == expected_output->last_error_code);
-  if (decoder->last_error_code == VtencErrorNoError) {
+  if (decoder->last_error_code == VTENC_OK) {
     EXPECT_TRUE(memcmp(out, expected_output->values, sizeof(out)) == 0);
   }
 
@@ -1295,7 +1295,7 @@ int vtenc_decode16_test_case(struct DecodeTestCase *test_case)
   );
 
   EXPECT_TRUE(decoder->last_error_code == expected_output->last_error_code);
-  if (decoder->last_error_code == VtencErrorNoError) {
+  if (decoder->last_error_code == VTENC_OK) {
     EXPECT_TRUE(memcmp(out, expected_output->values, sizeof(out)) == 0);
   }
 
@@ -1318,7 +1318,7 @@ int vtenc_decode32_test_case(struct DecodeTestCase *test_case)
   );
 
   EXPECT_TRUE(decoder->last_error_code == expected_output->last_error_code);
-  if (decoder->last_error_code == VtencErrorNoError) {
+  if (decoder->last_error_code == VTENC_OK) {
     EXPECT_TRUE(memcmp(out, expected_output->values, sizeof(out)) == 0);
   }
 
@@ -1341,7 +1341,7 @@ int vtenc_decode64_test_case(struct DecodeTestCase *test_case)
   );
 
   EXPECT_TRUE(decoder->last_error_code == expected_output->last_error_code);
-  if (decoder->last_error_code == VtencErrorNoError) {
+  if (decoder->last_error_code == VTENC_OK) {
     EXPECT_TRUE(memcmp(out, expected_output->values, sizeof(out)) == 0);
   }
 

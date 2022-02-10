@@ -11,7 +11,7 @@ void vtenc_encoder_init(VtencEncoder *enc)
   enc->allow_repeated_values  = 1;
   enc->skip_full_subtrees     = 1;
   enc->min_cluster_length     = 1;
-  enc->last_error_code        = VtencErrorNoError;
+  enc->last_error_code        = VTENC_OK;
 }
 
 #define ENC_STACK_MAX_SIZE 64

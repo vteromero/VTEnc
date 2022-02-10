@@ -113,7 +113,7 @@ int encdec_encode(struct EncDec *encdec, const void *in, size_t in_len)
     enc_out_cap
   );
 
-  if (encoder.last_error_code != VtencErrorNoError) {
+  if (encoder.last_error_code != VTENC_OK) {
     fprintf(stderr, "encode failed with code: %d\n", encoder.last_error_code);
     return 0;
   }
@@ -146,7 +146,7 @@ int encdec_decode(struct EncDec *encdec)
     encdec->ctx.dec_out_len
   );
 
-  if (decoder.last_error_code != VtencErrorNoError) {
+  if (decoder.last_error_code != VTENC_OK) {
     fprintf(stderr, "decode failed with code: %d\n", decoder.last_error_code);
     return 0;
   }
