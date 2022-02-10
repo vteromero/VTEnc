@@ -34,12 +34,26 @@ extern "C" {
 #define VTENC_ERR_INPUT_TOO_BIG     (-4)  /* Input size too big */
 #define VTENC_ERR_OUTPUT_TOO_BIG    (-5)  /* Output size too big */
 #define VTENC_ERR_WRONG_FORMAT      (-6)  /* Wrong encoded format */
+#define VTENC_ERR_CONFIG            (-7)  /* Unrecognised config option */
 
 /* Encoding/decoding handler */
 typedef struct vtenc vtenc;
 
-/* Initialises the encoding/decoding handler */
+/* Initialise the encoding/decoding handler */
 int vtenc_init(vtenc *handler);
+
+/*
+ * Configuration options.
+ *
+ * These constants are the available integer options that can be passed as the
+ * second argument to the `vtenc_config` function.
+ */
+#define VTENC_CONFIG_ALLOW_REPEATED_VALUES  0   /* int */
+#define VTENC_CONFIG_SKIP_FULL_SUBTREES     1   /* int */
+#define VTENC_CONFIG_MIN_CLUSTER_LENGTH     2   /* size_t */
+
+/* Configure encoding/decoding handler */
+int vtenc_config(vtenc *handler, int op, ...);
 
 /**
  * typedef VtencEncoder - VTEnc encoder.
