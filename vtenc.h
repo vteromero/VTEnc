@@ -59,40 +59,6 @@ void vtenc_destroy(vtenc *handler);
 int vtenc_config(vtenc *handler, int op, ...);
 
 /**
- * typedef VtencEncoder - VTEnc encoder.
- */
-typedef struct {
-  /**
-   * Indicates whether repeated values are allowed or not.
-   */
-  int allow_repeated_values;
-
-  /**
-   * Indicates whether to skip full subtrees or not.
-   * This parameter is only applicable to sets, i.e. sequences with no repeated
-   * values. It's ignored if `allow_repeated_values` is set to 1.
-   */
-  int skip_full_subtrees;
-
-  /**
-   * Minimum cluster length to serialise.
-   */
-  size_t min_cluster_length;
-
-  /**
-   * 'Returning state' after calling a encode function. It'll hold the error
-   * code value if the encode function fails, or a 'VtencErrorNoError' value if
-   * the function runs successfully.
-   */
-  int last_error_code;
-} VtencEncoder;
-
-/**
- * vtenc_encoder_init - initialises encoder @enc.
- */
-void vtenc_encoder_init(VtencEncoder *enc);
-
-/**
  * vtenc_encode* functions.
  *
  * Functions to encode the sequence @in into the already-allocated stream of
@@ -115,10 +81,15 @@ void vtenc_encoder_init(VtencEncoder *enc);
  *
  * Return the size of the encoded output @out.
  */
-size_t vtenc_encode8(VtencEncoder *enc, const uint8_t *in, size_t in_len, uint8_t *out, size_t out_cap);
-size_t vtenc_encode16(VtencEncoder *enc, const uint16_t *in, size_t in_len, uint8_t *out, size_t out_cap);
-size_t vtenc_encode32(VtencEncoder *enc, const uint32_t *in, size_t in_len, uint8_t *out, size_t out_cap);
-size_t vtenc_encode64(VtencEncoder *enc, const uint64_t *in, size_t in_len, uint8_t *out, size_t out_cap);
+int vtenc_encode8(vtenc *enc, const uint8_t *in, size_t in_len, uint8_t *out, size_t out_cap);
+int vtenc_encode16(vtenc *enc, const uint16_t *in, size_t in_len, uint8_t *out, size_t out_cap);
+int vtenc_encode32(vtenc *enc, const uint32_t *in, size_t in_len, uint8_t *out, size_t out_cap);
+int vtenc_encode64(vtenc *enc, const uint64_t *in, size_t in_len, uint8_t *out, size_t out_cap);
+
+/*
+ * Returns the number of bytes of the output of calling a vtenc_encode* function.
+ */
+size_t vtenc_encoded_size(vtenc *enc);
 
 /**
  * vtenc_max_encoded_size* functions.

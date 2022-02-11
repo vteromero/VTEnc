@@ -3,7 +3,6 @@
   Licensed under the MIT License.
   See LICENSE file in the project root for full license information.
  */
-#include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -38,21 +37,6 @@
 #define vtenc_max_encoded_size_(_width_) BITWIDTH_SUFFIX(vtenc_max_encoded_size, _width_)
 #define vtenc_max_encoded_size vtenc_max_encoded_size_(BITWIDTH)
 
-#define enc_return_with_code(ctx, enc, code)  \
-do {                                          \
-  (enc)->last_error_code = code;              \
-  encctx_close((ctx));                        \
-  return 0;                                   \
-} while (0)
-
-#define enc_return_on_error(ctx, enc, exp)  \
-do {                                        \
-  const int code = (exp);                   \
-  if (code != VTENC_OK) {                   \
-    enc_return_with_code(ctx, enc, code);   \
-  }                                         \
-} while(0)
-
 struct encctx {
   const TYPE        *values;
   size_t            values_len;
@@ -62,9 +46,8 @@ struct encctx {
   struct bswriter   bits_writer;
 };
 
-static int encctx_init(struct encctx *ctx,
-  const VtencEncoder *enc, const TYPE *in, size_t in_len,
-  uint8_t *out, size_t out_cap)
+static int encctx_init(struct encctx *ctx, const vtenc *enc,
+  const TYPE *in, size_t in_len, uint8_t *out, size_t out_cap)
 {
   ctx->values = in;
   ctx->values_len = in_len;
@@ -73,9 +56,10 @@ static int encctx_init(struct encctx *ctx,
    * `skip_full_subtrees` parameter is only applicable to sets, i.e. sequences
    * with no repeated values.
    */
-  ctx->skip_full_subtrees = !enc->allow_repeated_values && enc->skip_full_subtrees;
+  ctx->skip_full_subtrees = !enc->params.allow_repeated_values &&
+                            enc->params.skip_full_subtrees;
 
-  ctx->min_cluster_length = enc->min_cluster_length;
+  ctx->min_cluster_length = enc->params.min_cluster_length;
 
   enc_stack_init(&ctx->stack);
 
@@ -175,25 +159,27 @@ static int encode_bit_cluster_tree(struct encctx *ctx)
   return VTENC_OK;
 }
 
-size_t vtenc_encode(VtencEncoder *enc, const TYPE *in, size_t in_len,
-  uint8_t *out, size_t out_cap)
+int vtenc_encode(vtenc *enc, const TYPE *in, size_t in_len, uint8_t *out, size_t out_cap)
 {
+  int rc;
+  uint64_t max_values = enc->params.allow_repeated_values ? LIST_MAX_VALUES : SET_MAX_VALUES;
   struct encctx ctx;
-  uint64_t max_values = enc->allow_repeated_values ? LIST_MAX_VALUES : SET_MAX_VALUES;
 
-  enc->last_error_code = VTENC_OK;
+  enc->out_size = 0;
 
-  enc_return_on_error(&ctx, enc,
-    encctx_init(&ctx, enc, in, in_len, out, out_cap)
-  );
+  if ((uint64_t)in_len > max_values)
+    return VTENC_ERR_INPUT_TOO_BIG;
 
-  if ((uint64_t)in_len > max_values) {
-    enc_return_with_code(&ctx, enc, VTENC_ERR_INPUT_TOO_BIG);
-  }
+  rc = encctx_init(&ctx, enc, in, in_len, out, out_cap);
+  if (rc != VTENC_OK)
+    return rc;
 
-  enc_return_on_error(&ctx, enc, encode_bit_cluster_tree(&ctx));
+  rc = encode_bit_cluster_tree(&ctx);
 
-  return encctx_close(&ctx);
+  if (rc == VTENC_OK)
+    enc->out_size = encctx_close(&ctx);
+
+  return rc;
 }
 
 size_t vtenc_max_encoded_size(size_t in_len)

@@ -56,3 +56,7 @@ int vtenc_config(vtenc *handler, int op, ...)
   return rc;
 }
 
+size_t vtenc_encoded_size(vtenc *enc)
+{
+  return enc->out_size;
+}
