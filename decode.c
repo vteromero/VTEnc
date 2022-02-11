@@ -6,14 +6,6 @@
 #include "internals.h"
 #include "stack.h"
 
-void vtenc_decoder_init(VtencDecoder *dec)
-{
-  dec->allow_repeated_values  = 1;
-  dec->skip_full_subtrees     = 1;
-  dec->min_cluster_length     = 1;
-  dec->last_error_code        = VTENC_OK;
-}
-
 #define DEC_STACK_MAX_SIZE 64
 
 struct dec_bit_cluster {

@@ -106,40 +106,6 @@ size_t vtenc_max_encoded_size32(size_t in_len);
 size_t vtenc_max_encoded_size64(size_t in_len);
 
 /**
- * typedef VtencDecoder - VTEnc decoder.
- */
-typedef struct {
-  /**
-   * Indicates whether repeated values are allowed or not.
-   */
-  int allow_repeated_values;
-
-  /**
-   * Indicates whether to skip full subtrees or not.
-   * This parameter is only applicable to sets, i.e. sequences with no repeated
-   * values. It's ignored if `allow_repeated_values` is set to 1.
-   */
-  int skip_full_subtrees;
-
-  /**
-   * Minimum cluster length to serialise.
-   */
-  size_t min_cluster_length;
-
-  /**
-   * 'Returning state' after calling a decode function. It'll hold the error
-   * code value if the decode function fails, or a 'VtencErrorNoError' value if
-   * the function runs successfully.
-   */
-  int last_error_code;
-} VtencDecoder;
-
-/**
- * vtenc_decoder_init - initialises decoder @dec.
- */
-void vtenc_decoder_init(VtencDecoder *dec);
-
-/**
  * vtenc_decode* functions.
  *
  * Functions to decode the stream of bytes @in into the already-allocated
@@ -156,10 +122,10 @@ void vtenc_decoder_init(VtencDecoder *dec);
  * calling the function. If the function didn't fail, it holds a
  * 'VtencErrorNoError' value.
  */
-void vtenc_decode8(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint8_t *out, size_t out_len);
-void vtenc_decode16(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint16_t *out, size_t out_len);
-void vtenc_decode32(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint32_t *out, size_t out_len);
-void vtenc_decode64(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint64_t *out, size_t out_len);
+int vtenc_decode8(vtenc *dec, const uint8_t *in, size_t in_len, uint8_t *out, size_t out_len);
+int vtenc_decode16(vtenc *dec, const uint8_t *in, size_t in_len, uint16_t *out, size_t out_len);
+int vtenc_decode32(vtenc *dec, const uint8_t *in, size_t in_len, uint32_t *out, size_t out_len);
+int vtenc_decode64(vtenc *dec, const uint8_t *in, size_t in_len, uint64_t *out, size_t out_len);
 
 #ifdef __cplusplus
 }

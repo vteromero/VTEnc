@@ -134,11 +134,17 @@ destroy_and_return:
 
 int encdec_decode(struct EncDec *encdec)
 {
-  VtencDecoder decoder = {
-    .allow_repeated_values = encdec->allow_repeated_values,
-    .skip_full_subtrees = encdec->skip_full_subtrees,
-    .min_cluster_length = encdec->min_cluster_length
-  };
+  int rc, res=1;
+  vtenc *decoder = vtenc_create();
+
+  if (decoder == NULL) {
+    fprintf(stderr, "failed to create the decoder\n");
+    return 0;
+  }
+
+  vtenc_config(decoder, VTENC_CONFIG_ALLOW_REPEATED_VALUES, encdec->allow_repeated_values);
+  vtenc_config(decoder, VTENC_CONFIG_SKIP_FULL_SUBTREES, encdec->skip_full_subtrees);
+  vtenc_config(decoder, VTENC_CONFIG_MIN_CLUSTER_LENGTH, encdec->min_cluster_length);
 
   encdec->ctx.dec_out_len = encdec->ctx.in_len;
 
@@ -146,23 +152,28 @@ int encdec_decode(struct EncDec *encdec)
 
   if (encdec->ctx.dec_out == NULL) {
     fprintf(stderr, "allocation error\n");
-    return 0;
+    res = 0;
+    goto destroy_and_return;
   }
 
-  encdec->funcs->decode(
-    &decoder,
+  rc = encdec->funcs->decode(
+    decoder,
     encdec->ctx.enc_out,
     encdec->ctx.enc_out_len,
     encdec->ctx.dec_out,
     encdec->ctx.dec_out_len
   );
 
-  if (decoder.last_error_code != VTENC_OK) {
-    fprintf(stderr, "decode failed with code: %d\n", decoder.last_error_code);
-    return 0;
+  if (rc != VTENC_OK) {
+    fprintf(stderr, "decode failed with code: %d\n", rc);
+    res = 0;
+    goto destroy_and_return;
   }
 
-  return 1;
+destroy_and_return:
+  vtenc_destroy(decoder);
+
+  return res;
 }
 
 int encdec_check_equality(struct EncDec *encdec)
