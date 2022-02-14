@@ -9,7 +9,6 @@
 #include "bitstream.h"
 #include "common.h"
 #include "countbits.h"
-#include "error.h"
 #include "internals.h"
 
 #define encctx_(_width_) BITWIDTH_SUFFIX(encctx, _width_)

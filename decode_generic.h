@@ -8,7 +8,6 @@
 
 #include "bitstream.h"
 #include "common.h"
-#include "error.h"
 #include "internals.h"
 
 #define decctx_(_width_) BITWIDTH_SUFFIX(decctx, _width_)

@@ -11,7 +11,6 @@
 #include <stdint.h>
 
 #include "internals.h"
-#include "error.h"
 #include "mem.h"
 
 struct bswriter {

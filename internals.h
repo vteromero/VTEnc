@@ -40,4 +40,13 @@ struct vtenc {
   size_t out_size;              /* Output size in bytes */
 };
 
+/* Error-handling helper macro */
+#define return_if_error(exp)  \
+do {                          \
+  const int code = (exp);     \
+  if (code != VTENC_OK) {     \
+    return code;              \
+  }                           \
+} while(0)
+
 #endif /* VTENC_INTERNALS_H_ */
