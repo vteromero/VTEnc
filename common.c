@@ -14,6 +14,13 @@ vtenc *vtenc_create(void)
 
   handler = malloc(sizeof(*handler));
 
+  if (handler) {
+    handler->params.allow_repeated_values = 1;
+    handler->params.skip_full_subtrees = 1;
+    handler->params.min_cluster_length = 1;
+    handler->out_size = 0;
+  }
+
   return handler;
 }
 
