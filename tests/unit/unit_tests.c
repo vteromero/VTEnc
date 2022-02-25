@@ -58,8 +58,6 @@ int main()
   RUN_TEST(test_count_zeros_at_bit_pos32);
   RUN_TEST(test_count_zeros_at_bit_pos64);
 
-  RUN_TEST(test_vtenc_encoder_init);
-
   RUN_TEST(test_vtenc_encode8);
   RUN_TEST(test_vtenc_encode16);
   RUN_TEST(test_vtenc_encode32);
@@ -69,8 +67,6 @@ int main()
   RUN_TEST(test_vtenc_max_encoded_size16);
   RUN_TEST(test_vtenc_max_encoded_size32);
   RUN_TEST(test_vtenc_max_encoded_size64);
-
-  RUN_TEST(test_vtenc_decoder_init);
 
   RUN_TEST(test_vtenc_decode8);
   RUN_TEST(test_vtenc_decode16);

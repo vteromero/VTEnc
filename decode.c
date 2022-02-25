@@ -3,20 +3,10 @@
   Licensed under the MIT License.
   See LICENSE file in the project root for full license information.
  */
-#include "vtenc.h"
-
 #include "internals.h"
 #include "stack.h"
 
-void vtenc_decoder_init(VtencDecoder *dec)
-{
-  dec->allow_repeated_values  = 1;
-  dec->skip_full_subtrees     = 1;
-  dec->min_cluster_length     = 1;
-  dec->last_error_code        = VtencErrorNoError;
-}
-
-#define DECODE_STACK_MAX_SIZE 64
+#define DEC_STACK_MAX_SIZE 64
 
 struct dec_bit_cluster {
   size_t        from;
@@ -25,7 +15,7 @@ struct dec_bit_cluster {
   uint64_t      higher_bits;
 };
 
-CREATE_STACK(dec_stack, struct dec_bit_cluster, DECODE_STACK_MAX_SIZE)
+CREATE_STACK(dec_stack, struct dec_bit_cluster, DEC_STACK_MAX_SIZE)
 
 #define LIST_MAX_VALUES VTENC_LIST_MAX_VALUES
 

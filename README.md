@@ -27,96 +27,114 @@ For reference, VTEnc has been tested on a laptop Ubuntu Desktop 19.10 with a Cor
 
 The documented interface is found in the header file `vtenc.h`.
 
-## Examples
-
-Encoding example:
+## Example
 
 ```c
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "vtenc.h"
 
+int encode(
+  vtenc *handler,
+  const uint8_t *values,
+  size_t values_len,
+  uint8_t **out,
+  size_t *out_len)
+{
+  const size_t out_cap = vtenc_max_encoded_size8(values_len); /* output capacity */
+  int rc;
+
+  *out = (uint8_t *) malloc(out_cap * sizeof(uint8_t));
+  if (*out == NULL) {
+    fprintf(stderr, "allocation error\n");
+    return 0;
+  }
+
+  rc = vtenc_encode8(handler, values, values_len, *out, out_cap);
+  if (rc != VTENC_OK) {
+    fprintf(stderr, "encode failed with code: %d\n", rc);
+    return 0;
+  }
+
+  *out_len = vtenc_encoded_size(handler);
+
+  return 1;
+}
+
+int decode(
+  vtenc *handler,
+  const uint8_t *in,
+  size_t in_len,
+  uint8_t **out,
+  size_t out_len)
+{
+  int rc;
+
+  *out = (uint8_t *) malloc(out_len * sizeof(uint8_t));
+  if (*out == NULL) {
+    fprintf(stderr, "allocation error\n");
+    return 0;
+  }
+
+  rc = vtenc_decode8(handler, in, in_len, *out, out_len);
+  if (rc != VTENC_OK) {
+    fprintf(stderr, "decode failed with code: %d\n", rc);
+    return 0;
+  }
+
+  return 1;
+}
+
 int main()
 {
-  const uint8_t in[] = {13, 14, 29, 39, 65, 80, 88, 106, 152, 154, 155, 177};
-  const size_t in_len = sizeof(in) / sizeof(in[0]);
-  const size_t out_cap = vtenc_max_encoded_size8(in_len); /* output capacity */
-  uint8_t *out=NULL;
-  size_t out_len;
-  VtencEncoder encoder;
+  const uint8_t values[] = {13, 14, 29, 39, 65, 80, 88, 106, 152, 154, 155, 177};
+  const size_t values_len = sizeof(values) / sizeof(values[0]);
+  uint8_t *enc_out=NULL, *dec_out=NULL;
+  size_t enc_out_len;
+  int rc = 0;
+  vtenc *handler = vtenc_create();
 
-  /* initialise `encoder` */
-  vtenc_encoder_init(&encoder);
-
-  /* allocate `out_cap` bytes */
-  out = (uint8_t *) malloc(out_cap * sizeof(uint8_t));
-  if (out == NULL) {
-    fprintf(stderr, "allocation error\n");
+  if (handler == NULL) {
+    fprintf(stderr, "It failed to create the handler\n");
     return 1;
   }
 
-  /* encode `in` list into `out` stream of bytes */
-  out_len = vtenc_encode8(&encoder, in, in_len, out, out_cap);
-  if (encoder.last_error_code != VtencErrorNoError) {
-    fprintf(stderr, "encode failed with code: %d\n", encoder.last_error_code);
-    free(out);
-    return 1;
+  if (!encode(handler, values, values_len, &enc_out, &enc_out_len)) {
+    rc = 1;
+    goto free_and_return;
   }
 
-  /* here `out` holds the encoded output, which is `out_len` bytes long */
+  if (!decode(handler, enc_out, enc_out_len, &dec_out, values_len)) {
+    rc = 1;
+    goto free_and_return;
+  }
 
-  free(out);
+  printf("Original list: %lu bytes\n", values_len);
+  printf("Encoded stream: %lu bytes\n", enc_out_len);
 
-  return 0;
+  if (memcmp(values, dec_out, values_len) == 0) {
+    printf("Decoded output matches original list\n");
+  } else {
+    printf("Decoded output different from original list\n");
+    rc = 1;
+  }
+
+free_and_return:
+  if (enc_out != NULL)
+    free(enc_out);
+
+  if (dec_out != NULL)
+    free(dec_out);
+
+  vtenc_destroy(handler);
+
+  return rc;
 }
-```
 
-Decoding example:
-
-```c
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "vtenc.h"
-
-int main()
-{
-  const uint8_t in[] = {0x0c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x90, 0x26,
-    0x24, 0x8d, 0x75, 0xfd, 0x95, 0x83, 0x9b, 0x03};
-  const size_t in_len = sizeof(in) / sizeof(in[0]);
-  uint8_t *out = NULL;
-  size_t out_len = 12; /* the decoded sequence's size needs to be known here */
-  VtencDecoder decoder;
-
-  /* initialise decoder */
-  vtenc_decoder_init(&decoder);
-
-  /* allocate `out_len` items */
-  out = (uint8_t *) malloc(out_len * sizeof(uint8_t));
-  if (out == NULL) {
-    fprintf(stderr, "allocation error\n");
-    return 1;
-  }
-
-  /* decode `in` stream of bytes into `out` list */
-  vtenc_decode8(&decoder, in, in_len, out, out_len);
-  if (decoder.last_error_code != VtencErrorNoError) {
-    fprintf(stderr, "decode failed with code: %d\n", decoder.last_error_code);
-    free(out);
-    return 1;
-  }
-
-  /* here `out` holds the decoded list of integers, of size `out_len` */
-
-  free(out);
-
-  return 0;
-}
 ```
 
 ## Limitations

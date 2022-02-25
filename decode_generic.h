@@ -3,13 +3,11 @@
   Licensed under the MIT License.
   See LICENSE file in the project root for full license information.
  */
-#include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
 
 #include "bitstream.h"
 #include "common.h"
-#include "error.h"
 #include "internals.h"
 
 #define decctx_(_width_) BITWIDTH_SUFFIX(decctx, _width_)
@@ -33,20 +31,6 @@
 #define vtenc_decode_(_width_) BITWIDTH_SUFFIX(vtenc_decode, _width_)
 #define vtenc_decode vtenc_decode_(BITWIDTH)
 
-#define dec_return_with_code(dec, code) \
-do {                                    \
-  (dec)->last_error_code = code;        \
-  return;                               \
-} while (0)
-
-#define dec_return_on_error(dec, exp)   \
-do {                                    \
-  const VtencErrorCode code = (exp);    \
-  if (code != VtencErrorNoError) {      \
-    dec_return_with_code(dec, code);    \
-  }                                     \
-} while (0)
-
 struct decctx {
   TYPE              *values;
   size_t            values_len;
@@ -56,9 +40,8 @@ struct decctx {
   struct bsreader   bits_reader;
 };
 
-static VtencErrorCode decctx_init(struct decctx *ctx,
-  const VtencDecoder *dec, const uint8_t *in, size_t in_len,
-  TYPE *out, size_t out_len)
+static int decctx_init(struct decctx *ctx, const vtenc *dec,
+  const uint8_t *in, size_t in_len, TYPE *out, size_t out_len)
 {
   ctx->values = out;
   ctx->values_len = out_len;
@@ -67,18 +50,19 @@ static VtencErrorCode decctx_init(struct decctx *ctx,
    * `skip_full_subtrees` parameter is only applicable to sets, i.e. sequences
    * with no repeated values.
    */
-  ctx->reconstruct_full_subtrees = !dec->allow_repeated_values && dec->skip_full_subtrees;
+  ctx->reconstruct_full_subtrees = !dec->params.allow_repeated_values &&
+                                    dec->params.skip_full_subtrees;
 
-  ctx->min_cluster_length = dec->min_cluster_length;
+  ctx->min_cluster_length = dec->params.min_cluster_length;
 
   dec_stack_init(&ctx->stack);
 
   bsreader_init(&(ctx->bits_reader), in, in_len);
 
-  return VtencErrorNoError;
+  return VTENC_OK;
 }
 
-static inline VtencErrorCode decode_lower_bits_step(struct decctx *ctx,
+static inline int decode_lower_bits_step(struct decctx *ctx,
   TYPE *value, unsigned int n_bits)
 {
 #if BITWIDTH > BIT_STREAM_MAX_READ
@@ -95,18 +79,18 @@ static inline VtencErrorCode decode_lower_bits_step(struct decctx *ctx,
   return_if_error(bsreader_read(&(ctx->bits_reader), n_bits, &lower));
   *value |= lower << shift;
 
-  return VtencErrorNoError;
+  return VTENC_OK;
 #else
   uint64_t lower;
 
   return_if_error(bsreader_read(&(ctx->bits_reader), n_bits, &lower));
   *value |= (TYPE)lower;
 
-  return VtencErrorNoError;
+  return VTENC_OK;
 #endif
 }
 
-static inline VtencErrorCode decode_lower_bits(struct decctx *ctx,
+static inline int decode_lower_bits(struct decctx *ctx,
   TYPE *values, size_t values_len, unsigned int n_bits, TYPE higher_bits)
 {
   size_t i;
@@ -116,7 +100,7 @@ static inline VtencErrorCode decode_lower_bits(struct decctx *ctx,
     return_if_error(decode_lower_bits_step(ctx, &values[i], n_bits));
   }
 
-  return VtencErrorNoError;
+  return VTENC_OK;
 }
 
 static inline void decode_full_subtree(TYPE *values, size_t values_len, TYPE higher_bits)
@@ -147,7 +131,7 @@ static inline struct dec_bit_cluster *bcltree_next(struct decctx *ctx)
   return dec_stack_pop(&ctx->stack);
 }
 
-static VtencErrorCode decode_bit_cluster_tree(struct decctx *ctx)
+static int decode_bit_cluster_tree(struct decctx *ctx)
 {
   bcltree_add(ctx, &(struct dec_bit_cluster){0, ctx->values_len, BITWIDTH, 0});
 
@@ -184,7 +168,7 @@ static VtencErrorCode decode_bit_cluster_tree(struct decctx *ctx)
 
     return_if_error(bsreader_read(&(ctx->bits_reader), enc_len, &n_zeros));
 
-    if (n_zeros > (uint64_t)cl_len) return VtencErrorWrongFormat;
+    if (n_zeros > (uint64_t)cl_len) return VTENC_ERR_WRONG_FORMAT;
 
     {
       unsigned int next_bit_pos = cl_bit_pos - 1;
@@ -196,26 +180,23 @@ static VtencErrorCode decode_bit_cluster_tree(struct decctx *ctx)
     }
   }
 
-  return VtencErrorNoError;
+  return VTENC_OK;
 }
 
-void vtenc_decode(VtencDecoder *dec, const uint8_t *in, size_t in_len,
-  TYPE *out, size_t out_len)
+int vtenc_decode(vtenc *dec, const uint8_t *in, size_t in_len, TYPE *out, size_t out_len)
 {
+  int rc;
   struct decctx ctx;
-  uint64_t max_values = dec->allow_repeated_values ? LIST_MAX_VALUES : SET_MAX_VALUES;
+  uint64_t max_values = dec->params.allow_repeated_values ? LIST_MAX_VALUES : SET_MAX_VALUES;
 
-  dec->last_error_code = VtencErrorNoError;
+  if ((uint64_t)out_len > max_values)
+    return VTENC_ERR_OUTPUT_TOO_BIG;
 
-  dec_return_on_error(dec,
-    decctx_init(&ctx, dec, in, in_len, out, out_len)
-  );
-
-  if ((uint64_t)out_len > max_values) {
-    dec_return_with_code(dec, VtencErrorOutputTooBig);
-  }
+  rc = decctx_init(&ctx, dec, in, in_len, out, out_len);
+  if (rc != VTENC_OK)
+    return rc;
 
   memset(out, 0, out_len * sizeof(*out));
 
-  dec_return_on_error(dec, decode_bit_cluster_tree(&ctx));
+  return decode_bit_cluster_tree(&ctx);
 }

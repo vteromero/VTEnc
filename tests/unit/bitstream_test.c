@@ -30,7 +30,7 @@ int test_bswriter_init_1(void)
   const size_t buf_cap = 4;
   uint8_t buf[buf_cap];
 
-  EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VtencErrorBufferTooSmall);
+  EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VTENC_ERR_BUFFER_TOO_SMALL);
 
   return 1;
 }
@@ -41,7 +41,7 @@ int test_bswriter_init_2(void)
   const size_t buf_cap = 8;
   uint8_t buf[buf_cap];
 
-  EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VtencErrorNoError);
+  EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VTENC_OK);
 
   return 1;
 }
@@ -54,15 +54,15 @@ int test_bswriter_write_1(void)
 
   memset(buf, 0, buf_cap);
 
-  EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VtencErrorNoError);
+  EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VTENC_OK);
 
-  EXPECT_TRUE(bswriter_write(&writer, 0xffff, 16) == VtencErrorNoError);
-  EXPECT_TRUE(bswriter_write(&writer, 0x2, 4) == VtencErrorNoError);
-  EXPECT_TRUE(bswriter_write(&writer, 0x2, 4) == VtencErrorNoError);
-  EXPECT_TRUE(bswriter_write(&writer, 0x00, 8) == VtencErrorNoError);
-  EXPECT_TRUE(bswriter_write(&writer, 0x99999999, 32) == VtencErrorNoError);
-  EXPECT_TRUE(bswriter_write(&writer, 0x44, 8) == VtencErrorNoError);
-  EXPECT_TRUE(bswriter_write(&writer, 0xaa, 8) == VtencErrorNoError);
+  EXPECT_TRUE(bswriter_write(&writer, 0xffff, 16) == VTENC_OK);
+  EXPECT_TRUE(bswriter_write(&writer, 0x2, 4) == VTENC_OK);
+  EXPECT_TRUE(bswriter_write(&writer, 0x2, 4) == VTENC_OK);
+  EXPECT_TRUE(bswriter_write(&writer, 0x00, 8) == VTENC_OK);
+  EXPECT_TRUE(bswriter_write(&writer, 0x99999999, 32) == VTENC_OK);
+  EXPECT_TRUE(bswriter_write(&writer, 0x44, 8) == VTENC_OK);
+  EXPECT_TRUE(bswriter_write(&writer, 0xaa, 8) == VTENC_OK);
 
   bswriter_close(&writer);
 
@@ -79,16 +79,16 @@ int test_bswriter_write_2(void)
 
   memset(buf, 0, buf_cap);
 
-  EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VtencErrorNoError);
+  EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VTENC_OK);
 
-  EXPECT_TRUE(bswriter_write(&writer, 0x0, 0) == VtencErrorNoError);
-  EXPECT_TRUE(bswriter_write(&writer, 0x0, 0) == VtencErrorNoError);
-  EXPECT_TRUE(bswriter_write(&writer, 0xffffffff, 32) == VtencErrorNoError);
-  EXPECT_TRUE(bswriter_write(&writer, 0x7fffffff, 31) == VtencErrorNoError);
-  EXPECT_TRUE(bswriter_write(&writer, 0x0, 0) == VtencErrorNoError);
-  EXPECT_TRUE(bswriter_write(&writer, 0x0, 0) == VtencErrorNoError);
-  EXPECT_TRUE(bswriter_write(&writer, 0x1, 1) == VtencErrorEndOfStream);
-  EXPECT_TRUE(bswriter_write(&writer, 0x1, 1) == VtencErrorEndOfStream);
+  EXPECT_TRUE(bswriter_write(&writer, 0x0, 0) == VTENC_OK);
+  EXPECT_TRUE(bswriter_write(&writer, 0x0, 0) == VTENC_OK);
+  EXPECT_TRUE(bswriter_write(&writer, 0xffffffff, 32) == VTENC_OK);
+  EXPECT_TRUE(bswriter_write(&writer, 0x7fffffff, 31) == VTENC_OK);
+  EXPECT_TRUE(bswriter_write(&writer, 0x0, 0) == VTENC_OK);
+  EXPECT_TRUE(bswriter_write(&writer, 0x0, 0) == VTENC_OK);
+  EXPECT_TRUE(bswriter_write(&writer, 0x1, 1) == VTENC_ERR_END_OF_STREAM);
+  EXPECT_TRUE(bswriter_write(&writer, 0x1, 1) == VTENC_ERR_END_OF_STREAM);
 
   bswriter_close(&writer);
 
@@ -105,11 +105,11 @@ int test_bswriter_write_3(void)
 
   memset(buf, 0, buf_cap);
 
-  EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VtencErrorNoError);
+  EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VTENC_OK);
 
-  EXPECT_TRUE(bswriter_write(&writer, 0x1ffffffffffffff, 57) == VtencErrorNoError);
-  EXPECT_TRUE(bswriter_write(&writer, 0x1ffffffffffffff, 57) == VtencErrorNoError);
-  EXPECT_TRUE(bswriter_write(&writer, 0x1ffffffffffffff, 57) == VtencErrorNoError);
+  EXPECT_TRUE(bswriter_write(&writer, 0x1ffffffffffffff, 57) == VTENC_OK);
+  EXPECT_TRUE(bswriter_write(&writer, 0x1ffffffffffffff, 57) == VTENC_OK);
+  EXPECT_TRUE(bswriter_write(&writer, 0x1ffffffffffffff, 57) == VTENC_OK);
 
   bswriter_close(&writer);
 
@@ -127,7 +127,7 @@ int test_bswriter_close_1(void)
   const size_t buf_cap = 8;
   uint8_t buf[buf_cap];
 
-  EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VtencErrorNoError);
+  EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VTENC_OK);
   EXPECT_TRUE(bswriter_close(&writer) == 0);
 
   return 1;
@@ -139,12 +139,12 @@ int test_bswriter_close_2(void)
   const size_t buf_cap = 8;
   uint8_t buf[buf_cap];
 
-  EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VtencErrorNoError);
+  EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VTENC_OK);
 
-  EXPECT_TRUE(bswriter_write(&writer, 0x12, 8) == VtencErrorNoError);
-  EXPECT_TRUE(bswriter_write(&writer, 0x3, 2) == VtencErrorNoError);
-  EXPECT_TRUE(bswriter_write(&writer, 0x7, 3) == VtencErrorNoError);
-  EXPECT_TRUE(bswriter_write(&writer, 0xe, 4) == VtencErrorNoError);
+  EXPECT_TRUE(bswriter_write(&writer, 0x12, 8) == VTENC_OK);
+  EXPECT_TRUE(bswriter_write(&writer, 0x3, 2) == VTENC_OK);
+  EXPECT_TRUE(bswriter_write(&writer, 0x7, 3) == VTENC_OK);
+  EXPECT_TRUE(bswriter_write(&writer, 0xe, 4) == VTENC_OK);
 
   EXPECT_TRUE(bswriter_close(&writer) == 3);
 
@@ -160,7 +160,7 @@ int test_bsreader_read_1(void)
 
   bsreader_init(&reader, buf, buf_len);
 
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VtencErrorEndOfStream);
+  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_ERR_END_OF_STREAM);
 
   return 1;
 }
@@ -174,8 +174,8 @@ int test_bsreader_read_2(void)
 
   bsreader_init(&reader, buf, buf_len);
 
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VtencErrorNoError && val == 0xff);
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VtencErrorEndOfStream);
+  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_OK && val == 0xff);
+  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_ERR_END_OF_STREAM);
 
   return 1;
 }
@@ -189,9 +189,9 @@ int test_bsreader_read_3(void)
 
   bsreader_init(&reader, buf, buf_len);
 
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VtencErrorNoError && val == 0xff);
-  EXPECT_TRUE(bsreader_read(&reader, 16, &val) == VtencErrorNotEnoughBits);
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VtencErrorNoError && val == 0x66);
+  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_OK && val == 0xff);
+  EXPECT_TRUE(bsreader_read(&reader, 16, &val) == VTENC_ERR_NOT_ENOUGH_BITS);
+  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_OK && val == 0x66);
 
   return 1;
 }
@@ -205,12 +205,12 @@ int test_bsreader_read_4(void)
 
   bsreader_init(&reader, buf, buf_len);
 
-  EXPECT_TRUE(bsreader_read(&reader, 0, &val) == VtencErrorNoError);
-  EXPECT_TRUE(bsreader_read(&reader, 4, &val) == VtencErrorNoError && val == 0xa);
-  EXPECT_TRUE(bsreader_read(&reader, 0, &val) == VtencErrorNoError);
-  EXPECT_TRUE(bsreader_read(&reader, 4, &val) == VtencErrorNoError && val == 0xb);
-  EXPECT_TRUE(bsreader_read(&reader, 0, &val) == VtencErrorNoError);
-  EXPECT_TRUE(bsreader_read(&reader, 1, &val) == VtencErrorEndOfStream);
+  EXPECT_TRUE(bsreader_read(&reader, 0, &val) == VTENC_OK);
+  EXPECT_TRUE(bsreader_read(&reader, 4, &val) == VTENC_OK && val == 0xa);
+  EXPECT_TRUE(bsreader_read(&reader, 0, &val) == VTENC_OK);
+  EXPECT_TRUE(bsreader_read(&reader, 4, &val) == VTENC_OK && val == 0xb);
+  EXPECT_TRUE(bsreader_read(&reader, 0, &val) == VTENC_OK);
+  EXPECT_TRUE(bsreader_read(&reader, 1, &val) == VTENC_ERR_END_OF_STREAM);
 
   return 1;
 }
@@ -227,10 +227,10 @@ int test_bsreader_read_5(void)
 
   bsreader_init(&reader, buf, buf_len);
 
-  EXPECT_TRUE(bsreader_read(&reader, 48, &val) == VtencErrorNoError && val == 0x111111111111);
-  EXPECT_TRUE(bsreader_read(&reader, 48, &val) == VtencErrorNoError && val == 0x222222222222);
-  EXPECT_TRUE(bsreader_read(&reader, 48, &val) == VtencErrorNoError && val == 0x333333333333);
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VtencErrorEndOfStream);
+  EXPECT_TRUE(bsreader_read(&reader, 48, &val) == VTENC_OK && val == 0x111111111111);
+  EXPECT_TRUE(bsreader_read(&reader, 48, &val) == VTENC_OK && val == 0x222222222222);
+  EXPECT_TRUE(bsreader_read(&reader, 48, &val) == VTENC_OK && val == 0x333333333333);
+  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_ERR_END_OF_STREAM);
 
   return 1;
 }
@@ -246,18 +246,18 @@ int test_bsreader_read_6(void)
 
   bsreader_init(&reader, buf, buf_len);
 
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VtencErrorNoError && val == 0xff);
-  EXPECT_TRUE(bsreader_read(&reader, 4, &val) == VtencErrorNoError && val == 0xb);
-  EXPECT_TRUE(bsreader_read(&reader, 4, &val) == VtencErrorNoError && val == 0xa);
-  EXPECT_TRUE(bsreader_read(&reader, 1, &val) == VtencErrorNoError && val == 0x1);
-  EXPECT_TRUE(bsreader_read(&reader, 2, &val) == VtencErrorNoError && val == 0x0);
-  EXPECT_TRUE(bsreader_read(&reader, 2, &val) == VtencErrorNoError && val == 0x2);
-  EXPECT_TRUE(bsreader_read(&reader, 3, &val) == VtencErrorNoError && val == 0x0);
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VtencErrorNoError && val == 0xcd);
-  EXPECT_TRUE(bsreader_read(&reader, 16, &val) == VtencErrorNoError && val == 0x5555);
-  EXPECT_TRUE(bsreader_read(&reader, 16, &val) == VtencErrorNoError && val == 0x5555);
-  EXPECT_TRUE(bsreader_read(&reader, 32, &val) == VtencErrorNoError && val == 0x66666666);
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VtencErrorEndOfStream);
+  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_OK && val == 0xff);
+  EXPECT_TRUE(bsreader_read(&reader, 4, &val) == VTENC_OK && val == 0xb);
+  EXPECT_TRUE(bsreader_read(&reader, 4, &val) == VTENC_OK && val == 0xa);
+  EXPECT_TRUE(bsreader_read(&reader, 1, &val) == VTENC_OK && val == 0x1);
+  EXPECT_TRUE(bsreader_read(&reader, 2, &val) == VTENC_OK && val == 0x0);
+  EXPECT_TRUE(bsreader_read(&reader, 2, &val) == VTENC_OK && val == 0x2);
+  EXPECT_TRUE(bsreader_read(&reader, 3, &val) == VTENC_OK && val == 0x0);
+  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_OK && val == 0xcd);
+  EXPECT_TRUE(bsreader_read(&reader, 16, &val) == VTENC_OK && val == 0x5555);
+  EXPECT_TRUE(bsreader_read(&reader, 16, &val) == VTENC_OK && val == 0x5555);
+  EXPECT_TRUE(bsreader_read(&reader, 32, &val) == VTENC_OK && val == 0x66666666);
+  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_ERR_END_OF_STREAM);
 
   return 1;
 }
@@ -274,9 +274,9 @@ int test_bsreader_read_7(void)
 
   bsreader_init(&reader, buf, buf_len);
 
-  EXPECT_TRUE(bsreader_read(&reader, 57, &val) == VtencErrorNoError && val == 0x155555555555555);
-  EXPECT_TRUE(bsreader_read(&reader, 57, &val) == VtencErrorNoError && val == 0x0aaaaaaaaaaaaaa);
-  EXPECT_TRUE(bsreader_read(&reader, 6, &val) == VtencErrorNoError && val == 0x15);
+  EXPECT_TRUE(bsreader_read(&reader, 57, &val) == VTENC_OK && val == 0x155555555555555);
+  EXPECT_TRUE(bsreader_read(&reader, 57, &val) == VTENC_OK && val == 0x0aaaaaaaaaaaaaa);
+  EXPECT_TRUE(bsreader_read(&reader, 6, &val) == VTENC_OK && val == 0x15);
 
   return 1;
 }

@@ -87,11 +87,17 @@ void encdec_init64(struct EncDec *encdec)
 int encdec_encode(struct EncDec *encdec, const void *in, size_t in_len)
 {
   size_t enc_out_cap;
-  VtencEncoder encoder = {
-    .allow_repeated_values = encdec->allow_repeated_values,
-    .skip_full_subtrees = encdec->skip_full_subtrees,
-    .min_cluster_length = encdec->min_cluster_length
-  };
+  int rc, res=1;
+  vtenc *encoder = vtenc_create();
+
+  if (encoder == NULL) {
+    fprintf(stderr, "failed to create the encoder\n");
+    return 0;
+  }
+
+  vtenc_config(encoder, VTENC_CONFIG_ALLOW_REPEATED_VALUES, encdec->allow_repeated_values);
+  vtenc_config(encoder, VTENC_CONFIG_SKIP_FULL_SUBTREES, encdec->skip_full_subtrees);
+  vtenc_config(encoder, VTENC_CONFIG_MIN_CLUSTER_LENGTH, encdec->min_cluster_length);
 
   encdec->ctx.in = in;
   encdec->ctx.in_len = in_len;
@@ -99,35 +105,46 @@ int encdec_encode(struct EncDec *encdec, const void *in, size_t in_len)
   enc_out_cap = encdec->funcs->max_encoded_size(in_len);
 
   encdec->ctx.enc_out = (uint8_t *) malloc(enc_out_cap * sizeof(uint8_t));
-
   if (encdec->ctx.enc_out == NULL) {
     fprintf(stderr, "allocation error\n");
-    return 0;
+    res = 0;
+    goto destroy_and_return;
   }
 
-  encdec->ctx.enc_out_len = encdec->funcs->encode(
-    &encoder,
+  rc = encdec->funcs->encode(
+    encoder,
     encdec->ctx.in,
     encdec->ctx.in_len,
     encdec->ctx.enc_out,
     enc_out_cap
   );
-
-  if (encoder.last_error_code != VtencErrorNoError) {
-    fprintf(stderr, "encode failed with code: %d\n", encoder.last_error_code);
-    return 0;
+  if (rc != VTENC_OK) {
+    fprintf(stderr, "encode failed with code: %d\n", rc);
+    res = 0;
+    goto destroy_and_return;
   }
 
-  return 1;
+  encdec->ctx.enc_out_len = vtenc_encoded_size(encoder);
+
+destroy_and_return:
+  vtenc_destroy(encoder);
+
+  return res;
 }
 
 int encdec_decode(struct EncDec *encdec)
 {
-  VtencDecoder decoder = {
-    .allow_repeated_values = encdec->allow_repeated_values,
-    .skip_full_subtrees = encdec->skip_full_subtrees,
-    .min_cluster_length = encdec->min_cluster_length
-  };
+  int rc, res=1;
+  vtenc *decoder = vtenc_create();
+
+  if (decoder == NULL) {
+    fprintf(stderr, "failed to create the decoder\n");
+    return 0;
+  }
+
+  vtenc_config(decoder, VTENC_CONFIG_ALLOW_REPEATED_VALUES, encdec->allow_repeated_values);
+  vtenc_config(decoder, VTENC_CONFIG_SKIP_FULL_SUBTREES, encdec->skip_full_subtrees);
+  vtenc_config(decoder, VTENC_CONFIG_MIN_CLUSTER_LENGTH, encdec->min_cluster_length);
 
   encdec->ctx.dec_out_len = encdec->ctx.in_len;
 
@@ -135,23 +152,28 @@ int encdec_decode(struct EncDec *encdec)
 
   if (encdec->ctx.dec_out == NULL) {
     fprintf(stderr, "allocation error\n");
-    return 0;
+    res = 0;
+    goto destroy_and_return;
   }
 
-  encdec->funcs->decode(
-    &decoder,
+  rc = encdec->funcs->decode(
+    decoder,
     encdec->ctx.enc_out,
     encdec->ctx.enc_out_len,
     encdec->ctx.dec_out,
     encdec->ctx.dec_out_len
   );
 
-  if (decoder.last_error_code != VtencErrorNoError) {
-    fprintf(stderr, "decode failed with code: %d\n", decoder.last_error_code);
-    return 0;
+  if (rc != VTENC_OK) {
+    fprintf(stderr, "decode failed with code: %d\n", rc);
+    res = 0;
+    goto destroy_and_return;
   }
 
-  return 1;
+destroy_and_return:
+  vtenc_destroy(decoder);
+
+  return res;
 }
 
 int encdec_check_equality(struct EncDec *encdec)
@@ -172,11 +194,11 @@ int encdec_check_equality(struct EncDec *encdec)
 void encdec_print_summary(struct EncDec *encdec)
 {
   size_t in_len_in_bytes = encdec->ctx.in_len * encdec->funcs->type_size();
-  double ratio = encdec->ctx.enc_out_len / (double)in_len_in_bytes;
+  double ratio = in_len_in_bytes / (double)encdec->ctx.enc_out_len;
 
   printf("input size: %lu (%lu bytes)\n", encdec->ctx.in_len, in_len_in_bytes);
   printf("encoded size: %lu bytes\n", encdec->ctx.enc_out_len);
-  printf("compression ratio: %f (%.4f%%)\n", ratio, ratio * 100.0);
+  printf("compression ratio: %.1f\n", ratio);
 }
 
 void encdec_free(struct EncDec *encdec)

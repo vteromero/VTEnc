@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-/**
+/*
  * This library provides a series of functions to encode and decode sorted
  * sequences of unsigned integers using VTEnc algorithm.
  *
@@ -21,51 +21,58 @@ extern "C" {
  * uint64_t.
  */
 
-/* Error codes */
-typedef enum {
-  VtencErrorNoError         = 0,
-  VtencErrorMemoryAlloc     = 1,
-  VtencErrorBufferTooSmall  = 2,
-  VtencErrorEndOfStream     = 3,
-  VtencErrorNotEnoughBits   = 4,
-  VtencErrorInputTooBig     = 6,
-  VtencErrorOutputTooBig    = 7,
-  VtencErrorWrongFormat     = 8
-} VtencErrorCode;
-
-/**
- * typedef VtencEncoder - VTEnc encoder.
+/*
+ * Result codes.
+ *
+ * Most VTEnc functions return an integer result code from the following set
+ * to indicate success or failure.
  */
-typedef struct {
-  /**
-   * Indicates whether repeated values are allowed or not.
-   */
-  int allow_repeated_values;
+#define VTENC_OK                    0     /* Successful code */
+#define VTENC_ERR_BUFFER_TOO_SMALL  (-1)  /* Buffer too small */
+#define VTENC_ERR_END_OF_STREAM     (-2)  /* Write or Read reaches end of the stream */
+#define VTENC_ERR_NOT_ENOUGH_BITS   (-3)  /* Not enough bits to read */
+#define VTENC_ERR_INPUT_TOO_BIG     (-4)  /* Input size too big */
+#define VTENC_ERR_OUTPUT_TOO_BIG    (-5)  /* Output size too big */
+#define VTENC_ERR_WRONG_FORMAT      (-6)  /* Wrong encoded format */
+#define VTENC_ERR_CONFIG            (-7)  /* Unrecognised config option */
 
-  /**
-   * Indicates whether to skip full subtrees or not.
-   * This parameter is only applicable to sets, i.e. sequences with no repeated
-   * values. It's ignored if `allow_repeated_values` is set to 1.
-   */
-  int skip_full_subtrees;
+/* Encoding/decoding handler */
+typedef struct vtenc vtenc;
 
-  /**
-   * Minimum cluster length to serialise.
-   */
-  size_t min_cluster_length;
+/* Create a new encoding/decoding handler */
+vtenc *vtenc_create(void);
 
-  /**
-   * 'Returning state' after calling a encode function. It'll hold the error
-   * code value if the encode function fails, or a 'VtencErrorNoError' value if
-   * the function runs successfully.
-   */
-  VtencErrorCode last_error_code;
-} VtencEncoder;
+/* Destroy an encoding/decoding handler */
+void vtenc_destroy(vtenc *handler);
 
-/**
- * vtenc_encoder_init - initialises encoder @enc.
+/*
+ * Configuration options.
+ *
+ * These constants are the available integer options that can be passed as the
+ * second argument to the vtenc_config() function.
+ *
+ * VTENC_CONFIG_ALLOW_REPEATED_VALUES takes a single argument of type int. If
+ * non-zero, the sequence to be encoded or decoded can have repeated values.
+ * If the parameter is zero, the sequence is considered to be a set with no
+ * repeated values.
+ *
+ * VTENC_CONFIG_SKIP_FULL_SUBTREES takes a single argument of type int. If
+ * non-zero, full subtrees are skipped to be encoded, meaning that children
+ * nodes in a full subtree are not part of the encoded stream. If argument is
+ * zero, this functionality is disabled.
+ * VTENC_CONFIG_SKIP_FULL_SUBTREES is only relevant to sets, so this config
+ * will be ignored when VTENC_CONFIG_ALLOW_REPEATED_VALUES is set to a non-zero
+ * value.
+ *
+ * VTENC_CONFIG_MIN_CLUSTER_LENGTH takes a single argument of type size_t. It
+ * sets the minimun cluster length that is encoded.
  */
-void vtenc_encoder_init(VtencEncoder *enc);
+#define VTENC_CONFIG_ALLOW_REPEATED_VALUES  0   /* int */
+#define VTENC_CONFIG_SKIP_FULL_SUBTREES     1   /* int */
+#define VTENC_CONFIG_MIN_CLUSTER_LENGTH     2   /* size_t */
+
+/* Configure encoding/decoding handler */
+int vtenc_config(vtenc *handler, int op, ...);
 
 /**
  * vtenc_encode* functions.
@@ -73,27 +80,31 @@ void vtenc_encoder_init(VtencEncoder *enc);
  * Functions to encode the sequence @in into the already-allocated stream of
  * bytes @out, using the VTEnc algorithm with the provided encoding parameters.
  *
- * @enc: encoder. Provides encoding parameters and holds the returning state.
+ * @enc: encoder. Provides encoding parameters.
  * @in: input sequence to be encoded.
  * @in_len: size of @in.
  * @out: output stream of bytes.
  * @out_cap: capacity of @out / number of allocated bytes in @out.
  *
- * In case of error, @enc->last_error_code contains a specific error code
- * after calling the function. Otherwise, it has a 'VtencErrorNoError' code.
+ * Returns VTENC_OK if the encoding is successful. Otherwise, an error code
+ * will be returned (see result codes for more info).
+ *
+ * The output size can be obtained by calling vtenc_encoded_size() separately.
  *
  * Note that these functions assume that @in is a sorted sequence and they don't
- * check its order. If you pass in an unsorted sequence, @enc->last_error_code
- * will still have a 'VtencErrorNoError' value after calling the function, but
- * the output won't correspond to the correct encoded stream for the input
- * sequence.
- *
- * Return the size of the encoded output @out.
+ * check its order. If you pass in an unsorted sequence, you may still get a
+ * VTENC_OK code, but the output won't necessarily correspond to the correct
+ * encoded stream for the input sequence.
  */
-size_t vtenc_encode8(VtencEncoder *enc, const uint8_t *in, size_t in_len, uint8_t *out, size_t out_cap);
-size_t vtenc_encode16(VtencEncoder *enc, const uint16_t *in, size_t in_len, uint8_t *out, size_t out_cap);
-size_t vtenc_encode32(VtencEncoder *enc, const uint32_t *in, size_t in_len, uint8_t *out, size_t out_cap);
-size_t vtenc_encode64(VtencEncoder *enc, const uint64_t *in, size_t in_len, uint8_t *out, size_t out_cap);
+int vtenc_encode8(vtenc *enc, const uint8_t *in, size_t in_len, uint8_t *out, size_t out_cap);
+int vtenc_encode16(vtenc *enc, const uint16_t *in, size_t in_len, uint8_t *out, size_t out_cap);
+int vtenc_encode32(vtenc *enc, const uint32_t *in, size_t in_len, uint8_t *out, size_t out_cap);
+int vtenc_encode64(vtenc *enc, const uint64_t *in, size_t in_len, uint8_t *out, size_t out_cap);
+
+/*
+ * Returns the number of bytes of the output of calling a vtenc_encode* function.
+ */
+size_t vtenc_encoded_size(vtenc *enc);
 
 /**
  * vtenc_max_encoded_size* functions.
@@ -110,60 +121,27 @@ size_t vtenc_max_encoded_size32(size_t in_len);
 size_t vtenc_max_encoded_size64(size_t in_len);
 
 /**
- * typedef VtencDecoder - VTEnc decoder.
- */
-typedef struct {
-  /**
-   * Indicates whether repeated values are allowed or not.
-   */
-  int allow_repeated_values;
-
-  /**
-   * Indicates whether to skip full subtrees or not.
-   * This parameter is only applicable to sets, i.e. sequences with no repeated
-   * values. It's ignored if `allow_repeated_values` is set to 1.
-   */
-  int skip_full_subtrees;
-
-  /**
-   * Minimum cluster length to serialise.
-   */
-  size_t min_cluster_length;
-
-  /**
-   * 'Returning state' after calling a decode function. It'll hold the error
-   * code value if the decode function fails, or a 'VtencErrorNoError' value if
-   * the function runs successfully.
-   */
-  VtencErrorCode last_error_code;
-} VtencDecoder;
-
-/**
- * vtenc_decoder_init - initialises decoder @dec.
- */
-void vtenc_decoder_init(VtencDecoder *dec);
-
-/**
  * vtenc_decode* functions.
  *
  * Functions to decode the stream of bytes @in into the already-allocated
- * sequence @out, using the VTEnc algorithm with the provided decoding
+ * sequence @out, using the VTEnc algorithm with the provided encoding
  * parameters.
  *
- * @dec: decoder. Provides decoding parameters and holds the returning state.
+ * @dec: decoder. Provides encoding parameters.
  * @in: input stream of bytes to be decoded.
  * @in_len: size of @in.
  * @out: output sequence.
  * @out_len: size of @out.
  *
- * In case of failure, @dec->last_error_code contains the error code after
- * calling the function. If the function didn't fail, it holds a
- * 'VtencErrorNoError' value.
+ * Returns VTENC_OK when the decoding is successful or an error code otherwise.
+ *
+ * Note that the size of the output (@out_len) needs to be known to call a
+ * vtenc_decode* function.
  */
-void vtenc_decode8(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint8_t *out, size_t out_len);
-void vtenc_decode16(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint16_t *out, size_t out_len);
-void vtenc_decode32(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint32_t *out, size_t out_len);
-void vtenc_decode64(VtencDecoder *dec, const uint8_t *in, size_t in_len, uint64_t *out, size_t out_len);
+int vtenc_decode8(vtenc *dec, const uint8_t *in, size_t in_len, uint8_t *out, size_t out_len);
+int vtenc_decode16(vtenc *dec, const uint8_t *in, size_t in_len, uint16_t *out, size_t out_len);
+int vtenc_decode32(vtenc *dec, const uint8_t *in, size_t in_len, uint32_t *out, size_t out_len);
+int vtenc_decode64(vtenc *dec, const uint8_t *in, size_t in_len, uint64_t *out, size_t out_len);
 
 #ifdef __cplusplus
 }
