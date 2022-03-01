@@ -12,17 +12,18 @@ For reference, VTEnc has been tested on a laptop Ubuntu Desktop 21.10 with a Cor
 
 * `gov2.sorted`:
 
- | ![Encoding speed vs ratio](doc/images/gov2_enc_speed_vs_ratio.png) | ![Decoding speed vs ratio](doc/images/gov2_dec_speed_vs_ratio.png) |
- | ![Encoding speed](doc/images/gov2_enc_speed.png) | ![Decoding speed](doc/images/gov2_dec_speed.png) |
- |:---:|:---:|
+ ![Encoding speed vs ratio](doc/images/gov2_enc_speed_vs_ratio.png) | ![Decoding speed vs ratio](doc/images/gov2_dec_speed_vs_ratio.png)
+ :---:|:---:
+ ![Encoding speed](doc/images/gov2_enc_speed.png) | ![Decoding speed](doc/images/gov2_dec_speed.png)
 
- _(\*) VTEnc's results on "speed vs ratio" charts are for the following values of the encoding parameter `min_cluster_length`: 1, 2, 4, 8, 16, 32, 64, 128 and 256._
+ _(\*) VTEnc's results on "speed vs ratio" charts are for the following values of the encoding parameter `min_cluster_length`: 1, 2, 4, 8, 16, 32, 64, 128 and 256._  
  _(\*\*) VTEnc's results on "speed" charts are for `min_cluster_length` = 256._
 
 * Timestamps (`ts.txt`):
 
- | ![Encoding speed vs ratio](doc/images/ts_enc_speed_vs_ratio.png) | ![Decoding speed](doc/images/ts_dec_speed.png) |
- |:---:|:---:|
+ ![Encoding speed vs ratio](doc/images/ts_enc_speed_vs_ratio.png) | ![Decoding speed vs ratio](doc/images/ts_dec_speed_vs_ratio.png)
+ :---:|:---:
+ ![Encoding speed](doc/images/ts_enc_speed.png) | ![Decoding speed](doc/images/ts_dec_speed.png)
 
 ## API
 
