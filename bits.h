@@ -149,7 +149,11 @@ static inline unsigned int bits_len_u16(uint16_t value)
 static inline unsigned int bits_len_u32(uint32_t value)
 {
 #ifdef __HAVE_BUILTIN_CLZ__
-  return 32 - __builtin_clz(value | 1);
+  if (value == 0) {
+    return 1;
+  } else {
+    return 32 - __builtin_clz(value);
+  }
 #else
   unsigned int n = 0;
 
@@ -169,7 +173,11 @@ static inline unsigned int bits_len_u32(uint32_t value)
 static inline unsigned int bits_len_u64(uint64_t value)
 {
 #ifdef __HAVE_BUILTIN_CLZLL__
-  return 64 - __builtin_clzll(value | 1ULL);
+  if (value == 0) {
+    return 1;
+  } else {
+    return 64 - __builtin_clzll(value);
+  }
 #else
   unsigned int n = 0;
 
