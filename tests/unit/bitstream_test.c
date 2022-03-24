@@ -12,14 +12,14 @@
 int test_bswriter_align_buffer_size(void)
 {
   EXPECT_TRUE(bswriter_align_buffer_size(0) == 8);
-  EXPECT_TRUE(bswriter_align_buffer_size(1) == 8);
-  EXPECT_TRUE(bswriter_align_buffer_size(7) == 8);
-  EXPECT_TRUE(bswriter_align_buffer_size(8) == 8);
-  EXPECT_TRUE(bswriter_align_buffer_size(9) == 16);
-  EXPECT_TRUE(bswriter_align_buffer_size(13) == 16);
-  EXPECT_TRUE(bswriter_align_buffer_size(16) == 16);
-  EXPECT_TRUE(bswriter_align_buffer_size(33) == 40);
-  EXPECT_TRUE(bswriter_align_buffer_size(48) == 48);
+  EXPECT_TRUE(bswriter_align_buffer_size(1) == 9);
+  EXPECT_TRUE(bswriter_align_buffer_size(7) == 15);
+  EXPECT_TRUE(bswriter_align_buffer_size(8) == 16);
+  EXPECT_TRUE(bswriter_align_buffer_size(9) == 17);
+  EXPECT_TRUE(bswriter_align_buffer_size(13) == 21);
+  EXPECT_TRUE(bswriter_align_buffer_size(16) == 24);
+  EXPECT_TRUE(bswriter_align_buffer_size(33) == 41);
+  EXPECT_TRUE(bswriter_align_buffer_size(48) == 56);
 
   return 1;
 }

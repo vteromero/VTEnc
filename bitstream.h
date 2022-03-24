@@ -23,8 +23,7 @@ struct bswriter {
 
 static inline size_t bswriter_align_buffer_size(size_t orig_size)
 {
-  if ((orig_size > 0) && (orig_size%8 == 0)) return orig_size;
-  return orig_size + 8 - (orig_size % 8);
+  return orig_size + 8;
 }
 
 static inline int bswriter_init(struct bswriter *writer,
