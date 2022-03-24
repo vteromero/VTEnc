@@ -69,14 +69,16 @@ static inline int bswriter_flush(struct bswriter *writer)
 static inline int bswriter_write(struct bswriter *writer,
   uint64_t value, unsigned int n_bits)
 {
-  assert(n_bits <= BIT_STREAM_MAX_WRITE);
+  const unsigned int total_bits = writer->bit_pos + n_bits;
+  const unsigned int n_bytes = total_bits >> 3;
 
-  if (writer->ptr > writer->end_ptr) return VTENC_ERR_END_OF_STREAM;
+  writer->bit_container |= value << writer->bit_pos;
 
-  if (n_bits + writer->bit_pos >= 64)
-    return_if_error(bswriter_flush(writer));
+  mem_write_le_u64(writer->ptr, writer->bit_container);
 
-  bswriter_append(writer, value, n_bits);
+  writer->ptr += n_bytes;
+  writer->bit_pos = total_bits & 7;
+  writer->bit_container >>= (n_bytes << 3);
 
   return VTENC_OK;
 }
