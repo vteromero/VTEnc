@@ -29,15 +29,15 @@ static inline size_t bswriter_align_buffer_size(size_t orig_size)
 static inline int bswriter_init(struct bswriter *writer,
   uint8_t *out_buf, size_t out_capacity)
 {
+  if (out_capacity < sizeof(writer->bit_container)) {
+    return VTENC_ERR_BUFFER_TOO_SMALL;
+  }
+
   writer->bit_container = 0;
   writer->bit_pos = 0;
   writer->start_ptr = out_buf;
   writer->ptr = writer->start_ptr;
   writer->end_ptr = writer->start_ptr + out_capacity - sizeof(writer->bit_container);
-
-  if (out_capacity < sizeof(writer->bit_container)) {
-    return VTENC_ERR_BUFFER_TOO_SMALL;
-  }
 
   return VTENC_OK;
 }
