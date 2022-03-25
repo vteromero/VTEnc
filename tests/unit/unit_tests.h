@@ -43,8 +43,8 @@ int test_bswriter_init_2(void);
 int test_bswriter_write_1(void);
 int test_bswriter_write_2(void);
 int test_bswriter_write_3(void);
-int test_bswriter_close_1(void);
-int test_bswriter_close_2(void);
+int test_bswriter_size_1(void);
+int test_bswriter_size_2(void);
 
 int test_bsreader_read_1(void);
 int test_bsreader_read_2(void);

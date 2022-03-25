@@ -67,7 +67,7 @@ static int encctx_init(struct encctx *ctx, const vtenc *enc,
 
 static inline size_t encctx_close(struct encctx *ctx)
 {
-  return bswriter_close(&(ctx->bits_writer));
+  return bswriter_size(&(ctx->bits_writer));
 }
 
 static inline int encode_lower_bits_step(struct encctx *ctx,

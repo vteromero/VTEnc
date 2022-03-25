@@ -85,7 +85,7 @@ static inline int bswriter_write(struct bswriter *writer,
   return VTENC_OK;
 }
 
-static inline size_t bswriter_close(struct bswriter *writer)
+static inline size_t bswriter_size(struct bswriter *writer)
 {
   return (writer->ptr - writer->start_ptr) + (writer->bit_pos > 0);
 }

@@ -38,8 +38,8 @@ int main()
   RUN_TEST(test_bswriter_write_1);
   RUN_TEST(test_bswriter_write_2);
   RUN_TEST(test_bswriter_write_3);
-  RUN_TEST(test_bswriter_close_1);
-  RUN_TEST(test_bswriter_close_2);
+  RUN_TEST(test_bswriter_size_1);
+  RUN_TEST(test_bswriter_size_2);
 
   RUN_TEST(test_bsreader_read_1);
   RUN_TEST(test_bsreader_read_2);
