@@ -85,9 +85,6 @@ static inline int bswriter_write(struct bswriter *writer,
 
 static inline size_t bswriter_close(struct bswriter *writer)
 {
-  if (writer->ptr <= writer->end_ptr)
-    bswriter_flush(writer);
-
   return (writer->ptr - writer->start_ptr) + (writer->bit_pos > 0);
 }
 
