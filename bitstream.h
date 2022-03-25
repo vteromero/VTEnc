@@ -72,6 +72,8 @@ static inline int bswriter_write(struct bswriter *writer,
   const unsigned int total_bits = writer->bit_pos + n_bits;
   const unsigned int n_bytes = total_bits >> 3;
 
+  if (writer->ptr >= writer->end_ptr) return VTENC_ERR_END_OF_STREAM;
+
   writer->bit_container |= value << writer->bit_pos;
 
   mem_write_le_u64(writer->ptr, writer->bit_container);

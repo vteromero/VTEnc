@@ -49,10 +49,9 @@ int test_bswriter_init_2(void)
 int test_bswriter_write_1(void)
 {
   struct bswriter writer;
-  const size_t buf_cap = 16;
+  const size_t buf_sz = 10;
+  const size_t buf_cap = bswriter_align_buffer_size(buf_sz);
   uint8_t buf[buf_cap];
-
-  memset(buf, 0, buf_cap);
 
   EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VTENC_OK);
 
@@ -66,7 +65,7 @@ int test_bswriter_write_1(void)
 
   bswriter_close(&writer);
 
-  EXPECT_TRUE(memcmp(buf, "\xff\xff\x22\x00\x99\x99\x99\x99\x44\xaa\x00\x00\x00\x00\x00\x00", buf_cap) == 0);
+  EXPECT_TRUE(memcmp(buf, "\xff\xff\x22\x00\x99\x99\x99\x99\x44\xaa", buf_sz) == 0);
 
   return 1;
 }
@@ -74,10 +73,9 @@ int test_bswriter_write_1(void)
 int test_bswriter_write_2(void)
 {
   struct bswriter writer;
-  const size_t buf_cap = 8;
+  const size_t buf_sz = 8;
+  const size_t buf_cap = bswriter_align_buffer_size(buf_sz);
   uint8_t buf[buf_cap];
-
-  memset(buf, 0, buf_cap);
 
   EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VTENC_OK);
 
@@ -87,12 +85,12 @@ int test_bswriter_write_2(void)
   EXPECT_TRUE(bswriter_write(&writer, 0x7fffffff, 31) == VTENC_OK);
   EXPECT_TRUE(bswriter_write(&writer, 0x0, 0) == VTENC_OK);
   EXPECT_TRUE(bswriter_write(&writer, 0x0, 0) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0x1, 1) == VTENC_ERR_END_OF_STREAM);
+  EXPECT_TRUE(bswriter_write(&writer, 0x1, 1) == VTENC_OK);
   EXPECT_TRUE(bswriter_write(&writer, 0x1, 1) == VTENC_ERR_END_OF_STREAM);
 
   bswriter_close(&writer);
 
-  EXPECT_TRUE(memcmp(buf, "\xff\xff\xff\xff\xff\xff\xff\x7f", buf_cap) == 0);
+  EXPECT_TRUE(memcmp(buf, "\xff\xff\xff\xff\xff\xff\xff\xff", buf_sz) == 0);
 
   return 1;
 }
@@ -100,7 +98,8 @@ int test_bswriter_write_2(void)
 int test_bswriter_write_3(void)
 {
   struct bswriter writer;
-  const size_t buf_cap = 24;
+  const size_t buf_sz = 24;
+  const size_t buf_cap = bswriter_align_buffer_size(buf_sz);
   uint8_t buf[buf_cap];
 
   memset(buf, 0, buf_cap);
@@ -116,7 +115,7 @@ int test_bswriter_write_3(void)
   EXPECT_TRUE(memcmp(buf,
     "\xff\xff\xff\xff\xff\xff\xff\xff"
     "\xff\xff\xff\xff\xff\xff\xff\xff"
-    "\xff\xff\xff\xff\xff\x07\x00\x00", buf_cap) == 0);
+    "\xff\xff\xff\xff\xff\x07\x00\x00", buf_sz) == 0);
 
   return 1;
 }
@@ -124,7 +123,8 @@ int test_bswriter_write_3(void)
 int test_bswriter_close_1(void)
 {
   struct bswriter writer;
-  const size_t buf_cap = 8;
+  const size_t buf_sz = 8;
+  const size_t buf_cap = bswriter_align_buffer_size(buf_sz);
   uint8_t buf[buf_cap];
 
   EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VTENC_OK);
@@ -136,7 +136,8 @@ int test_bswriter_close_1(void)
 int test_bswriter_close_2(void)
 {
   struct bswriter writer;
-  const size_t buf_cap = 8;
+  const size_t buf_sz = 8;
+  const size_t buf_cap = bswriter_align_buffer_size(buf_sz);
   uint8_t buf[buf_cap];
 
   EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VTENC_OK);
