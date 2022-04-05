@@ -38,6 +38,7 @@ int main()
   RUN_TEST(test_bswriter_write_1);
   RUN_TEST(test_bswriter_write_2);
   RUN_TEST(test_bswriter_write_3);
+  RUN_TEST(test_bswriter_append_and_flush);
   RUN_TEST(test_bswriter_size_1);
   RUN_TEST(test_bswriter_size_2);
 

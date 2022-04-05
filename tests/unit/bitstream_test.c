@@ -114,6 +114,27 @@ int test_bswriter_write_3(void)
   return 1;
 }
 
+int test_bswriter_append_and_flush(void)
+{
+  struct bswriter writer;
+  const size_t buf_sz = 5;
+  const size_t buf_cap = bswriter_align_buffer_size(buf_sz);
+  uint8_t buf[buf_cap];
+
+  EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VTENC_OK);
+
+  bswriter_append(&writer, 0xffff, 16);
+  bswriter_append(&writer, 0x55, 8);
+  bswriter_append(&writer, 0xabab, 16);
+
+  EXPECT_TRUE(bswriter_flush(&writer) == VTENC_OK);
+  EXPECT_TRUE(bswriter_flush(&writer) == VTENC_ERR_END_OF_STREAM);
+
+  EXPECT_TRUE(memcmp(buf, "\xff\xff\x55\xab\xab", buf_sz) == 0);
+
+  return 1;
+}
+
 int test_bswriter_size_1(void)
 {
   struct bswriter writer;
