@@ -24,4 +24,7 @@
 #define __HAVE_BUILTIN_CLZLL__
 #endif
 
+#define likely(x)  __builtin_expect(!!(x), 1)
+#define unlikely(x)  __builtin_expect(!!(x), 0)
+
 #endif /* VTENC_COMPILER_H_ */
