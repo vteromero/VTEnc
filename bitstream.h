@@ -10,6 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "compiler.h"
 #include "internals.h"
 #include "mem.h"
 
@@ -54,9 +55,11 @@ static inline void bswriter_append(struct bswriter *writer,
 
 static inline int bswriter_flush(struct bswriter *writer)
 {
-  size_t const n_bytes = writer->bit_pos >> 3;
+  const unsigned int n_bytes = writer->bit_pos >> 3;
 
-  if (writer->ptr >= writer->end_ptr) return VTENC_ERR_END_OF_STREAM;
+  if (unlikely(writer->ptr >= writer->end_ptr)) {
+    return VTENC_ERR_END_OF_STREAM;
+  }
 
   mem_write_le_u64(writer->ptr, writer->bit_container);
 
@@ -73,7 +76,9 @@ static inline int bswriter_write(struct bswriter *writer,
   const unsigned int total_bits = writer->bit_pos + n_bits;
   const unsigned int n_bytes = total_bits >> 3;
 
-  if (writer->ptr >= writer->end_ptr) return VTENC_ERR_END_OF_STREAM;
+  if (unlikely(writer->ptr >= writer->end_ptr)) {
+    return VTENC_ERR_END_OF_STREAM;
+  }
 
   writer->bit_container |= value << writer->bit_pos;
 
