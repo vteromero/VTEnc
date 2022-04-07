@@ -10,6 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "compiler.h"
 #include "internals.h"
 #include "mem.h"
 
@@ -23,22 +24,21 @@ struct bswriter {
 
 static inline size_t bswriter_align_buffer_size(size_t orig_size)
 {
-  if ((orig_size > 0) && (orig_size%8 == 0)) return orig_size;
-  return orig_size + 8 - (orig_size % 8);
+  return orig_size + 8;
 }
 
 static inline int bswriter_init(struct bswriter *writer,
   uint8_t *out_buf, size_t out_capacity)
 {
+  if (out_capacity < sizeof(writer->bit_container)) {
+    return VTENC_ERR_BUFFER_TOO_SMALL;
+  }
+
   writer->bit_container = 0;
   writer->bit_pos = 0;
   writer->start_ptr = out_buf;
   writer->ptr = writer->start_ptr;
   writer->end_ptr = writer->start_ptr + out_capacity - sizeof(writer->bit_container);
-
-  if (out_capacity < sizeof(writer->bit_container)) {
-    return VTENC_ERR_BUFFER_TOO_SMALL;
-  }
 
   return VTENC_OK;
 }
@@ -55,7 +55,11 @@ static inline void bswriter_append(struct bswriter *writer,
 
 static inline int bswriter_flush(struct bswriter *writer)
 {
-  size_t const n_bytes = writer->bit_pos >> 3;
+  const unsigned int n_bytes = writer->bit_pos >> 3;
+
+  if (unlikely(writer->ptr >= writer->end_ptr)) {
+    return VTENC_ERR_END_OF_STREAM;
+  }
 
   mem_write_le_u64(writer->ptr, writer->bit_container);
 
@@ -63,30 +67,32 @@ static inline int bswriter_flush(struct bswriter *writer)
   writer->bit_pos &= 7;
   writer->bit_container >>= (n_bytes << 3);
 
-  if (writer->ptr > writer->end_ptr) return VTENC_ERR_END_OF_STREAM;
   return VTENC_OK;
 }
 
 static inline int bswriter_write(struct bswriter *writer,
   uint64_t value, unsigned int n_bits)
 {
-  assert(n_bits <= BIT_STREAM_MAX_WRITE);
+  const unsigned int total_bits = writer->bit_pos + n_bits;
+  const unsigned int n_bytes = total_bits >> 3;
 
-  if (writer->ptr > writer->end_ptr) return VTENC_ERR_END_OF_STREAM;
+  if (unlikely(writer->ptr >= writer->end_ptr)) {
+    return VTENC_ERR_END_OF_STREAM;
+  }
 
-  if (n_bits + writer->bit_pos >= 64)
-    return_if_error(bswriter_flush(writer));
+  writer->bit_container |= value << writer->bit_pos;
 
-  bswriter_append(writer, value, n_bits);
+  mem_write_le_u64(writer->ptr, writer->bit_container);
+
+  writer->ptr += n_bytes;
+  writer->bit_pos = total_bits & 7;
+  writer->bit_container >>= (n_bytes << 3);
 
   return VTENC_OK;
 }
 
-static inline size_t bswriter_close(struct bswriter *writer)
+static inline size_t bswriter_size(struct bswriter *writer)
 {
-  if (writer->ptr <= writer->end_ptr)
-    bswriter_flush(writer);
-
   return (writer->ptr - writer->start_ptr) + (writer->bit_pos > 0);
 }
 

@@ -1298,56 +1298,56 @@ int test_vtenc_encode64(void)
 
 int test_vtenc_max_encoded_size8(void)
 {
-  EXPECT_TRUE(vtenc_max_encoded_size8(0) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size8(1) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size8(7) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size8(8) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size8(15) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size8(16) == 24);
-  EXPECT_TRUE(vtenc_max_encoded_size8(100) == 104);
-  EXPECT_TRUE(vtenc_max_encoded_size8(1000) == 1008);
+  EXPECT_TRUE(vtenc_max_encoded_size8(0) == 9);
+  EXPECT_TRUE(vtenc_max_encoded_size8(1) == 10);
+  EXPECT_TRUE(vtenc_max_encoded_size8(7) == 16);
+  EXPECT_TRUE(vtenc_max_encoded_size8(8) == 17);
+  EXPECT_TRUE(vtenc_max_encoded_size8(15) == 24);
+  EXPECT_TRUE(vtenc_max_encoded_size8(16) == 25);
+  EXPECT_TRUE(vtenc_max_encoded_size8(100) == 109);
+  EXPECT_TRUE(vtenc_max_encoded_size8(1000) == 1009);
 
   return 1;
 }
 
 int test_vtenc_max_encoded_size16(void)
 {
-  EXPECT_TRUE(vtenc_max_encoded_size16(0) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size16(1) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size16(3) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size16(4) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size16(7) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size16(8) == 24);
-  EXPECT_TRUE(vtenc_max_encoded_size16(10) == 24);
-  EXPECT_TRUE(vtenc_max_encoded_size16(100) == 208);
-  EXPECT_TRUE(vtenc_max_encoded_size16(1000) == 2008);
+  EXPECT_TRUE(vtenc_max_encoded_size16(0) == 10);
+  EXPECT_TRUE(vtenc_max_encoded_size16(1) == 12);
+  EXPECT_TRUE(vtenc_max_encoded_size16(3) == 16);
+  EXPECT_TRUE(vtenc_max_encoded_size16(4) == 18);
+  EXPECT_TRUE(vtenc_max_encoded_size16(7) == 24);
+  EXPECT_TRUE(vtenc_max_encoded_size16(8) == 26);
+  EXPECT_TRUE(vtenc_max_encoded_size16(10) == 30);
+  EXPECT_TRUE(vtenc_max_encoded_size16(100) == 210);
+  EXPECT_TRUE(vtenc_max_encoded_size16(1000) == 2010);
 
   return 1;
 }
 
 int test_vtenc_max_encoded_size32(void)
 {
-  EXPECT_TRUE(vtenc_max_encoded_size32(0) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size32(1) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size32(2) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size32(3) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size32(4) == 24);
-  EXPECT_TRUE(vtenc_max_encoded_size32(10) == 48);
-  EXPECT_TRUE(vtenc_max_encoded_size32(100) == 408);
-  EXPECT_TRUE(vtenc_max_encoded_size32(1000) == 4008);
+  EXPECT_TRUE(vtenc_max_encoded_size32(0) == 12);
+  EXPECT_TRUE(vtenc_max_encoded_size32(1) == 16);
+  EXPECT_TRUE(vtenc_max_encoded_size32(2) == 20);
+  EXPECT_TRUE(vtenc_max_encoded_size32(3) == 24);
+  EXPECT_TRUE(vtenc_max_encoded_size32(4) == 28);
+  EXPECT_TRUE(vtenc_max_encoded_size32(10) == 52);
+  EXPECT_TRUE(vtenc_max_encoded_size32(100) == 412);
+  EXPECT_TRUE(vtenc_max_encoded_size32(1000) == 4012);
 
   return 1;
 }
 
 int test_vtenc_max_encoded_size64(void)
 {
-  EXPECT_TRUE(vtenc_max_encoded_size64(0) == 8);
-  EXPECT_TRUE(vtenc_max_encoded_size64(1) == 16);
-  EXPECT_TRUE(vtenc_max_encoded_size64(2) == 24);
-  EXPECT_TRUE(vtenc_max_encoded_size64(3) == 32);
-  EXPECT_TRUE(vtenc_max_encoded_size64(10) == 88);
-  EXPECT_TRUE(vtenc_max_encoded_size64(100) == 808);
-  EXPECT_TRUE(vtenc_max_encoded_size64(1000) == 8008);
+  EXPECT_TRUE(vtenc_max_encoded_size64(0) == 16);
+  EXPECT_TRUE(vtenc_max_encoded_size64(1) == 24);
+  EXPECT_TRUE(vtenc_max_encoded_size64(2) == 32);
+  EXPECT_TRUE(vtenc_max_encoded_size64(3) == 40);
+  EXPECT_TRUE(vtenc_max_encoded_size64(10) == 96);
+  EXPECT_TRUE(vtenc_max_encoded_size64(100) == 816);
+  EXPECT_TRUE(vtenc_max_encoded_size64(1000) == 8016);
 
   return 1;
 }
