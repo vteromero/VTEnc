@@ -225,7 +225,6 @@ int test_bsreader_read_4(void)
   EXPECT_TRUE(bsreader_read(&reader, 4, &val) == VTENC_OK && val == 0xa);
   EXPECT_TRUE(bsreader_read(&reader, 0, &val) == VTENC_OK);
   EXPECT_TRUE(bsreader_read(&reader, 4, &val) == VTENC_OK && val == 0xb);
-  EXPECT_TRUE(bsreader_read(&reader, 0, &val) == VTENC_OK);
   EXPECT_TRUE(bsreader_read(&reader, 1, &val) == VTENC_ERR_END_OF_STREAM);
 
   return 1;
