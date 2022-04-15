@@ -116,24 +116,19 @@ static inline void bsreader_init(struct bsreader *reader,
   reader->end_ptr = reader->start_ptr + buf_len;
 }
 
-static inline int bsreader_load(struct bsreader *reader)
+static inline int bsreader_read(struct bsreader *reader,
+  unsigned int n_bits, uint64_t *read_value)
 {
-  size_t n_bytes;
+  const unsigned int n_bytes = reader->end_ptr - reader->ptr;
 
-  reader->ptr += reader->bits_consumed >> 3;
-
-  assert(reader->ptr <= reader->end_ptr);
-  n_bytes = reader->end_ptr - reader->ptr;
-
-  if (n_bytes == 0) return VTENC_ERR_END_OF_STREAM;
+  if (reader->ptr >= reader->end_ptr) {
+    return VTENC_ERR_END_OF_STREAM;
+  }
 
   if (n_bytes >= 8) {
     reader->bit_container = mem_read_le_u64(reader->ptr);
-    reader->bits_loaded = 64;
-    reader->bits_consumed &= 7;
   } else {
     reader->bit_container = (uint64_t)(reader->ptr[0]);
-
     switch (n_bytes) {
       case 7: reader->bit_container |= (uint64_t)(reader->ptr[6]) << 48;
       case 6: reader->bit_container |= (uint64_t)(reader->ptr[5]) << 40;
@@ -143,28 +138,15 @@ static inline int bsreader_load(struct bsreader *reader)
       case 2: reader->bit_container |= (uint64_t)(reader->ptr[1]) << 8;
       default: break;
     }
-
-    reader->bits_loaded = n_bytes << 3;
-    reader->bits_consumed &= 7;
   }
 
-  return VTENC_OK;
-}
-
-static inline int bsreader_read(struct bsreader *reader,
-  unsigned int n_bits, uint64_t *read_value)
-{
-  assert(n_bits <= BIT_STREAM_MAX_READ);
-
-  if (n_bits + reader->bits_consumed > reader->bits_loaded) {
-    return_if_error(bsreader_load(reader));
-
-    if (n_bits + reader->bits_consumed > reader->bits_loaded)
-      return VTENC_ERR_NOT_ENOUGH_BITS;
+  if ((reader->bits_consumed + n_bits) > ((reader->end_ptr - reader->ptr) << 3)) {
+    return VTENC_ERR_NOT_ENOUGH_BITS;
   }
 
   *read_value = (reader->bit_container >> reader->bits_consumed) & ((1ULL << n_bits) - 1ULL);
-  reader->bits_consumed += n_bits;
+  reader->ptr += (reader->bits_consumed + n_bits) >> 3;
+  reader->bits_consumed = (reader->bits_consumed + n_bits) & 7;
 
   return VTENC_OK;
 }
