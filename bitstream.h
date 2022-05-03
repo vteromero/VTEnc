@@ -140,10 +140,6 @@ static inline int bsreader_read(struct bsreader *reader,
     }
   }
 
-  if ((reader->bits_consumed + n_bits) > ((reader->end_ptr - reader->ptr) << 3)) {
-    return VTENC_ERR_NOT_ENOUGH_BITS;
-  }
-
   *read_value = (reader->bit_container >> reader->bits_consumed) & ((1ULL << n_bits) - 1ULL);
   reader->ptr += (reader->bits_consumed + n_bits) >> 3;
   reader->bits_consumed = (reader->bits_consumed + n_bits) & 7;

@@ -206,8 +206,8 @@ int test_bsreader_read_3(void)
   bsreader_init(&reader, buf, buf_len);
 
   EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_OK && val == 0xff);
-  EXPECT_TRUE(bsreader_read(&reader, 16, &val) == VTENC_ERR_NOT_ENOUGH_BITS);
   EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_OK && val == 0x66);
+  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_ERR_END_OF_STREAM);
 
   return 1;
 }
