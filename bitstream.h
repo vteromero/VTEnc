@@ -98,7 +98,6 @@ static inline size_t bswriter_size(struct bswriter *writer)
 
 struct bsreader {
   uint64_t      bit_container;
-  unsigned int  bits_loaded;
   unsigned int  bits_consumed;
   const uint8_t *start_ptr;
   const uint8_t *ptr;
@@ -109,7 +108,6 @@ static inline void bsreader_init(struct bsreader *reader,
   const uint8_t *buf, size_t buf_len)
 {
   reader->bit_container = 0;
-  reader->bits_loaded = 0;
   reader->bits_consumed = 0;
   reader->start_ptr = buf;
   reader->ptr = reader->start_ptr;
