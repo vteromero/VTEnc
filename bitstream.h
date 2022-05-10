@@ -98,7 +98,7 @@ static inline size_t bswriter_size(struct bswriter *writer)
 
 struct bsreader {
   uint64_t      bit_container;
-  unsigned int  bits_consumed;
+  unsigned int  bit_pos;
   const uint8_t *start_ptr;
   const uint8_t *ptr;
   const uint8_t *end_ptr;
@@ -108,7 +108,7 @@ static inline void bsreader_init(struct bsreader *reader,
   const uint8_t *buf, size_t buf_len)
 {
   reader->bit_container = 0;
-  reader->bits_consumed = 0;
+  reader->bit_pos = 0;
   reader->start_ptr = buf;
   reader->ptr = reader->start_ptr;
   reader->end_ptr = reader->start_ptr + buf_len;
@@ -138,16 +138,16 @@ static inline int bsreader_read(struct bsreader *reader,
     }
   }
 
-  *read_value = (reader->bit_container >> reader->bits_consumed) & ((1ULL << n_bits) - 1ULL);
-  reader->ptr += (reader->bits_consumed + n_bits) >> 3;
-  reader->bits_consumed = (reader->bits_consumed + n_bits) & 7;
+  *read_value = (reader->bit_container >> reader->bit_pos) & ((1ULL << n_bits) - 1ULL);
+  reader->ptr += (reader->bit_pos + n_bits) >> 3;
+  reader->bit_pos = (reader->bit_pos + n_bits) & 7;
 
   return VTENC_OK;
 }
 
 static inline size_t bsreader_size(struct bsreader *reader)
 {
-  return (reader->ptr - reader->start_ptr) + (reader->bits_consumed >> 3) + ((reader->bits_consumed & 7) > 0);
+  return (reader->ptr - reader->start_ptr) + (reader->bit_pos >> 3) + ((reader->bit_pos & 7) > 0);
 }
 
 #endif /* VTENC_BITSTREAM_H_ */
