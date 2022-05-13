@@ -30,11 +30,10 @@ extern "C" {
 #define VTENC_OK                    0     /* Successful code */
 #define VTENC_ERR_BUFFER_TOO_SMALL  (-1)  /* Buffer too small */
 #define VTENC_ERR_END_OF_STREAM     (-2)  /* Write or Read reaches end of the stream */
-#define VTENC_ERR_NOT_ENOUGH_BITS   (-3)  /* Not enough bits to read */
-#define VTENC_ERR_INPUT_TOO_BIG     (-4)  /* Input size too big */
-#define VTENC_ERR_OUTPUT_TOO_BIG    (-5)  /* Output size too big */
-#define VTENC_ERR_WRONG_FORMAT      (-6)  /* Wrong encoded format */
-#define VTENC_ERR_CONFIG            (-7)  /* Unrecognised config option */
+#define VTENC_ERR_INPUT_TOO_BIG     (-3)  /* Input size too big */
+#define VTENC_ERR_OUTPUT_TOO_BIG    (-4)  /* Output size too big */
+#define VTENC_ERR_WRONG_FORMAT      (-5)  /* Wrong encoded format */
+#define VTENC_ERR_CONFIG            (-6)  /* Unrecognised config option */
 
 /* Encoding/decoding handler */
 typedef struct vtenc vtenc;
