@@ -36,6 +36,7 @@ struct decctx {
   size_t            values_len;
   int               reconstruct_full_subtrees;
   size_t            min_cluster_length;
+  unsigned int      bit_width;
   struct dec_stack  stack;
   struct bsreader   bits_reader;
 };
@@ -54,6 +55,12 @@ static int decctx_init(struct decctx *ctx, const vtenc *dec,
                                     dec->params.skip_full_subtrees;
 
   ctx->min_cluster_length = dec->params.min_cluster_length;
+
+  if (dec->params.bit_width == 0 || dec->params.bit_width > BITWIDTH) {
+    ctx->bit_width = BITWIDTH;
+  } else {
+    ctx->bit_width = dec->params.bit_width;
+  }
 
   dec_stack_init(&ctx->stack);
 
@@ -133,7 +140,7 @@ static inline struct dec_bit_cluster *bcltree_next(struct decctx *ctx)
 
 static int decode_bit_cluster_tree(struct decctx *ctx)
 {
-  bcltree_add(ctx, &(struct dec_bit_cluster){0, ctx->values_len, BITWIDTH, 0});
+  bcltree_add(ctx, &(struct dec_bit_cluster){0, ctx->values_len, ctx->bit_width, 0});
 
   while (bcltree_has_more(ctx)) {
     struct dec_bit_cluster *cluster = bcltree_next(ctx);

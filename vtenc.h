@@ -69,6 +69,7 @@ void vtenc_destroy(vtenc *handler);
 #define VTENC_CONFIG_ALLOW_REPEATED_VALUES  0   /* int */
 #define VTENC_CONFIG_SKIP_FULL_SUBTREES     1   /* int */
 #define VTENC_CONFIG_MIN_CLUSTER_LENGTH     2   /* size_t */
+#define VTENC_CONFIG_BIT_WIDTH              3   /* unsigned int */
 
 /* Configure encoding/decoding handler */
 int vtenc_config(vtenc *handler, int op, ...);

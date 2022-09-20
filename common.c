@@ -18,6 +18,7 @@ vtenc *vtenc_create(void)
     handler->params.allow_repeated_values = 1;
     handler->params.skip_full_subtrees = 1;
     handler->params.min_cluster_length = 1;
+    handler->params.bit_width = 0;
     handler->out_size = 0;
   }
 
@@ -50,6 +51,10 @@ int vtenc_config(vtenc *handler, int op, ...)
     }
     case VTENC_CONFIG_MIN_CLUSTER_LENGTH: {
       handler->params.min_cluster_length = va_arg(ap, size_t);
+      break;
+    }
+    case VTENC_CONFIG_BIT_WIDTH: {
+      handler->params.bit_width = va_arg(ap, unsigned int);
       break;
     }
     default: {

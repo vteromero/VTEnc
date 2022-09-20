@@ -41,6 +41,7 @@ struct encctx {
   size_t            values_len;
   int               skip_full_subtrees;
   size_t            min_cluster_length;
+  unsigned int      bit_width;
   struct enc_stack  stack;
   struct bswriter   bits_writer;
 };
@@ -59,6 +60,12 @@ static int encctx_init(struct encctx *ctx, const vtenc *enc,
                             enc->params.skip_full_subtrees;
 
   ctx->min_cluster_length = enc->params.min_cluster_length;
+
+  if (enc->params.bit_width == 0 || enc->params.bit_width > BITWIDTH) {
+    ctx->bit_width = BITWIDTH;
+  } else {
+    ctx->bit_width = enc->params.bit_width;
+  }
 
   enc_stack_init(&ctx->stack);
 
@@ -125,7 +132,7 @@ static inline struct enc_bit_cluster *bcltree_next(struct encctx *ctx)
 
 static int encode_bit_cluster_tree(struct encctx *ctx)
 {
-  bcltree_add(ctx, &(struct enc_bit_cluster){0, ctx->values_len, BITWIDTH});
+  bcltree_add(ctx, &(struct enc_bit_cluster){0, ctx->values_len, ctx->bit_width});
 
   while (bcltree_has_more(ctx)) {
     struct enc_bit_cluster *cluster = bcltree_next(ctx);

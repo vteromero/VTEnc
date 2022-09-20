@@ -36,6 +36,7 @@ struct vtenc {
     int allow_repeated_values;  /* 1 if repeated values are allowed */
     int skip_full_subtrees;     /* 1 to skip full subtrees */
     size_t min_cluster_length;  /* Minimum cluster length to serialise */
+    unsigned int bit_width;
   } params;
   size_t out_size;              /* Output size in bytes */
 };
