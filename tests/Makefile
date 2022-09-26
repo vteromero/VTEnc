@@ -11,7 +11,7 @@ CFLAGS ?= -std=c99 -Wall -O3
 default: all
 
 .PHONY: all
-all: timestamps gov2 testbinseq
+all: timestamps gov2 testbinseq testencmethods
 
 %.o: %.c
 	${CC} -c $(CFLAGS) $<
@@ -25,6 +25,9 @@ gov2: encdec.o gov2.o
 testbinseq: encdec.o testbinseq.o
 	$(CC) $(CFLAGS) $^ $(VTENCDIR)/libvtenc.a -o $@
 
+testencmethods: testencmethods.o
+	$(CC) $(CFLAGS) $^ $(VTENCDIR)/libvtenc.a -o $@
+
 .PHONY: clean
 clean:
-	rm -f *.o timestamps gov2 testbinseq
+	rm -f *.o timestamps gov2 testbinseq testencmethods

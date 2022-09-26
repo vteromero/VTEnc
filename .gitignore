@@ -4,5 +4,6 @@
 tests/gov2
 tests/testbinseq
 tests/timestamps
+tests/testencmethods
 tests/tools/genrandseq
 tests/unit/unit_tests
