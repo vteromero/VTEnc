@@ -72,3 +72,8 @@ size_t vtenc_encoded_size(vtenc *enc)
 {
   return enc->out_size;
 }
+
+size_t vtenc_encoded_size_bits(vtenc *enc)
+{
+  return enc->out_size_bits;
+}

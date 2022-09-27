@@ -89,7 +89,7 @@ static size_t encode(
     goto destroy_and_return;
   }
 
-  res = vtenc_encoded_size(encoder);
+  res = vtenc_encoded_size_bits(encoder);
 
 destroy_and_return:
   vtenc_destroy(encoder);
@@ -103,7 +103,7 @@ static void test_arr(
   unsigned int bit_width)
 {
   size_t lit = arr_len * bit_width;
-  size_t tree = encode(arr, arr_len, buf, buf_cap, bit_width) * 8;
+  size_t tree = encode(arr, arr_len, buf, buf_cap, bit_width);
   size_t bmp = 1u << bit_width;
 
   printf("len: %lu, lit: %lu, tree: %lu, bmp: %lu\n",

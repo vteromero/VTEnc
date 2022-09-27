@@ -105,6 +105,7 @@ int vtenc_encode64(vtenc *enc, const uint64_t *in, size_t in_len, uint8_t *out, 
  * Returns the number of bytes of the output of calling a vtenc_encode* function.
  */
 size_t vtenc_encoded_size(vtenc *enc);
+size_t vtenc_encoded_size_bits(vtenc *enc);
 
 /**
  * vtenc_max_encoded_size* functions.

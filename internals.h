@@ -39,6 +39,7 @@ struct vtenc {
     unsigned int bit_width;
   } params;
   size_t out_size;              /* Output size in bytes */
+  size_t out_size_bits;         /* Output size in bits */
 };
 
 /* Error-handling helper macro */

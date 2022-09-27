@@ -96,6 +96,11 @@ static inline size_t bswriter_size(struct bswriter *writer)
   return (writer->ptr - writer->start_ptr) + (writer->bit_pos > 0);
 }
 
+static inline size_t bswriter_size_bits(struct bswriter *writer)
+{
+  return (writer->ptr - writer->start_ptr) * 8 + writer->bit_pos;
+}
+
 struct bsreader {
   uint64_t      bit_container;
   unsigned int  bit_pos;

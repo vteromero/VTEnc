@@ -172,6 +172,7 @@ int vtenc_encode(vtenc *enc, const TYPE *in, size_t in_len, uint8_t *out, size_t
   struct encctx ctx;
 
   enc->out_size = 0;
+  enc->out_size_bits = 0;
 
   if ((uint64_t)in_len > max_values)
     return VTENC_ERR_INPUT_TOO_BIG;
@@ -182,8 +183,10 @@ int vtenc_encode(vtenc *enc, const TYPE *in, size_t in_len, uint8_t *out, size_t
 
   rc = encode_bit_cluster_tree(&ctx);
 
-  if (rc == VTENC_OK)
+  if (rc == VTENC_OK) {
+    enc->out_size_bits = bswriter_size_bits(&ctx.bits_writer);
     enc->out_size = encctx_close(&ctx);
+  }
 
   return rc;
 }
