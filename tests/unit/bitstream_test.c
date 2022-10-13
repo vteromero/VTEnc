@@ -55,13 +55,13 @@ int test_bswriter_write_1(void)
 
   EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VTENC_OK);
 
-  EXPECT_TRUE(bswriter_write(&writer, 0xffff, 16) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0x2, 4) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0x2, 4) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0x00, 8) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0x99999999, 32) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0x44, 8) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0xaa, 8) == VTENC_OK);
+  bswriter_write(&writer, 0xffff, 16);
+  bswriter_write(&writer, 0x2, 4);
+  bswriter_write(&writer, 0x2, 4);
+  bswriter_write(&writer, 0x00, 8);
+  bswriter_write(&writer, 0x99999999, 32);
+  bswriter_write(&writer, 0x44, 8);
+  bswriter_write(&writer, 0xaa, 8);
 
   EXPECT_TRUE(memcmp(buf, "\xff\xff\x22\x00\x99\x99\x99\x99\x44\xaa", buf_sz) == 0);
 
@@ -77,14 +77,13 @@ int test_bswriter_write_2(void)
 
   EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VTENC_OK);
 
-  EXPECT_TRUE(bswriter_write(&writer, 0x0, 0) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0x0, 0) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0xffffffff, 32) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0x7fffffff, 31) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0x0, 0) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0x0, 0) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0x1, 1) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0x1, 1) == VTENC_ERR_END_OF_STREAM);
+  bswriter_write(&writer, 0x0, 0);
+  bswriter_write(&writer, 0x0, 0);
+  bswriter_write(&writer, 0xffffffff, 32);
+  bswriter_write(&writer, 0x7fffffff, 31);
+  bswriter_write(&writer, 0x0, 0);
+  bswriter_write(&writer, 0x0, 0);
+  bswriter_write(&writer, 0x1, 1);
 
   EXPECT_TRUE(memcmp(buf, "\xff\xff\xff\xff\xff\xff\xff\xff", buf_sz) == 0);
 
@@ -102,9 +101,9 @@ int test_bswriter_write_3(void)
 
   EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VTENC_OK);
 
-  EXPECT_TRUE(bswriter_write(&writer, 0x1ffffffffffffff, 57) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0x1ffffffffffffff, 57) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0x1ffffffffffffff, 57) == VTENC_OK);
+  bswriter_write(&writer, 0x1ffffffffffffff, 57);
+  bswriter_write(&writer, 0x1ffffffffffffff, 57);
+  bswriter_write(&writer, 0x1ffffffffffffff, 57);
 
   EXPECT_TRUE(memcmp(buf,
     "\xff\xff\xff\xff\xff\xff\xff\xff"
@@ -127,8 +126,7 @@ int test_bswriter_append_and_flush(void)
   bswriter_append(&writer, 0x55, 8);
   bswriter_append(&writer, 0xabab, 16);
 
-  EXPECT_TRUE(bswriter_flush(&writer) == VTENC_OK);
-  EXPECT_TRUE(bswriter_flush(&writer) == VTENC_ERR_END_OF_STREAM);
+  bswriter_flush(&writer);
 
   EXPECT_TRUE(memcmp(buf, "\xff\xff\x55\xab\xab", buf_sz) == 0);
 
@@ -157,10 +155,10 @@ int test_bswriter_size_2(void)
 
   EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VTENC_OK);
 
-  EXPECT_TRUE(bswriter_write(&writer, 0x12, 8) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0x3, 2) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0x7, 3) == VTENC_OK);
-  EXPECT_TRUE(bswriter_write(&writer, 0xe, 4) == VTENC_OK);
+  bswriter_write(&writer, 0x12, 8);
+  bswriter_write(&writer, 0x3, 2);
+  bswriter_write(&writer, 0x7, 3);
+  bswriter_write(&writer, 0xe, 4);
 
   EXPECT_TRUE(bswriter_size(&writer) == 3);
 
@@ -170,49 +168,22 @@ int test_bswriter_size_2(void)
 int test_bsreader_read_1(void)
 {
   struct bsreader reader;
-  const uint8_t buf[] = {};
-  const size_t buf_len = sizeof(buf);
-  uint64_t val=0;
-
-  bsreader_init(&reader, buf, buf_len);
-
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_ERR_END_OF_STREAM);
-
-  return 1;
-}
-
-int test_bsreader_read_2(void)
-{
-  struct bsreader reader;
-  const uint8_t buf[] = {0xff};
-  const size_t buf_len = sizeof(buf);
-  uint64_t val=0;
-
-  bsreader_init(&reader, buf, buf_len);
-
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_OK && val == 0xff);
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_ERR_END_OF_STREAM);
-
-  return 1;
-}
-
-int test_bsreader_read_3(void)
-{
-  struct bsreader reader;
   const uint8_t buf[] = {0xff, 0x66};
   const size_t buf_len = sizeof(buf);
   uint64_t val=0;
 
   bsreader_init(&reader, buf, buf_len);
 
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_OK && val == 0xff);
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_OK && val == 0x66);
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_ERR_END_OF_STREAM);
+  bsreader_read(&reader, 8, &val);
+  EXPECT_TRUE(val == 0xff);
+
+  bsreader_read(&reader, 8, &val);
+  EXPECT_TRUE(val == 0x66);
 
   return 1;
 }
 
-int test_bsreader_read_4(void)
+int test_bsreader_read_2(void)
 {
   struct bsreader reader;
   const uint8_t buf[] = {0xba};
@@ -221,16 +192,18 @@ int test_bsreader_read_4(void)
 
   bsreader_init(&reader, buf, buf_len);
 
-  EXPECT_TRUE(bsreader_read(&reader, 0, &val) == VTENC_OK);
-  EXPECT_TRUE(bsreader_read(&reader, 4, &val) == VTENC_OK && val == 0xa);
-  EXPECT_TRUE(bsreader_read(&reader, 0, &val) == VTENC_OK);
-  EXPECT_TRUE(bsreader_read(&reader, 4, &val) == VTENC_OK && val == 0xb);
-  EXPECT_TRUE(bsreader_read(&reader, 1, &val) == VTENC_ERR_END_OF_STREAM);
+  bsreader_read(&reader, 0, &val);
+  bsreader_read(&reader, 4, &val);
+  EXPECT_TRUE(val == 0xa);
+
+  bsreader_read(&reader, 0, &val);
+  bsreader_read(&reader, 4, &val);
+  EXPECT_TRUE(val == 0xb);
 
   return 1;
 }
 
-int test_bsreader_read_5(void)
+int test_bsreader_read_3(void)
 {
   struct bsreader reader;
   const uint8_t buf[] = {
@@ -242,15 +215,19 @@ int test_bsreader_read_5(void)
 
   bsreader_init(&reader, buf, buf_len);
 
-  EXPECT_TRUE(bsreader_read(&reader, 48, &val) == VTENC_OK && val == 0x111111111111);
-  EXPECT_TRUE(bsreader_read(&reader, 48, &val) == VTENC_OK && val == 0x222222222222);
-  EXPECT_TRUE(bsreader_read(&reader, 48, &val) == VTENC_OK && val == 0x333333333333);
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_ERR_END_OF_STREAM);
+  bsreader_read(&reader, 48, &val);
+  EXPECT_TRUE(val == 0x111111111111);
+
+  bsreader_read(&reader, 48, &val);
+  EXPECT_TRUE(val == 0x222222222222);
+
+  bsreader_read(&reader, 48, &val);
+  EXPECT_TRUE(val == 0x333333333333);
 
   return 1;
 }
 
-int test_bsreader_read_6(void)
+int test_bsreader_read_4(void)
 {
   struct bsreader reader;
   const uint8_t buf[] = {
@@ -261,23 +238,43 @@ int test_bsreader_read_6(void)
 
   bsreader_init(&reader, buf, buf_len);
 
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_OK && val == 0xff);
-  EXPECT_TRUE(bsreader_read(&reader, 4, &val) == VTENC_OK && val == 0xb);
-  EXPECT_TRUE(bsreader_read(&reader, 4, &val) == VTENC_OK && val == 0xa);
-  EXPECT_TRUE(bsreader_read(&reader, 1, &val) == VTENC_OK && val == 0x1);
-  EXPECT_TRUE(bsreader_read(&reader, 2, &val) == VTENC_OK && val == 0x0);
-  EXPECT_TRUE(bsreader_read(&reader, 2, &val) == VTENC_OK && val == 0x2);
-  EXPECT_TRUE(bsreader_read(&reader, 3, &val) == VTENC_OK && val == 0x0);
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_OK && val == 0xcd);
-  EXPECT_TRUE(bsreader_read(&reader, 16, &val) == VTENC_OK && val == 0x5555);
-  EXPECT_TRUE(bsreader_read(&reader, 16, &val) == VTENC_OK && val == 0x5555);
-  EXPECT_TRUE(bsreader_read(&reader, 32, &val) == VTENC_OK && val == 0x66666666);
-  EXPECT_TRUE(bsreader_read(&reader, 8, &val) == VTENC_ERR_END_OF_STREAM);
+  bsreader_read(&reader, 8, &val);
+  EXPECT_TRUE(val == 0xff);
+
+  bsreader_read(&reader, 4, &val);
+  EXPECT_TRUE(val == 0xb);
+
+  bsreader_read(&reader, 4, &val);
+  EXPECT_TRUE(val == 0xa);
+
+  bsreader_read(&reader, 1, &val);
+  EXPECT_TRUE(val == 0x1);
+
+  bsreader_read(&reader, 2, &val);
+  EXPECT_TRUE(val == 0x0);
+
+  bsreader_read(&reader, 2, &val);
+  EXPECT_TRUE(val == 0x2);
+
+  bsreader_read(&reader, 3, &val);
+  EXPECT_TRUE(val == 0x0);
+
+  bsreader_read(&reader, 8, &val);
+  EXPECT_TRUE(val == 0xcd);
+
+  bsreader_read(&reader, 16, &val);
+  EXPECT_TRUE(val == 0x5555);
+
+  bsreader_read(&reader, 16, &val);
+  EXPECT_TRUE(val == 0x5555);
+
+  bsreader_read(&reader, 32, &val);
+  EXPECT_TRUE(val == 0x66666666);
 
   return 1;
 }
 
-int test_bsreader_read_7(void)
+int test_bsreader_read_5(void)
 {
   struct bsreader reader;
   const uint8_t buf[] = {
@@ -289,9 +286,14 @@ int test_bsreader_read_7(void)
 
   bsreader_init(&reader, buf, buf_len);
 
-  EXPECT_TRUE(bsreader_read(&reader, 57, &val) == VTENC_OK && val == 0x155555555555555);
-  EXPECT_TRUE(bsreader_read(&reader, 57, &val) == VTENC_OK && val == 0x0aaaaaaaaaaaaaa);
-  EXPECT_TRUE(bsreader_read(&reader, 6, &val) == VTENC_OK && val == 0x15);
+  bsreader_read(&reader, 57, &val);
+  EXPECT_TRUE(val == 0x155555555555555);
+
+  bsreader_read(&reader, 57, &val);
+  EXPECT_TRUE(val == 0x0aaaaaaaaaaaaaa);
+
+  bsreader_read(&reader, 6, &val);
+  EXPECT_TRUE(val == 0x15);
 
   return 1;
 }
