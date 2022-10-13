@@ -104,14 +104,12 @@ static inline void bsreader_init(struct bsreader *reader,
   reader->end_ptr = reader->start_ptr + buf_len;
 }
 
-static inline int bsreader_read(struct bsreader *reader,
+static inline void bsreader_read(struct bsreader *reader,
   unsigned int n_bits, uint64_t *read_value)
 {
   const unsigned int n_bytes = reader->end_ptr - reader->ptr;
 
-  if (reader->ptr >= reader->end_ptr) {
-    return VTENC_ERR_END_OF_STREAM;
-  }
+  assert(reader->ptr < reader->end_ptr);
 
   if (n_bytes >= 8) {
     reader->bit_container = mem_read_le_u64(reader->ptr);
@@ -131,8 +129,6 @@ static inline int bsreader_read(struct bsreader *reader,
   *read_value = (reader->bit_container >> reader->bit_pos) & ((1ULL << n_bits) - 1ULL);
   reader->ptr += (reader->bit_pos + n_bits) >> 3;
   reader->bit_pos = (reader->bit_pos + n_bits) & 7;
-
-  return VTENC_OK;
 }
 
 static inline size_t bsreader_size(struct bsreader *reader)
