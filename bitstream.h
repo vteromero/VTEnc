@@ -53,42 +53,32 @@ static inline void bswriter_append(struct bswriter *writer,
   writer->bit_pos += n_bits;
 }
 
-static inline int bswriter_flush(struct bswriter *writer)
+static inline void bswriter_flush(struct bswriter *writer)
 {
   const unsigned int n_bytes = writer->bit_pos >> 3;
 
-  if (unlikely(writer->ptr >= writer->end_ptr)) {
-    return VTENC_ERR_END_OF_STREAM;
-  }
-
+  assert(writer->ptr < writer->end_ptr);
   mem_write_le_u64(writer->ptr, writer->bit_container);
 
   writer->ptr += n_bytes;
   writer->bit_pos &= 7;
   writer->bit_container >>= (n_bytes << 3);
-
-  return VTENC_OK;
 }
 
-static inline int bswriter_write(struct bswriter *writer,
+static inline void bswriter_write(struct bswriter *writer,
   uint64_t value, unsigned int n_bits)
 {
   const unsigned int total_bits = writer->bit_pos + n_bits;
   const unsigned int n_bytes = total_bits >> 3;
 
-  if (unlikely(writer->ptr >= writer->end_ptr)) {
-    return VTENC_ERR_END_OF_STREAM;
-  }
-
   writer->bit_container |= value << writer->bit_pos;
 
+  assert(writer->ptr < writer->end_ptr);
   mem_write_le_u64(writer->ptr, writer->bit_container);
 
   writer->ptr += n_bytes;
   writer->bit_pos = total_bits & 7;
   writer->bit_container >>= (n_bytes << 3);
-
-  return VTENC_OK;
 }
 
 static inline size_t bswriter_size(struct bswriter *writer)
