@@ -53,42 +53,32 @@ static inline void bswriter_append(struct bswriter *writer,
   writer->bit_pos += n_bits;
 }
 
-static inline int bswriter_flush(struct bswriter *writer)
+static inline void bswriter_flush(struct bswriter *writer)
 {
   const unsigned int n_bytes = writer->bit_pos >> 3;
 
-  if (unlikely(writer->ptr >= writer->end_ptr)) {
-    return VTENC_ERR_END_OF_STREAM;
-  }
-
+  assert(writer->ptr < writer->end_ptr);
   mem_write_le_u64(writer->ptr, writer->bit_container);
 
   writer->ptr += n_bytes;
   writer->bit_pos &= 7;
   writer->bit_container >>= (n_bytes << 3);
-
-  return VTENC_OK;
 }
 
-static inline int bswriter_write(struct bswriter *writer,
+static inline void bswriter_write(struct bswriter *writer,
   uint64_t value, unsigned int n_bits)
 {
   const unsigned int total_bits = writer->bit_pos + n_bits;
   const unsigned int n_bytes = total_bits >> 3;
 
-  if (unlikely(writer->ptr >= writer->end_ptr)) {
-    return VTENC_ERR_END_OF_STREAM;
-  }
-
   writer->bit_container |= value << writer->bit_pos;
 
+  assert(writer->ptr < writer->end_ptr);
   mem_write_le_u64(writer->ptr, writer->bit_container);
 
   writer->ptr += n_bytes;
   writer->bit_pos = total_bits & 7;
   writer->bit_container >>= (n_bytes << 3);
-
-  return VTENC_OK;
 }
 
 static inline size_t bswriter_size(struct bswriter *writer)
@@ -114,14 +104,12 @@ static inline void bsreader_init(struct bsreader *reader,
   reader->end_ptr = reader->start_ptr + buf_len;
 }
 
-static inline int bsreader_read(struct bsreader *reader,
+static inline void bsreader_read(struct bsreader *reader,
   unsigned int n_bits, uint64_t *read_value)
 {
   const unsigned int n_bytes = reader->end_ptr - reader->ptr;
 
-  if (reader->ptr >= reader->end_ptr) {
-    return VTENC_ERR_END_OF_STREAM;
-  }
+  assert(reader->ptr < reader->end_ptr);
 
   if (n_bytes >= 8) {
     reader->bit_container = mem_read_le_u64(reader->ptr);
@@ -141,8 +129,6 @@ static inline int bsreader_read(struct bsreader *reader,
   *read_value = (reader->bit_container >> reader->bit_pos) & ((1ULL << n_bits) - 1ULL);
   reader->ptr += (reader->bit_pos + n_bits) >> 3;
   reader->bit_pos = (reader->bit_pos + n_bits) & 7;
-
-  return VTENC_OK;
 }
 
 static inline size_t bsreader_size(struct bsreader *reader)

@@ -62,43 +62,41 @@ static int encctx_init(struct encctx *ctx, const vtenc *enc,
 
   enc_stack_init(&ctx->stack);
 
-  return bswriter_init(&(ctx->bits_writer), out, out_cap);
+  return bswriter_init(&ctx->bits_writer, out, out_cap);
 }
 
 static inline size_t encctx_close(struct encctx *ctx)
 {
-  return bswriter_size(&(ctx->bits_writer));
+  return bswriter_size(&ctx->bits_writer);
 }
 
-static inline int encode_lower_bits_step(struct encctx *ctx,
+static inline void encode_lower_bits_step(struct encctx *ctx,
   uint64_t value, unsigned int n_bits)
 {
 #if BITWIDTH > BIT_STREAM_MAX_WRITE
   if (n_bits > BIT_STREAM_MAX_WRITE) {
-    return_if_error(bswriter_write(
-      &(ctx->bits_writer),
+    bswriter_write(
+      &ctx->bits_writer,
       value & BITS_SIZE_MASK[BIT_STREAM_MAX_WRITE],
       BIT_STREAM_MAX_WRITE
-    ));
+    );
 
     value >>= BIT_STREAM_MAX_WRITE;
     n_bits -= BIT_STREAM_MAX_WRITE;
   }
 #endif
 
-  return bswriter_write(&(ctx->bits_writer), value & BITS_SIZE_MASK[n_bits], n_bits);
+  bswriter_write(&ctx->bits_writer, value & BITS_SIZE_MASK[n_bits], n_bits);
 }
 
-static inline int encode_lower_bits(struct encctx *ctx,
+static inline void encode_lower_bits(struct encctx *ctx,
   const TYPE *values, size_t values_len, unsigned int n_bits)
 {
   size_t i;
 
   for (i = 0; i < values_len; ++i) {
-    return_if_error(encode_lower_bits_step(ctx, values[i], n_bits));
+    encode_lower_bits_step(ctx, values[i], n_bits);
   }
-
-  return VTENC_OK;
 }
 
 static inline void bcltree_add(struct encctx *ctx,
@@ -123,7 +121,7 @@ static inline struct enc_bit_cluster *bcltree_next(struct encctx *ctx)
   return enc_stack_pop(&ctx->stack);
 }
 
-static int encode_bit_cluster_tree(struct encctx *ctx)
+static void encode_bit_cluster_tree(struct encctx *ctx)
 {
   bcltree_add(ctx, &(struct enc_bit_cluster){0, ctx->values_len, BITWIDTH});
 
@@ -138,13 +136,13 @@ static int encode_bit_cluster_tree(struct encctx *ctx)
       continue;
 
     if (cl_len <= ctx->min_cluster_length) {
-      return_if_error(encode_lower_bits(ctx, ctx->values + cl_from, cl_len, cl_bit_pos));
+      encode_lower_bits(ctx, ctx->values + cl_from, cl_len, cl_bit_pos);
       continue;
     }
 
     size_t n_zeros = count_zeros_at_bit_pos(ctx->values + cl_from, cl_len, cur_bit_pos);
     unsigned int enc_len = bits_len_u64(cl_len);
-    return_if_error(bswriter_write(&(ctx->bits_writer), n_zeros, enc_len));
+    bswriter_write(&ctx->bits_writer, n_zeros, enc_len);
 
     {
       struct enc_bit_cluster zeros_cluster = {cl_from, n_zeros, cur_bit_pos};
@@ -154,8 +152,6 @@ static int encode_bit_cluster_tree(struct encctx *ctx)
       bcltree_add(ctx, &zeros_cluster);
     }
   }
-
-  return VTENC_OK;
 }
 
 int vtenc_encode(vtenc *enc, const TYPE *in, size_t in_len, uint8_t *out, size_t out_cap)
@@ -173,10 +169,9 @@ int vtenc_encode(vtenc *enc, const TYPE *in, size_t in_len, uint8_t *out, size_t
   if (rc != VTENC_OK)
     return rc;
 
-  rc = encode_bit_cluster_tree(&ctx);
+  encode_bit_cluster_tree(&ctx);
 
-  if (rc == VTENC_OK)
-    enc->out_size = encctx_close(&ctx);
+  enc->out_size = encctx_close(&ctx);
 
   return rc;
 }

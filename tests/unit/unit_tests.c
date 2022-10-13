@@ -47,8 +47,6 @@ int main()
   RUN_TEST(test_bsreader_read_3);
   RUN_TEST(test_bsreader_read_4);
   RUN_TEST(test_bsreader_read_5);
-  RUN_TEST(test_bsreader_read_6);
-  RUN_TEST(test_bsreader_read_7);
   RUN_TEST(test_bsreader_size);
 
   RUN_TEST(test_stack_init);

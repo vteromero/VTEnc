@@ -57,12 +57,12 @@ static int decctx_init(struct decctx *ctx, const vtenc *dec,
 
   dec_stack_init(&ctx->stack);
 
-  bsreader_init(&(ctx->bits_reader), in, in_len);
+  bsreader_init(&ctx->bits_reader, in, in_len);
 
   return VTENC_OK;
 }
 
-static inline int decode_lower_bits_step(struct decctx *ctx,
+static inline void decode_lower_bits_step(struct decctx *ctx,
   TYPE *value, unsigned int n_bits)
 {
 #if BITWIDTH > BIT_STREAM_MAX_READ
@@ -70,37 +70,31 @@ static inline int decode_lower_bits_step(struct decctx *ctx,
   unsigned int shift = 0;
 
   if (n_bits > BIT_STREAM_MAX_READ) {
-    return_if_error(bsreader_read(&(ctx->bits_reader), BIT_STREAM_MAX_READ, &lower));
+    bsreader_read(&ctx->bits_reader, BIT_STREAM_MAX_READ, &lower);
     *value |= lower;
     shift = BIT_STREAM_MAX_READ;
     n_bits -= BIT_STREAM_MAX_READ;
   }
 
-  return_if_error(bsreader_read(&(ctx->bits_reader), n_bits, &lower));
+  bsreader_read(&ctx->bits_reader, n_bits, &lower);
   *value |= lower << shift;
-
-  return VTENC_OK;
 #else
   uint64_t lower;
 
-  return_if_error(bsreader_read(&(ctx->bits_reader), n_bits, &lower));
+  bsreader_read(&ctx->bits_reader, n_bits, &lower);
   *value |= (TYPE)lower;
-
-  return VTENC_OK;
 #endif
 }
 
-static inline int decode_lower_bits(struct decctx *ctx,
+static inline void decode_lower_bits(struct decctx *ctx,
   TYPE *values, size_t values_len, unsigned int n_bits, TYPE higher_bits)
 {
   size_t i;
 
   for (i = 0; i < values_len; ++i) {
     values[i] = higher_bits;
-    return_if_error(decode_lower_bits_step(ctx, &values[i], n_bits));
+    decode_lower_bits_step(ctx, &values[i], n_bits);
   }
-
-  return VTENC_OK;
 }
 
 static inline void decode_full_subtree(TYPE *values, size_t values_len, TYPE higher_bits)
@@ -160,13 +154,13 @@ static int decode_bit_cluster_tree(struct decctx *ctx)
     }
 
     if (cl_len <= ctx->min_cluster_length) {
-      return_if_error(decode_lower_bits(ctx, ctx->values + cl_from, cl_len, cl_bit_pos, cl_higher_bits));
+      decode_lower_bits(ctx, ctx->values + cl_from, cl_len, cl_bit_pos, cl_higher_bits);
       continue;
     }
 
     enc_len = bits_len_u64(cl_len);
 
-    return_if_error(bsreader_read(&(ctx->bits_reader), enc_len, &n_zeros));
+    bsreader_read(&ctx->bits_reader, enc_len, &n_zeros);
 
     if (n_zeros > (uint64_t)cl_len) return VTENC_ERR_WRONG_FORMAT;
 
