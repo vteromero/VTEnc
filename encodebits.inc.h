@@ -19,6 +19,17 @@ static inline void batch0(
   const TYPE *values,
   unsigned int n_bits)
 {
+  uint64_t value = values[0];
+
+  assert(n_bits > BIT_STREAM_MAX_WRITE);
+
+  bswriter_append(writer, value & BITS_SIZE_MASK[BIT_STREAM_MAX_WRITE], BIT_STREAM_MAX_WRITE);
+  bswriter_flush(writer);
+
+  value >>= BIT_STREAM_MAX_WRITE;
+  n_bits -= BIT_STREAM_MAX_WRITE;
+  bswriter_append(writer, value & BITS_SIZE_MASK[n_bits], n_bits);
+  bswriter_flush(writer);
 }
 
 static inline void batch1(
@@ -64,10 +75,24 @@ static inline void batch4(
 }
 
 #define in_batches_(_width_, _n_) PASTE4(in_batches, _width_, _, _n_)
+#define in_batches0               in_batches_(BITWIDTH, 0)
 #define in_batches1               in_batches_(BITWIDTH, 1)
 #define in_batches2               in_batches_(BITWIDTH, 2)
 #define in_batches3               in_batches_(BITWIDTH, 3)
 #define in_batches4               in_batches_(BITWIDTH, 4)
+
+static inline void in_batches0(
+  struct bswriter *writer,
+  const TYPE *values,
+  size_t values_len,
+  unsigned int n_bits)
+{
+  size_t i;
+
+  for (i = 0; i < values_len; i++) {
+    batch0(writer, values + i, n_bits);
+  }
+}
 
 static inline void in_batches1(
   struct bswriter *writer,
@@ -151,5 +176,11 @@ static inline void encode_lower_bits(
   size_t values_len,
   unsigned int n_bits)
 {
-  in_batches1(writer, values, values_len, n_bits);
+  switch (batch_sz_table[n_bits]) {
+    case 0: in_batches0(writer, values, values_len, n_bits); break;
+    case 1: in_batches1(writer, values, values_len, n_bits); break;
+    case 2: in_batches2(writer, values, values_len, n_bits); break;
+    case 3: in_batches3(writer, values, values_len, n_bits); break;
+    case 4: in_batches4(writer, values, values_len, n_bits); break;
+  }
 }
