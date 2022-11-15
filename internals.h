@@ -14,6 +14,7 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define PASTE2(x, y) x ## y
 #define PASTE3(x, y, z) x ## y ## z
+#define PASTE4(a, b, c, d) a ## b ## c ## d
 #define BITWIDTH_SUFFIX(_name_, _width_) PASTE2(_name_, _width_)
 
 /* Bitstream constants */
