@@ -19,8 +19,6 @@
 #define encctx_close encctx_close_(BITWIDTH)
 #define count_zeros_at_bit_pos_(_width_) BITWIDTH_SUFFIX(count_zeros_at_bit_pos, _width_)
 #define count_zeros_at_bit_pos count_zeros_at_bit_pos_(BITWIDTH)
-#define encode_lower_bits_step_(_width_) BITWIDTH_SUFFIX(encode_lower_bits_step, _width_)
-#define encode_lower_bits_step encode_lower_bits_step_(BITWIDTH)
 #define encode_lower_bits_(_width_) BITWIDTH_SUFFIX(encode_lower_bits, _width_)
 #define encode_lower_bits encode_lower_bits_(BITWIDTH)
 #define bcltree_add_(_width_) BITWIDTH_SUFFIX(bcltree_add, _width_)
@@ -70,35 +68,6 @@ static inline size_t encctx_close(struct encctx *ctx)
   return bswriter_size(&ctx->bits_writer);
 }
 
-static inline void encode_lower_bits_step(struct encctx *ctx,
-  uint64_t value, unsigned int n_bits)
-{
-#if BITWIDTH > BIT_STREAM_MAX_WRITE
-  if (n_bits > BIT_STREAM_MAX_WRITE) {
-    bswriter_write(
-      &ctx->bits_writer,
-      value & BITS_SIZE_MASK[BIT_STREAM_MAX_WRITE],
-      BIT_STREAM_MAX_WRITE
-    );
-
-    value >>= BIT_STREAM_MAX_WRITE;
-    n_bits -= BIT_STREAM_MAX_WRITE;
-  }
-#endif
-
-  bswriter_write(&ctx->bits_writer, value & BITS_SIZE_MASK[n_bits], n_bits);
-}
-
-static inline void encode_lower_bits(struct encctx *ctx,
-  const TYPE *values, size_t values_len, unsigned int n_bits)
-{
-  size_t i;
-
-  for (i = 0; i < values_len; ++i) {
-    encode_lower_bits_step(ctx, values[i], n_bits);
-  }
-}
-
 static inline void bcltree_add(struct encctx *ctx,
   const struct enc_bit_cluster *cluster)
 {
@@ -136,7 +105,7 @@ static void encode_bit_cluster_tree(struct encctx *ctx)
       continue;
 
     if (cl_len <= ctx->min_cluster_length) {
-      encode_lower_bits(ctx, ctx->values + cl_from, cl_len, cl_bit_pos);
+      encode_lower_bits(&ctx->bits_writer, ctx->values + cl_from, cl_len, cl_bit_pos);
       continue;
     }
 

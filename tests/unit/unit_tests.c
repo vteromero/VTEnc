@@ -57,6 +57,11 @@ int main()
   RUN_TEST(test_count_zeros_at_bit_pos32);
   RUN_TEST(test_count_zeros_at_bit_pos64);
 
+  RUN_TEST(test_encode_lower_bits8);
+  RUN_TEST(test_encode_lower_bits16);
+  RUN_TEST(test_encode_lower_bits32);
+  RUN_TEST(test_encode_lower_bits64);
+
   RUN_TEST(test_vtenc_encode8);
   RUN_TEST(test_vtenc_encode16);
   RUN_TEST(test_vtenc_encode32);

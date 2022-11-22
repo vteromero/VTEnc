@@ -62,6 +62,11 @@ int test_count_zeros_at_bit_pos16(void);
 int test_count_zeros_at_bit_pos32(void);
 int test_count_zeros_at_bit_pos64(void);
 
+int test_encode_lower_bits8(void);
+int test_encode_lower_bits16(void);
+int test_encode_lower_bits32(void);
+int test_encode_lower_bits64(void);
+
 int test_vtenc_encode8(void);
 int test_vtenc_encode16(void);
 int test_vtenc_encode32(void);
