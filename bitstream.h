@@ -49,6 +49,20 @@ static inline void bswriter_append(struct bswriter *writer,
   assert(n_bits <= BIT_STREAM_MAX_WRITE);
   assert(n_bits + writer->bit_pos < 64);
 
+  writer->bit_container |= (value & BITS_SIZE_MASK[n_bits]) << writer->bit_pos;
+  writer->bit_pos += n_bits;
+}
+
+/*
+ * It only works if `value` is clean, meaning that all
+ * high bits above `n_bits` are 0.
+ */
+static inline void bswriter_append_fast(struct bswriter *writer,
+  uint64_t value, unsigned int n_bits)
+{
+  assert(n_bits <= BIT_STREAM_MAX_WRITE);
+  assert(n_bits + writer->bit_pos < 64);
+
   writer->bit_container |= value << writer->bit_pos;
   writer->bit_pos += n_bits;
 }
@@ -62,7 +76,7 @@ static inline void bswriter_flush(struct bswriter *writer)
 
   writer->ptr += n_bytes;
   writer->bit_pos &= 7;
-  writer->bit_container >>= (n_bytes << 3);
+  writer->bit_container >>= n_bytes << 3;
 }
 
 static inline void bswriter_write(struct bswriter *writer,
