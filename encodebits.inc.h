@@ -20,16 +20,17 @@ static inline void batch1(
 {
 #if BITWIDTH == 64
   uint64_t value = values[0];
-
   if (n_bits > BIT_STREAM_MAX_WRITE) {
-    bswriter_write(writer, value & BITS_SIZE_MASK[BIT_STREAM_MAX_WRITE], BIT_STREAM_MAX_WRITE);
+    bswriter_append(writer, value, BIT_STREAM_MAX_WRITE);
+    bswriter_flush(writer);
     value >>= BIT_STREAM_MAX_WRITE;
     n_bits -= BIT_STREAM_MAX_WRITE;
   }
-
-  bswriter_write(writer, value & BITS_SIZE_MASK[n_bits], n_bits);
+  bswriter_append(writer, value, n_bits);
+  bswriter_flush(writer);
 #else
-  bswriter_write(writer, values[0] & BITS_SIZE_MASK[n_bits], n_bits);
+  bswriter_append(writer, values[0], n_bits);
+  bswriter_flush(writer);
 #endif
 }
 
@@ -38,8 +39,8 @@ static inline void batch2(
   const TYPE *values,
   unsigned int n_bits)
 {
-  bswriter_append(writer, values[0] & BITS_SIZE_MASK[n_bits], n_bits);
-  bswriter_append(writer, values[1] & BITS_SIZE_MASK[n_bits], n_bits);
+  bswriter_append(writer, values[0], n_bits);
+  bswriter_append(writer, values[1], n_bits);
   bswriter_flush(writer);
 }
 
@@ -48,9 +49,9 @@ static inline void batch3(
   const TYPE *values,
   unsigned int n_bits)
 {
-  bswriter_append(writer, values[0] & BITS_SIZE_MASK[n_bits], n_bits);
-  bswriter_append(writer, values[1] & BITS_SIZE_MASK[n_bits], n_bits);
-  bswriter_append(writer, values[2] & BITS_SIZE_MASK[n_bits], n_bits);
+  bswriter_append(writer, values[0], n_bits);
+  bswriter_append(writer, values[1], n_bits);
+  bswriter_append(writer, values[2], n_bits);
   bswriter_flush(writer);
 }
 
@@ -59,10 +60,10 @@ static inline void batch4(
   const TYPE *values,
   unsigned int n_bits)
 {
-  bswriter_append(writer, values[0] & BITS_SIZE_MASK[n_bits], n_bits);
-  bswriter_append(writer, values[1] & BITS_SIZE_MASK[n_bits], n_bits);
-  bswriter_append(writer, values[2] & BITS_SIZE_MASK[n_bits], n_bits);
-  bswriter_append(writer, values[3] & BITS_SIZE_MASK[n_bits], n_bits);
+  bswriter_append(writer, values[0], n_bits);
+  bswriter_append(writer, values[1], n_bits);
+  bswriter_append(writer, values[2], n_bits);
+  bswriter_append(writer, values[3], n_bits);
   bswriter_flush(writer);
 }
 
