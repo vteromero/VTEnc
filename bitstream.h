@@ -71,6 +71,9 @@ static inline void bswriter_write(struct bswriter *writer,
   const unsigned int total_bits = writer->bit_pos + n_bits;
   const unsigned int n_bytes = total_bits >> 3;
 
+  assert(n_bits <= BIT_STREAM_MAX_WRITE);
+  assert(n_bits + writer->bit_pos < 64);
+
   writer->bit_container |= value << writer->bit_pos;
 
   assert(writer->ptr < writer->end_ptr);
