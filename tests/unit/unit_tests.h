@@ -44,6 +44,7 @@ int test_bswriter_write_1(void);
 int test_bswriter_write_2(void);
 int test_bswriter_write_3(void);
 int test_bswriter_append_and_flush(void);
+int test_bswriter_append_fast_and_flush(void);
 int test_bswriter_size_1(void);
 int test_bswriter_size_2(void);
 
