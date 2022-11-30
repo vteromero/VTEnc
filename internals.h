@@ -18,7 +18,7 @@
 #define BITWIDTH_SUFFIX(_name_, _width_) PASTE2(_name_, _width_)
 
 /* Bitstream constants */
-#define BIT_STREAM_MAX_WRITE  57
+#define BIT_STREAM_MAX_WRITE  56
 #define BIT_STREAM_MAX_READ   BIT_STREAM_MAX_WRITE
 
 /* VTEnc constants */
