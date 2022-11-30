@@ -93,7 +93,7 @@ int test_bswriter_write_2(void)
 int test_bswriter_write_3(void)
 {
   struct bswriter writer;
-  const size_t buf_sz = 24;
+  const size_t buf_sz = 16;
   const size_t buf_cap = bswriter_align_buffer_size(buf_sz);
   uint8_t buf[buf_cap];
 
@@ -101,14 +101,19 @@ int test_bswriter_write_3(void)
 
   EXPECT_TRUE(bswriter_init(&writer, buf, buf_cap) == VTENC_OK);
 
-  bswriter_write(&writer, 0x1ffffffffffffff, 57);
-  bswriter_write(&writer, 0x1ffffffffffffff, 57);
-  bswriter_write(&writer, 0x1ffffffffffffff, 57);
+  bswriter_write(&writer, 0x0, 7);
+  bswriter_write(&writer, 0xfffffffffffffe, 56);
+  bswriter_write(&writer, 0x1, 1);
 
-  EXPECT_TRUE(memcmp(buf,
-    "\xff\xff\xff\xff\xff\xff\xff\xff"
-    "\xff\xff\xff\xff\xff\xff\xff\xff"
-    "\xff\xff\xff\xff\xff\x07\x00\x00", buf_sz) == 0);
+  bswriter_write(&writer, 0x7f, 7);
+  bswriter_write(&writer, 0x1, 56);
+  bswriter_write(&writer, 0x0, 1);
+
+  EXPECT_TRUE(
+    memcmp(buf,
+      "\x00\xff\xff\xff\xff\xff\xff\xff"
+      "\xff\x00\x00\x00\x00\x00\x00\x00", buf_sz) == 0
+  );
 
   return 1;
 }
