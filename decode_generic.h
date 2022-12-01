@@ -62,46 +62,36 @@ static int decctx_init(struct decctx *ctx, const vtenc *dec,
   return VTENC_OK;
 }
 
-static inline void decode_lower_bits_step(struct decctx *ctx,
-  TYPE *value, unsigned int n_bits)
+static inline TYPE decode_lower_bits_step(struct decctx *ctx,
+  unsigned int n_bits)
 {
 #if BITWIDTH > BIT_STREAM_MAX_READ
-  uint64_t lower;
+  uint64_t value = 0;
   unsigned int shift = 0;
 
   if (n_bits > BIT_STREAM_MAX_READ) {
-    bsreader_read(&ctx->bits_reader, BIT_STREAM_MAX_READ, &lower);
-    *value |= lower;
+    value = bsreader_read(&ctx->bits_reader, BIT_STREAM_MAX_READ);
     shift = BIT_STREAM_MAX_READ;
     n_bits -= BIT_STREAM_MAX_READ;
   }
 
-  bsreader_read(&ctx->bits_reader, n_bits, &lower);
-  *value |= lower << shift;
+  return (TYPE)(value | (bsreader_read(&ctx->bits_reader, n_bits) << shift));
 #else
-  uint64_t lower;
-
-  bsreader_read(&ctx->bits_reader, n_bits, &lower);
-  *value |= (TYPE)lower;
+  return (TYPE)bsreader_read(&ctx->bits_reader, n_bits);
 #endif
 }
 
 static inline void decode_lower_bits(struct decctx *ctx,
   TYPE *values, size_t values_len, unsigned int n_bits, TYPE higher_bits)
 {
-  size_t i;
-
-  for (i = 0; i < values_len; ++i) {
-    values[i] = higher_bits;
-    decode_lower_bits_step(ctx, &values[i], n_bits);
+  for (size_t i = 0; i < values_len; ++i) {
+    values[i] = higher_bits | decode_lower_bits_step(ctx, n_bits);
   }
 }
 
 static inline void decode_full_subtree(TYPE *values, size_t values_len, TYPE higher_bits)
 {
-  size_t i;
-
-  for (i = 0; i < values_len; ++i) {
+  for (size_t i = 0; i < values_len; ++i) {
     values[i] = higher_bits | (TYPE)i;
   }
 }
@@ -135,13 +125,9 @@ static int decode_bit_cluster_tree(struct decctx *ctx)
     size_t cl_len = cluster->length;
     unsigned int cl_bit_pos = cluster->bit_pos;
     uint64_t cl_higher_bits = cluster->higher_bits;
-    uint64_t n_zeros;
-    unsigned int enc_len;
 
     if (cl_bit_pos == 0) {
-      size_t i;
-
-      for (i = 0; i < cl_len; i++) {
+      for (size_t i = 0; i < cl_len; i++) {
         ctx->values[cl_from + i] = (TYPE)cl_higher_bits;
       }
 
@@ -158,20 +144,17 @@ static int decode_bit_cluster_tree(struct decctx *ctx)
       continue;
     }
 
-    enc_len = bits_len_u64(cl_len);
-
-    bsreader_read(&ctx->bits_reader, enc_len, &n_zeros);
+    unsigned int enc_len = bits_len_u64(cl_len);
+    uint64_t n_zeros = bsreader_read(&ctx->bits_reader, enc_len);
 
     if (n_zeros > (uint64_t)cl_len) return VTENC_ERR_WRONG_FORMAT;
 
-    {
-      unsigned int next_bit_pos = cl_bit_pos - 1;
-      struct dec_bit_cluster zeros_cluster = {cl_from, n_zeros, next_bit_pos, cl_higher_bits};
-      struct dec_bit_cluster ones_cluster = {cl_from + n_zeros, cl_len - n_zeros, next_bit_pos, cl_higher_bits | (1LL << (next_bit_pos))};
+    unsigned int next_bit_pos = cl_bit_pos - 1;
+    struct dec_bit_cluster zeros_cluster = {cl_from, n_zeros, next_bit_pos, cl_higher_bits};
+    struct dec_bit_cluster ones_cluster = {cl_from + n_zeros, cl_len - n_zeros, next_bit_pos, cl_higher_bits | (1LL << (next_bit_pos))};
 
-      bcltree_add(ctx, &ones_cluster);
-      bcltree_add(ctx, &zeros_cluster);
-    }
+    bcltree_add(ctx, &ones_cluster);
+    bcltree_add(ctx, &zeros_cluster);
   }
 
   return VTENC_OK;
@@ -179,14 +162,13 @@ static int decode_bit_cluster_tree(struct decctx *ctx)
 
 int vtenc_decode(vtenc *dec, const uint8_t *in, size_t in_len, TYPE *out, size_t out_len)
 {
-  int rc;
   struct decctx ctx;
   uint64_t max_values = dec->params.allow_repeated_values ? LIST_MAX_VALUES : SET_MAX_VALUES;
 
   if ((uint64_t)out_len > max_values)
     return VTENC_ERR_OUTPUT_TOO_BIG;
 
-  rc = decctx_init(&ctx, dec, in, in_len, out, out_len);
+  int rc = decctx_init(&ctx, dec, in, in_len, out, out_len);
   if (rc != VTENC_OK)
     return rc;
 

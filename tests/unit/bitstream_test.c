@@ -195,15 +195,11 @@ int test_bsreader_read_1(void)
   struct bsreader reader;
   const uint8_t buf[] = {0xff, 0x66};
   const size_t buf_len = sizeof(buf);
-  uint64_t val=0;
 
   bsreader_init(&reader, buf, buf_len);
 
-  bsreader_read(&reader, 8, &val);
-  EXPECT_TRUE(val == 0xff);
-
-  bsreader_read(&reader, 8, &val);
-  EXPECT_TRUE(val == 0x66);
+  EXPECT_TRUE(bsreader_read(&reader, 8) == 0xff);
+  EXPECT_TRUE(bsreader_read(&reader, 8) == 0x66);
 
   return 1;
 }
@@ -213,17 +209,14 @@ int test_bsreader_read_2(void)
   struct bsreader reader;
   const uint8_t buf[] = {0xba};
   const size_t buf_len = sizeof(buf);
-  uint64_t val=0;
 
   bsreader_init(&reader, buf, buf_len);
 
-  bsreader_read(&reader, 0, &val);
-  bsreader_read(&reader, 4, &val);
-  EXPECT_TRUE(val == 0xa);
+  bsreader_read(&reader, 0);
+  EXPECT_TRUE(bsreader_read(&reader, 4) == 0xa);
 
-  bsreader_read(&reader, 0, &val);
-  bsreader_read(&reader, 4, &val);
-  EXPECT_TRUE(val == 0xb);
+  bsreader_read(&reader, 0);
+  EXPECT_TRUE(bsreader_read(&reader, 4) == 0xb);
 
   return 1;
 }
@@ -236,18 +229,12 @@ int test_bsreader_read_3(void)
     0x33, 0x33, 0x33, 0x33, 0x33, 0x33
   };
   const size_t buf_len = sizeof(buf);
-  uint64_t val=0;
 
   bsreader_init(&reader, buf, buf_len);
 
-  bsreader_read(&reader, 48, &val);
-  EXPECT_TRUE(val == 0x111111111111);
-
-  bsreader_read(&reader, 48, &val);
-  EXPECT_TRUE(val == 0x222222222222);
-
-  bsreader_read(&reader, 48, &val);
-  EXPECT_TRUE(val == 0x333333333333);
+  EXPECT_TRUE(bsreader_read(&reader, 48) == 0x111111111111);
+  EXPECT_TRUE(bsreader_read(&reader, 48) == 0x222222222222);
+  EXPECT_TRUE(bsreader_read(&reader, 48) == 0x333333333333);
 
   return 1;
 }
@@ -259,42 +246,20 @@ int test_bsreader_read_4(void)
     0xff, 0xab, 0x11, 0xcd, 0x55, 0x55, 0x55, 0x55, 0x66, 0x66, 0x66, 0x66
   };
   const size_t buf_len = sizeof(buf);
-  uint64_t val=0;
 
   bsreader_init(&reader, buf, buf_len);
 
-  bsreader_read(&reader, 8, &val);
-  EXPECT_TRUE(val == 0xff);
-
-  bsreader_read(&reader, 4, &val);
-  EXPECT_TRUE(val == 0xb);
-
-  bsreader_read(&reader, 4, &val);
-  EXPECT_TRUE(val == 0xa);
-
-  bsreader_read(&reader, 1, &val);
-  EXPECT_TRUE(val == 0x1);
-
-  bsreader_read(&reader, 2, &val);
-  EXPECT_TRUE(val == 0x0);
-
-  bsreader_read(&reader, 2, &val);
-  EXPECT_TRUE(val == 0x2);
-
-  bsreader_read(&reader, 3, &val);
-  EXPECT_TRUE(val == 0x0);
-
-  bsreader_read(&reader, 8, &val);
-  EXPECT_TRUE(val == 0xcd);
-
-  bsreader_read(&reader, 16, &val);
-  EXPECT_TRUE(val == 0x5555);
-
-  bsreader_read(&reader, 16, &val);
-  EXPECT_TRUE(val == 0x5555);
-
-  bsreader_read(&reader, 32, &val);
-  EXPECT_TRUE(val == 0x66666666);
+  EXPECT_TRUE(bsreader_read(&reader, 8) == 0xff);
+  EXPECT_TRUE(bsreader_read(&reader, 4) == 0xb);
+  EXPECT_TRUE(bsreader_read(&reader, 4) == 0xa);
+  EXPECT_TRUE(bsreader_read(&reader, 1) == 0x1);
+  EXPECT_TRUE(bsreader_read(&reader, 2) == 0x0);
+  EXPECT_TRUE(bsreader_read(&reader, 2) == 0x2);
+  EXPECT_TRUE(bsreader_read(&reader, 3) == 0x0);
+  EXPECT_TRUE(bsreader_read(&reader, 8) == 0xcd);
+  EXPECT_TRUE(bsreader_read(&reader, 16) == 0x5555);
+  EXPECT_TRUE(bsreader_read(&reader, 16) == 0x5555);
+  EXPECT_TRUE(bsreader_read(&reader, 32) == 0x66666666);
 
   return 1;
 }
@@ -303,22 +268,19 @@ int test_bsreader_read_5(void)
 {
   struct bsreader reader;
   const uint8_t buf[] = {
-    0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
-    0x55, 0x55, 0x55
+    0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
+    0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55
   };
   const size_t buf_len = sizeof(buf);
-  uint64_t val=0;
 
   bsreader_init(&reader, buf, buf_len);
 
-  bsreader_read(&reader, 57, &val);
-  EXPECT_TRUE(val == 0x155555555555555);
+  EXPECT_TRUE(bsreader_read(&reader, 7) == 0x55);
+  EXPECT_TRUE(bsreader_read(&reader, 56) == 0xaaaaaaaaaaaaaa);
+  EXPECT_TRUE(bsreader_read(&reader, 1) == 0x0);
 
-  bsreader_read(&reader, 57, &val);
-  EXPECT_TRUE(val == 0x0aaaaaaaaaaaaaa);
-
-  bsreader_read(&reader, 6, &val);
-  EXPECT_TRUE(val == 0x15);
+  EXPECT_TRUE(bsreader_read(&reader, 56) == 0x55555555555555);
+  EXPECT_TRUE(bsreader_read(&reader, 8) == 0x55);
 
   return 1;
 }
@@ -330,19 +292,18 @@ int test_bsreader_size(void)
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
   };
   const size_t buf_len = sizeof(buf);
-  uint64_t val=0;
 
   bsreader_init(&reader, buf, buf_len);
 
   EXPECT_TRUE(bsreader_size(&reader) == 0);
-  bsreader_read(&reader, 1, &val); EXPECT_TRUE(bsreader_size(&reader) == 1);
-  bsreader_read(&reader, 5, &val); EXPECT_TRUE(bsreader_size(&reader) == 1);
-  bsreader_read(&reader, 5, &val); EXPECT_TRUE(bsreader_size(&reader) == 2);
-  bsreader_read(&reader, 5, &val); EXPECT_TRUE(bsreader_size(&reader) == 2);
-  bsreader_read(&reader, 1, &val); EXPECT_TRUE(bsreader_size(&reader) == 3);
-  bsreader_read(&reader, 20, &val); EXPECT_TRUE(bsreader_size(&reader) == 5);
-  bsreader_read(&reader, 40, &val); EXPECT_TRUE(bsreader_size(&reader) == 10);
-  bsreader_read(&reader, 16, &val); EXPECT_TRUE(bsreader_size(&reader) == 12);
+  bsreader_read(&reader, 1); EXPECT_TRUE(bsreader_size(&reader) == 1);
+  bsreader_read(&reader, 5); EXPECT_TRUE(bsreader_size(&reader) == 1);
+  bsreader_read(&reader, 5); EXPECT_TRUE(bsreader_size(&reader) == 2);
+  bsreader_read(&reader, 5); EXPECT_TRUE(bsreader_size(&reader) == 2);
+  bsreader_read(&reader, 1); EXPECT_TRUE(bsreader_size(&reader) == 3);
+  bsreader_read(&reader, 20); EXPECT_TRUE(bsreader_size(&reader) == 5);
+  bsreader_read(&reader, 40); EXPECT_TRUE(bsreader_size(&reader) == 10);
+  bsreader_read(&reader, 16); EXPECT_TRUE(bsreader_size(&reader) == 12);
 
   return 1;
 }
