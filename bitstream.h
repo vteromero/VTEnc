@@ -144,6 +144,9 @@ static inline uint64_t bsreader_read(
     }
   }
 
+  assert(n_bits <= BIT_STREAM_MAX_READ);
+  assert(n_bits + reader->bit_pos < 64);
+
   uint64_t value = (reader->bit_container >> reader->bit_pos) & ((1ULL << n_bits) - 1ULL);
   reader->ptr += (reader->bit_pos + n_bits) >> 3;
   reader->bit_pos = (reader->bit_pos + n_bits) & 7;
